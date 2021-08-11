@@ -1,0 +1,183 @@
+body {
+    font-family: sans-serif;
+    margin: 0em;
+    grip-gap: 1rem;
+    display: flex;
+    flex-flow: column;
+}
+code {
+    color: chocolate;
+}
+h1,h2, h3, h4, h5, h6 {
+    scroll-margin-top: 5em;
+}
+pre {
+    white-space: pre-wrap !important;
+    padding: 1em
+}
+a.external::after {
+    content: '\20\27a1';
+}
+
+
+.header {
+    background-color: #1b1a1a;
+    position: sticky;
+    top: 0px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 5px solid lightcoral;
+}
+.header a {
+    text-decoration: none;
+}
+.header .title {
+    font-family: sans-serif;
+    font-size: xxx-large;
+    font-weight: bold;
+    padding-left: 0.2em;
+    color: white;
+    display: block;
+}
+.header .subtitle {
+    font-family: sans-serif;
+    font-size: medium;
+    padding-left: 2em;
+    color: white;
+}
+
+
+.breadcrumb {
+    background: #101010;
+}
+
+.breadcrumb a {
+    text-decoration: none;
+    text-transform: capitalize;
+    color: gray;
+    font-size: small;
+}
+.breadcrumb a.internal {
+    color: white;
+}
+.breadcrumb a.internal:hover {
+    color: lightcoral;
+}
+
+.breadcrumb ol {
+    display: flex;
+    margin: 5px;
+}
+
+.breadcrumb li {
+    list-style: none;
+}
+
+.breadcrumb li:after {
+    content:'\3E';
+    color: white;
+    margin: 0.3em;
+    font-weight: bolder;
+}
+
+.breadcrumb li:first-child:before {
+    content: '\2302';
+    color: white;
+    margin: 0.3em;
+    font-weight: bolder;
+}
+
+.breadcrumb li:last-child:after {
+    content: none;
+}
+
+.main {
+    display: flex;
+    overflow-x: auto;
+}
+
+
+.links , .links ol {
+    display: flex;
+    justify-content: flex-end;
+}
+.links li {
+    padding: 1em;
+    display: flex;
+    align-items: center;
+    flex-flow: column;
+}
+.links li a {
+    color: white;
+    text-transform: uppercase;
+}
+.links li a:hover {
+    color: lightcoral;
+}
+.links li.selected {
+    background-color: lightcoral;
+}
+
+
+.links ol li > ol {
+    visibility: hidden;
+    display: block;
+    position: absolute;
+    top: 4rem;
+    padding-left: 0;
+}
+.links ol li:hover > ol , .links ol li:focus-within > ol{
+    visibility: visible;
+}
+
+.links ol li > ol > li {
+    clear: both;
+    width: 100%;
+    background: #1b1a1a;
+    display: block;
+}
+
+
+
+.content {
+    margin: 1em;
+    grid-area: main;
+}
+
+
+.toc {
+    background-color: #1b1a1a;
+    color: white;
+    min-height: 100vh;
+}
+.toc a {
+    text-transform: uppercase;
+    color: #d4d4d4;
+    font-size: small;
+    text-decoration: none;
+}
+.toc a:hover {
+    color: lightcoral;
+}
+.toc ol ol a {
+    text-transform: none;
+}
+.toc li {
+    list-style: none;
+    border-left: 2px solid lightcoral;
+    padding-left: 3px;
+    margin-bottom: 6px;
+}
+.toc ol {
+    padding: 0.9em;
+}
+
+
+
+@media only screen and (max-width: 768px) {
+    .toc {
+        display: none;
+    }
+}
+
+
