@@ -22,6 +22,7 @@ public class DocSiteTest {
         .name("jExt")
         .title("jExt - A Java library")
         .description("This is the description of the library")
+        .theme("lightcoral")
         .home(source("index", "src/test/resources/README.md")
             .withSections(
                 source("changelog", "src/test/resources/CHANGELOG.md"),

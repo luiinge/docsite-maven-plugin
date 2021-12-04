@@ -12,15 +12,22 @@ public class SiteConfiguration {
     private String name;
     private String title;
     private String description;
+    private String theme;
+    private String themeFile;
     private Map<String,String> meta;
     private Map<String,String> styles;
-    private String cssFile;
     private Section home;
     private Path outputFolder;
 
 
+
     public String title() {
         return (title == null || title.isBlank()) ? name : title;
+    }
+
+
+    public String themeFile() {
+        return Objects.requireNonNullElse(themeFile,"theme-"+theme+".css");
     }
 
 }

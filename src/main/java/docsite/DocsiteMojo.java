@@ -26,7 +26,7 @@ public class DocsiteMojo extends AbstractMojo {
     private Map<String,String> styles = new LinkedHashMap<>();
 
     @Parameter
-    private String cssFile;
+    private String theme;
 
     @Parameter(required = true)
     private Section home;
@@ -42,7 +42,7 @@ public class DocsiteMojo extends AbstractMojo {
         .description(description)
         .meta(meta)
         .styles(styles)
-        .cssFile(cssFile)
+        .theme(theme)
         .home(home)
         .outputFolder(outputFolder)
         .build();

@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
-import java.util.List;
+import java.util.*;
 import java.util.regex.*;
 import java.util.stream.*;
 import com.vdurmont.emoji.EmojiParser;
@@ -14,7 +14,7 @@ import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 import docsite.Section.SectionType;
-import j2html.tags.ContainerTag;
+import j2html.tags.*;
 import static docsite.EmitterUtil.normalizeLinks;
 import static j2html.TagCreator.*;
 
@@ -22,9 +22,16 @@ public class SiteHtmlEmitter {
 
 
 
-    private static final String CSS_FILE = "style.css";
-    private static final String PRISM_CSS_FILE = "prism-light.css";
-    private static final String PRISM_JS_FILE = "prism.js";
+    private static final String[] CSS_FILES = {
+        "common.css",
+        "resolution-large.css",
+        "resolution-medium.css",
+        "resolution-small.css",
+        "prism-light.css"
+    };
+    private static final String[] JS_FILES = {
+        "prism.js"
+    };
 
 
     private static final int tocMinLevel = 2;
@@ -49,9 +56,13 @@ public class SiteHtmlEmitter {
     public void generateSite(SiteConfiguration configuration) throws IOException {
         SectionHtmlEmitter home = SectionHtmlEmitter.build(configuration);
         writePage(configuration,home);
-        copyResource(CSS_FILE, configuration.outputFolder());
-        copyResource(PRISM_CSS_FILE, configuration.outputFolder());
-        copyResource(PRISM_JS_FILE, configuration.outputFolder());
+        copyResource(configuration.themeFile(), configuration.outputFolder());
+        for (String css: CSS_FILES) {
+            copyResource(css, configuration.outputFolder());
+        }
+        for (String js: JS_FILES) {
+            copyResource(js, configuration.outputFolder());
+        }
     }
 
 
@@ -117,18 +128,27 @@ public class SiteHtmlEmitter {
         ContainerTag<?> sidebar,
         ContainerTag<?> content
     ) {
+        
+        List<DomContent> headContents = new ArrayList<>();
+        headContents.add(title(site.title()));
+        headContents.add(meta().withCharset("UTF-8"));
+        headContents.add(meta().withName("viewport").withContent("width=device-width, initial-scale=1.0"));
+        for (String css : CSS_FILES) {
+            headContents.add(link().attr("href",css).attr("rel","stylesheet"));
+        }
+        headContents.add(link().attr("href",site.themeFile()).attr("rel","stylesheet"));
+
+        List<DomContent> bodyContents = new ArrayList<>();
+        bodyContents.add(heading);
+        bodyContents.add(breadcrumbs);
+        bodyContents.add(div().withClass("main").with(sidebar,content));
+        for (String js : JS_FILES) {
+            headContents.add(script().attr("src",js));
+        }
+
         return html().with(
-            head().with(
-                link().attr("href",CSS_FILE).attr("rel","stylesheet"),
-                link().attr("href",PRISM_CSS_FILE).attr("rel","stylesheet"),
-                meta().withCharset("UTF-8"),
-                title(site.title())
-            ),
-            body()
-            .with(heading)
-            .with(breadcrumbs)
-            .with(div().withClass("main").with(sidebar,content))
-            .with(script().attr("src",PRISM_JS_FILE))
+            head().with(headContents),
+            body().with(bodyContents)
         );
     }
 
@@ -139,7 +159,7 @@ public class SiteHtmlEmitter {
             String markdownContent = read(markdown);
             Node document = parser.parse(markdownContent);
             StreamSupport.stream(document.getChildren().spliterator(), false)
-                .filter(node->node instanceof Heading)
+                .filter(Heading.class::isInstance)
                 .map(Heading.class::cast)
                 .forEach(heading -> heading.setAnchorRefId(hrefId(heading.getAnchorRefText())));
             String html = renderer.render(document);
@@ -171,7 +191,7 @@ public class SiteHtmlEmitter {
             Node document = parser.parse(read(markdown));
 
             List<Heading> children = StreamSupport.stream(document.getChildren().spliterator(), false)
-                .filter(node->node instanceof Heading)
+                .filter(Heading.class::isInstance)
                 .map(Heading.class::cast)
                 .filter(child->child.getLevel()>=tocMinLevel)
                 .filter(child->child.getLevel()<=tocMaxLevel)
