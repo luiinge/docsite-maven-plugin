@@ -2,13 +2,16 @@ package docsite;
 
 import static docsite.EmitterUtil.*;
 import static j2html.TagCreator.*;
+
 import java.io.*;
 import java.net.URL;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Stream;
+
 import docsite.Section.SectionType;
 import j2html.tags.ContainerTag;
+import j2html.tags.specialized.*;
 
 
 public class SectionHtmlEmitter {
@@ -43,7 +46,7 @@ public class SectionHtmlEmitter {
 
 
 
-    private final SiteConfiguration configuration;
+    private final SiteConfiguration site;
     private final Section section;
     private final String source;
     private final SectionHtmlEmitter root;
@@ -51,85 +54,107 @@ public class SectionHtmlEmitter {
     private final List<SectionHtmlEmitter> children = new ArrayList<>();
 
 
+
     private SectionHtmlEmitter(
-        SiteConfiguration configuration,
+        SiteConfiguration site,
         SectionHtmlEmitter root,
         Section section,
         List<SectionHtmlEmitter> ancestors
     ) throws IOException {
-        this.configuration = configuration;
+        this.site = site;
         this.section = section;
         this.root = (root == null ? this : root);
         this.ancestors = ancestors;
-        this.source = generateSourceIfNecessary(section,configuration.outputFolder());
+        this.source = generateSourceIfNecessary(section,site.outputFolder());
     }
 
 
 
-
-    public ContainerTag<?> createHeaderFromconfiguration() {
-
-        ContainerTag<?> [] sectionLinks = root.children.stream()
-            .filter(SectionHtmlEmitter::isValid)
-            .map(mainSection -> mainSection.createSectionLink(mainSection == this))
-            .toArray(ContainerTag<?>[]::new);
-
-        return header().withClass("header").with(
-            div(
-                 inlink(configuration.title(),INDEX_FILE).withClass("title"),
-                 span(configuration.description()).withClass("subtitle")
-            ),
-            nav().withClass("links").with(ol().with(sectionLinks))
+    public HeaderTag createHeader() {
+        return header().with(
+            createTitleAndSubtitle(),
+            createNavigation()
         );
     }
 
 
-    private ContainerTag<?> createSectionLink(boolean selected) {
 
-        ContainerTag<?> dropdownMenu = ol().withClass("dropdown");
+    private DivTag createTitleAndSubtitle() {
+        return div().withClass("title-and-subtitle")
+            .with(
+                h1().withClasses("title label")
+                    .with(
+                        EmitterUtil.icon(site.logo()),
+                        span(site.title())
+                    ),
+                span(site.description()).withClass("subtitle")
+            );
+    }
+
+
+
+    private NavTag createNavigation() {
+        return nav().withClass("sections")
+            .with(
+                ul().with(
+                    root.children.stream()
+                        .filter(SectionHtmlEmitter::isValid)
+                        .map(it -> it.createNavigationSection(it == this))
+                        .toArray(LiTag[]::new)
+                )
+            );
+    }
+
+
+
+
+    private LiTag createNavigationSection(boolean selected) {
+
+        UlTag dropdownMenu = ul().withClass("dropdown");
         for (SectionHtmlEmitter child : children) {
-            dropdownMenu.with(li().with(child.sectionLink()));
+            dropdownMenu.with(li().with(child.createLinkToSection()));
         }
         return li()
-            .withCondClass(!selected,"headerLink")
-            .withCondClass(selected, "headerLink selected")
-            .with(sectionLink())
+            .withCondClass(selected, "selected")
+            .with(createLinkToSection())
             .with(dropdownMenu);
     }
 
 
 
-    private ContainerTag<?> sectionLink() {
+    private ATag createLinkToSection() {
         return hasType(SectionType.GENERATED,SectionType.GROUP) ?
-            inlink(name(), page()) :
-            exlink(name(), page());
+            internalLinkWithIcon(name(), page(), icon()) :
+            externalLinkWithIcon(name(), page(), icon());
     }
 
 
 
-    public ContainerTag<?> createBreadcrumbs() {
-        if (this.ancestors.isEmpty()) {
-            return div();
-        }
-        ContainerTag<?> container = ol();
-        Iterator<SectionHtmlEmitter> iterator = this.ancestors.iterator();
-        List<ContainerTag<?>> items = new ArrayList<>();
-        // first section in ancestors is always the index
-        SectionHtmlEmitter path;
-        iterator.next();
-        items.add(li().with(inlink(configuration.name(),INDEX_FILE)));
+    public NavTag createBreadcrumbs() {
 
-        while (iterator.hasNext()) {
-            path = iterator.next();
-            if (path.isValid()) {
-                items.add(li().with(inlink(path.name(),path.page())));
-            } else {
-                items.add(li().with(a(path.name())));
+
+        OlTag container = ol();
+        container.with(li().with(internalLink(site.name(),INDEX_FILE)));
+
+
+        if (!this.ancestors.isEmpty()) {
+            Iterator<SectionHtmlEmitter> iterator = this.ancestors.iterator();
+            // first section in ancestors is always the index
+            SectionHtmlEmitter path;
+            iterator.next();
+
+            while (iterator.hasNext()) {
+                path = iterator.next();
+                if (path.isValid()) {
+                    container.with(li().with(internalLink(path.name(),path.page())));
+                } else {
+                    container.with(li().with(a(path.name())));
+                }
             }
+            container.with(li().with(a(this.name())));
         }
-        items.add(li().with(a(this.name())));
-        container = container.with(items);
-        return nav().withClass("breadcrumb").with(container);
+
+        return nav().withClass("breadcrumbs").with(container);
     }
 
 
@@ -144,7 +169,14 @@ public class SectionHtmlEmitter {
 
 
     public String page() {
-        return hasType(SectionType.EMBEDDED_SITE) ? source : EmitterUtil.page(section.name());
+        switch (section.type()) {
+            case EMBEDDED_SITE:
+                return source;
+            case LINK:
+                return section.source();
+            default:
+                return EmitterUtil.page(section.name());
+        }
     }
 
 
@@ -158,8 +190,12 @@ public class SectionHtmlEmitter {
     }
 
 
+    public String icon() {
+        return section.icon();
+    }
+
     public Path outputFile() {
-        return configuration.outputFolder().resolve(page());
+        return site.outputFolder().resolve(page());
     }
 
 
@@ -231,7 +267,7 @@ public class SectionHtmlEmitter {
             writer.write("# "+title);
             writer.newLine();
             for (Section subsection : section.subsections()) {
-                writer.write("- ["+subsection.name()+"]("+EmitterUtil.href(subsection.name())+")");
+                writer.write("## ["+subsection.name()+"]("+EmitterUtil.href(subsection)+")");
                 writer.newLine();
             }
         }

@@ -7,23 +7,21 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor @Getter @Builder @Accessors(fluent = true)
 public class Section {
 
-
-    public static Section source(String name, String source) {
-        return new Section(name,source,SectionType.GENERATED,null,new ArrayList<>());
+    public static Section.SectionBuilder generated(String name) {
+        return builder().type(SectionType.GENERATED).name(name);
     }
 
-    public static Section group(String name) {
-        return new Section(name,null,SectionType.GROUP,null,new ArrayList<>());
+    public static Section.SectionBuilder site() {
+        return builder().type(SectionType.EMBEDDED_SITE);
     }
 
-    public static Section site(String name, String folder, String siteIndex) {
-        return new Section(name,folder,SectionType.EMBEDDED_SITE,siteIndex,new ArrayList<>());
+    public static Section.SectionBuilder group(String name) {
+        return builder().type(SectionType.GROUP).name(name);
     }
 
-    public static Section link(String name, String site) {
-        return new Section(name,site,SectionType.LINK,null,new ArrayList<>());
+    public static Section.SectionBuilder link() {
+        return builder().type(SectionType.LINK);
     }
-
 
     public enum SectionType {
         GENERATED,
@@ -34,16 +32,15 @@ public class Section {
 
 
     private String name;
+    private String icon;
     private String source;
     private SectionType type;
     private String siteIndex;
     private List<Section> subsections;
 
 
-
-    public Section withSections(Section...sections) {
-        this.subsections.addAll(Arrays.asList(sections));
-        return this;
+    public List<Section> subsections() {
+        return subsections == null ? List.of() : subsections;
     }
 
 }

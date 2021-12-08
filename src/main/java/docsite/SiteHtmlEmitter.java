@@ -1,5 +1,8 @@
 package docsite;
 
+import static docsite.EmitterUtil.normalizeLinks;
+import static j2html.TagCreator.*;
+
 import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
@@ -7,31 +10,20 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.regex.*;
 import java.util.stream.*;
+
 import com.vdurmont.emoji.EmojiParser;
 import com.vladsch.flexmark.ast.Heading;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
+
 import docsite.Section.SectionType;
 import j2html.tags.*;
-import static docsite.EmitterUtil.normalizeLinks;
-import static j2html.TagCreator.*;
+import j2html.tags.specialized.*;
 
 public class SiteHtmlEmitter {
 
-
-
-    private static final String[] CSS_FILES = {
-        "common.css",
-        "resolution-large.css",
-        "resolution-medium.css",
-        "resolution-small.css",
-        "prism-light.css"
-    };
-    private static final String[] JS_FILES = {
-        "prism.js"
-    };
 
 
     private static final int tocMinLevel = 2;
@@ -42,49 +34,52 @@ public class SiteHtmlEmitter {
     private final HtmlRenderer renderer = HtmlRenderer.builder(options).build();
 
     private final Logger logger;
+    private final SiteConfiguration site;
 
 
 
-
-    public SiteHtmlEmitter(Logger logger) {
+    public SiteHtmlEmitter(SiteConfiguration site, Logger logger) {
         this.logger = logger;
+        this.site = site;
     }
 
 
 
 
-    public void generateSite(SiteConfiguration configuration) throws IOException {
-        SectionHtmlEmitter home = SectionHtmlEmitter.build(configuration);
-        writePage(configuration,home);
-        copyResource(configuration.themeFile(), configuration.outputFolder());
-        for (String css: CSS_FILES) {
-            copyResource(css, configuration.outputFolder());
+    public void generateSite() throws IOException {
+        if (site.cssFile() == null) {
+            copyResource("layout.css", site.outputFolder().resolve("css"));
+        } else {
+            copyExternalFile(site.cssFile(), site.outputFolder().resolve("css"));
         }
-        for (String js: JS_FILES) {
-            copyResource(js, configuration.outputFolder());
-        }
+        copyResourceFolder("css",  site.outputFolder());
+        copyResourceFolder("js",  site.outputFolder());
+        copyResourceFolder("webfonts",  site.outputFolder());
+        writePage(SectionHtmlEmitter.build(site));
     }
 
 
 
-    private void writePage(SiteConfiguration site, SectionHtmlEmitter section) throws IOException {
+
+
+    private void writePage(SectionHtmlEmitter section) throws IOException {
         if (!section.isValid()) {
             warn("Section {} is not valid and would not be included", section.name());
             return;
         }
         if (section.hasType(SectionType.GENERATED, SectionType.GROUP)) {
-            ContainerTag<?> heading = section.createHeaderFromconfiguration();
-            ContainerTag<?> breadcrumbs = section.createBreadcrumbs();
-            ContainerTag<?> content = createContentFromSource(section);
-            ContainerTag<?> toc = section.hasMarkdownSource() ?
+            HeaderTag header = section.createHeader();
+            NavTag breadcrumbs = section.createBreadcrumbs();
+            SectionTag content = createContentFromSource(section);
+            AsideTag toc = section.hasMarkdownSource() || section.hasHTMLSource() ?
                 createTOCFromMarkdown(section.source()) :
-                div();
-            ContainerTag<?> page = buildPage(site, heading, breadcrumbs, toc, content);
+                aside().withClass("hidden");
+            ContainerTag<?> page = buildPage(header, breadcrumbs, toc, content);
 
             write(section.outputFile(), page, section.hasMarkdownSource());
         }
         for (SectionHtmlEmitter subsection : section.children()) {
-            writePage(site, subsection);
+            writePage(subsection);
         }
     }
 
@@ -94,8 +89,8 @@ public class SiteHtmlEmitter {
 
 
 
-    private ContainerTag<?> createContentFromSource(SectionHtmlEmitter section) throws IOException {
-        ContainerTag<?> content;
+    private SectionTag createContentFromSource(SectionHtmlEmitter section) throws IOException {
+        SectionTag content;
         if (section.hasMarkdownSource()) {
             content = createContentFromMarkdown(section.source());
          } else if (section.hasHTMLSource()){
@@ -120,41 +115,52 @@ public class SiteHtmlEmitter {
 
 
 
-
-    private ContainerTag<?> buildPage(
-        SiteConfiguration site,
-        ContainerTag<?> heading,
-        ContainerTag<?> breadcrumbs,
-        ContainerTag<?> sidebar,
-        ContainerTag<?> content
-    ) {
-        
-        List<DomContent> headContents = new ArrayList<>();
-        headContents.add(title(site.title()));
-        headContents.add(meta().withCharset("UTF-8"));
-        headContents.add(meta().withName("viewport").withContent("width=device-width, initial-scale=1.0"));
-        for (String css : CSS_FILES) {
-            headContents.add(link().attr("href",css).attr("rel","stylesheet"));
+    private HeadTag buildHtmlHead() throws IOException {
+        HeadTag head = head()
+            .with(title(site.title()))
+            .with(meta().withCharset("UTF-8"))
+            .with(meta().withName("viewport").withContent("width=device-width, initial-scale=1.0"))
+            ;
+        for (String css : ResourceUtil.getResourceFiles("css")) {
+            head.with(link().attr("href","css/"+css).attr("rel","stylesheet"));
         }
-        headContents.add(link().attr("href",site.themeFile()).attr("rel","stylesheet"));
+        Path cssFile = Objects.requireNonNullElse(site.cssFile(), Path.of("layout.css"));
+        head.with(link().attr("href","css/"+cssFile.getFileName().toString()).attr("rel","stylesheet"));
 
-        List<DomContent> bodyContents = new ArrayList<>();
-        bodyContents.add(heading);
-        bodyContents.add(breadcrumbs);
-        bodyContents.add(div().withClass("main").with(sidebar,content));
-        for (String js : JS_FILES) {
-            headContents.add(script().attr("src",js));
+        for (String js : ResourceUtil.getResourceFiles("js")) {
+            head.with(script().attr("src","js/"+js));
         }
+        return head;
+    }
 
-        return html().with(
-            head().with(headContents),
-            body().with(bodyContents)
+
+
+    private BodyTag buildHtmlBody(HeaderTag header, NavTag breadcrumbs, AsideTag aside, SectionTag section) {
+        return body().with(
+            header,
+            breadcrumbs,
+            aside,
+            section
         );
     }
 
 
 
-    private ContainerTag<?> createContentFromMarkdown(String markdownSource) throws IOException {
+    private ContainerTag<?> buildPage(
+        HeaderTag header,
+        NavTag breadcrumbs,
+        AsideTag aside,
+        SectionTag section
+    ) throws IOException {
+        return html().with(
+            buildHtmlHead(),
+            buildHtmlBody(header, breadcrumbs, aside, section)
+        );
+    }
+
+
+
+    private SectionTag createContentFromMarkdown(String markdownSource) throws IOException {
         try (InputStream markdown = open(markdownSource)) {
             String markdownContent = read(markdown);
             Node document = parser.parse(markdownContent);
@@ -163,28 +169,28 @@ public class SiteHtmlEmitter {
                 .map(Heading.class::cast)
                 .forEach(heading -> heading.setAnchorRefId(hrefId(heading.getAnchorRefText())));
             String html = renderer.render(document);
-            return div().with(rawHtml(normalizeLinks(generateHeadersId(html)))).withClass("content");
+            return section().with(rawHtml(normalizeLinks(generateHeadersId(html)))).withClass("content");
         }
     }
 
 
-    private ContainerTag<?> createContentFromHTML(String htmlSource) throws IOException {
+    private SectionTag createContentFromHTML(String htmlSource) throws IOException {
         try (InputStream html = open(htmlSource)) {
-            return div().with(rawHtml(normalizeLinks(read(html)))).withClass("content");
+            return section().with(rawHtml(normalizeLinks(read(html)))).withClass("content");
         }
     }
 
 
-    private ContainerTag<?> createContentFromText(String textSource) throws IOException {
+    private SectionTag createContentFromText(String textSource) throws IOException {
         try (InputStream text = open(textSource)) {
-            return div().with(pre(read(text)));
+            return section().with(pre(read(text)));
         }
     }
 
 
 
 
-    private ContainerTag<?> createTOCFromMarkdown(String markdownSource)
+    private AsideTag createTOCFromMarkdown(String markdownSource)
     throws IOException {
 
         try (InputStream markdown = open(markdownSource)) {
@@ -214,7 +220,7 @@ public class SiteHtmlEmitter {
                 previousLevel = heading.getLevel();
             }
             string.append("</ol>".repeat(Math.max(0, previousLevel)));
-            return nav().with(rawHtml(string.toString())).withClass("toc");
+            return aside().with(nav().with(rawHtml(string.toString())).withClass("toc"));
         }
     }
 
@@ -241,18 +247,39 @@ public class SiteHtmlEmitter {
 
 
 
+    private void copyResourceFolder(String folderName, Path outputFolder) throws IOException {
+        Path targetFolder = outputFolder.toAbsolutePath().resolve(folderName);
+        for (String file : ResourceUtil.getResourceFiles(folderName)) {
+            copyResource(folderName+"/"+file, targetFolder);
+        }
+    }
+
+
     private void copyResource(String resource, Path outputFolder) throws IOException {
         URL resourceUrl = Thread.currentThread().getContextClassLoader().getResource(resource);
         if (resourceUrl == null) {
             throw new FileNotFoundException(resource);
         }
-        Files.copy(
-            resourceUrl.openStream(),
-            outputFolder.resolve(resource),
-            StandardCopyOption.REPLACE_EXISTING
-        );
+        copyFromURL(resourceUrl, outputFolder);
     }
 
+    private void copyExternalFile(Path path, Path outputFolder) throws IOException {
+        copyFromURL(path.toUri().toURL(), outputFolder);
+    }
+
+
+    private void copyFromURL(URL url, Path outputFolder) throws IOException {
+        outputFolder = outputFolder.toAbsolutePath();
+        Path target = outputFolder.resolve(Path.of(url.getFile()).getFileName().toString());
+        Files.createDirectories(outputFolder);
+        Files.createDirectories(target.getParent());
+        Files.copy(
+            url.openStream(),
+            target,
+            StandardCopyOption.REPLACE_EXISTING
+        );
+        logger.info.accept("Copied "+url+" to "+target);
+    }
 
 
 

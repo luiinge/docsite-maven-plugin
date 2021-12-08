@@ -2,7 +2,7 @@ package docsite;
 
 import java.io.*;
 import java.nio.file.*;
-import java.util.Comparator;
+import java.util.*;
 import org.junit.Test;
 import static docsite.Section.*;
 
@@ -22,19 +22,37 @@ public class DocSiteTest {
         .name("jExt")
         .title("jExt - A Java library")
         .description("This is the description of the library")
-        .theme("lightcoral")
-        .home(source("index", "src/test/resources/README.md")
-            .withSections(
-                source("changelog", "src/test/resources/CHANGELOG.md"),
-                group("report").withSections(
-                    source("metrics", "src/test/resources/metrics.md"),
-                    source("Dependencies", "src/test/resources/dependencies.html"),
-                    site("Javadoc","src/test/resources/apidocs","index.html")
-                ),
-                source("license", "src/test/resources/LICENSE"),
-                link("Github","https://github.com/luiinge/jext")
-            ))
+        .logo("accessible-icon")
         .outputFolder(Paths.get("target","site"))
+        .index("src/test/resources/README.md")
+        .sections(List.of(
+            generated("Changelog")
+                .source("src/test/resources/CHANGELOG.md")
+                .build(),
+            group("Report")
+                .subsections(List.of(
+                    generated("Metrics")
+                        .source("src/test/resources/metrics.md")
+                        .build(),
+                    generated("Dependencies")
+                        .source("src/test/resources/dependencies.html")
+                        .build(),
+                    site()
+                        .name("Javadoc")
+                        .source("src/test/resources/apidocs")
+                        .siteIndex("index.html")
+                        .icon("java")
+                        .build()
+                )).build(),
+            generated("License")
+                .source("src/test/resources/LICENSE")
+                .build(),
+            link()
+                .name("Github")
+                .source("https://github.com/luiinge/jext")
+                .icon("github")
+                .build()
+        ))
         .build();
 
 
@@ -51,7 +69,7 @@ public class DocSiteTest {
            Files.createDirectory(configuration.outputFolder());
         }
 
-        new SiteHtmlEmitter(LOGGER).generateSite(configuration);
+        new SiteHtmlEmitter(configuration,LOGGER).generateSite();
     }
 
 

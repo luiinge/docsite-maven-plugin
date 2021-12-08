@@ -1,0 +1,19 @@
+body, div, a, p, header, nav, aside, main, section, ol {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 1rem;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+.hidden {
+    display: none;
+}
+ul {
+    padding-inline-start: 0;
+}
+
+.fa-blank {
+    visibility:hidden !important;
+}

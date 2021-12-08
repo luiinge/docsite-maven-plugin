@@ -1,18 +1,50 @@
 package docsite;
 
-import static j2html.TagCreator.a;
+import static j2html.TagCreator.*;
 import j2html.tags.ContainerTag;
+import j2html.tags.specialized.*;
 
 public final class EmitterUtil {
 
     private EmitterUtil() { /*avoid instantiation */ }
 
 
-    static ContainerTag<?> inlink(String title, String url) {
+    public static ATag internalLink(String title, String url) {
         return a(title).withClass("internal").withHref(url);
     }
 
-    static ContainerTag<?> exlink(String title, String url) {
+
+    public static ATag internalLinkWithIcon(String title, String url, String icon) {
+        return a()
+            .withClasses("label internal")
+            .withHref(url)
+            .with(
+                icon(icon),
+                span(title)
+            );
+    }
+
+
+    static ATag externalLinkWithIcon(String title, String url, String icon) {
+        return a()
+            .withClasses("label external")
+            .withHref(url)
+            .withTarget("_blank")
+            .withRel("external noreferrer noopener nofollow")
+            .with(
+                icon(icon),
+                span(title)
+            );
+    }
+
+
+    public static ITag icon(String icon) {
+        return i().withClasses(icon == null || icon.isBlank() ? "hidden" : "fab fa-"+icon);
+    }
+
+
+
+    public static ATag externalLink(String title, String url) {
         return a(title)
             .withClass("external")
             .withHref(url)
@@ -21,13 +53,25 @@ public final class EmitterUtil {
     }
 
 
+
+
+
     static String href(String name) {
         return name.strip().toLowerCase().replace(" ", "-");
     }
 
 
+    static String href(Section section) {
+        if (section.type() == Section.SectionType.EMBEDDED_SITE) {
+            return href(section.name()+"/"+section.siteIndex());
+        } else {
+            return href(section.name());
+        }
+    }
+
+
     static String page(String name) {
-        return href(name)+SectionHtmlEmitter.HTML_EXTENSION;
+        return href(name)+ SectionHtmlEmitter.HTML_EXTENSION;
     }
 
 

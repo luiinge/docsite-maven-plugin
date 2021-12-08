@@ -12,11 +12,10 @@ public class SiteConfiguration {
     private String name;
     private String title;
     private String description;
-    private String theme;
-    private String themeFile;
-    private Map<String,String> meta;
-    private Map<String,String> styles;
-    private Section home;
+    private String logo;
+    private Path cssFile;
+    private String index;
+    private List<Section> sections;
     private Path outputFolder;
 
 
@@ -26,8 +25,8 @@ public class SiteConfiguration {
     }
 
 
-    public String themeFile() {
-        return Objects.requireNonNullElse(themeFile,"theme-"+theme+".css");
+    public Section home() {
+        return Section.generated("index").source(index).subsections(sections()).build();
     }
 
 }

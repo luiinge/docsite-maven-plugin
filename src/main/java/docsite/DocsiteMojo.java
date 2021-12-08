@@ -28,8 +28,11 @@ public class DocsiteMojo extends AbstractMojo {
     @Parameter
     private String theme;
 
-    @Parameter(required = true)
-    private Section home;
+    @Parameter
+    private String index;
+
+    @Parameter
+    private List<Section> sections;
 
     @Parameter(defaultValue = "${project.build.outputDirectory}/site")
     private Path outputFolder;
@@ -40,15 +43,13 @@ public class DocsiteMojo extends AbstractMojo {
         .name(name)
         .title(title)
         .description(description)
-        .meta(meta)
-        .styles(styles)
-        .theme(theme)
-        .home(home)
+        .index(index)
+        .sections(sections)
         .outputFolder(outputFolder)
         .build();
 
         try {
-            new SiteHtmlEmitter(logger()).generateSite(siteConfiguration);
+            new SiteHtmlEmitter(siteConfiguration,logger()).generateSite();
         } catch (IOException e) {
             throw new MojoFailureException("Error generating site",e);
         }
