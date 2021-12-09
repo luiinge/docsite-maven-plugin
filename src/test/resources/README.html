@@ -1,0 +1,164 @@
+<h1>jExt</h1>
+<p><img src="https://img.shields.io/github/license/luiinge/jext?style=plastic" alt="GitHub" />
+    <img src="https://img.shields.io/github/workflow/status/luiinge/jext/quality%20check/master?style=plastic" alt="GitHub Workflow Status (branch)" />
+    <a href="https://sonarcloud.io/dashboard?id=luiinge_jext"><img src="https://sonarcloud.io/api/project_badges/measure?project=luiinge_jext&amp;metric=alert_status" alt="Quality Gate Status" /></a>
+    <img src="https://img.shields.io/maven-central/v/io.github.luiinge/jext?style=plastic" alt="Maven Central" /></p>
+<p>jExt is a simple library that allows you to define a <em>plug-in</em> architecture detecting the
+    Java classes that implements a specific interface. It mostly relies on the standard
+    <a href="https://docs.oracle.com/javase/tutorial/ext/basics/spi.html">extension mechanism provided</a> by Java by means of the <a href="https://docs.oracle.com/javase/11/docs/api/java/util/ServiceLoader.html">ServiceLoader</a>
+    class, but it simplifies and enhances the usage.</p>
+<p>The key concepts are:</p>
+<ul>
+    <li><strong>Extension points</strong> (interfaces annotated with <code>@ExtensionPoint</code>) which define the contract</li>
+    <li><strong>Extensions</strong> (classes annotated with <code>@Extension</code> and implementing the extension point class)</li>
+    <li><strong>Extension loaders</strong> that are responsible of discovering extensions for an specific extension point</li>
+</ul>
+<p>What is the extra value then?</p>
+<ul>
+    <li>Annotation processing of <code>@Extension</code> and <code>@ExtensionPoint</code> so the classes are
+        automatically registered as services by the compiler</li>
+    <li>Capability of using multiple class loaders at the same time</li>
+    <li>Use the default <code>ServiceLoader</code> mechanism or provide your own discoverer from a IoC framework</li>
+    <li>Explicitly declaring the extension point version that implement each extension,
+        avoiding using wrong jar versions</li>
+    <li>Custom control about creating new extension instances or reusing existing ones</li>
+    <li>When extending an extension via inheritance, you may either override the parent class or
+        use both superclass and subclass independently</li>
+</ul>
+<p><img src="screenshot.png" alt="" /></p>
+<h2>Usage</h2>
+<h3>Maven dependency</h3>
+<p>Include the following within the <code>&lt;dependencies&gt;</code> section of your <code>pom.xml</code> file:</p>
+<pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;io.github.luiinge&lt;/groupId&gt;
+    &lt;artifactId&gt;jext&lt;/artifactId&gt;
+    &lt;version&gt;1.0.0&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<h3>Quick start</h3>
+<h4>Declaring a extension point</h4>
+<p>Simply annotate an interface with <code>@Extension</code>:</p>
+<pre><code class="language-java">@ExtensionPoint
+public interface MyExtensionPoint {
+
+    List&lt;String&gt; provideStuff();
+
+}
+</code></pre>
+<h4>Providing an extension</h4>
+<p>Annotate a class implementing the interface with <code>@ExtensionPoint</code>:</p>
+<pre><code class="language-java">@Extension(provider=&quot;my.company&quot;, name=&quot;my.extension&quot;, version=&quot;1.0&quot;)
+public class MyExtension implements MyExtensionPoint {
+
+    @Override
+    public List&lt;String&gt; provideStuff() {
+        return List.of(&quot;apple&quot;,&quot;carrot&quot;,&quot;lemon&quot;);
+    }
+
+}
+</code></pre>
+<h4>Consuming an extension point</h4>
+<p>Use a <code>ExtensionManager</code> instance to get one or many implementations of the extension point:</p>
+<pre><code class="language-java">    ExtensionManager extensionManager = new ExtensionManager();
+    // get one
+    Optional&lt;MyExtensionPoint&gt; extension = extensionManager.getExtension(MyExtensionPoint.class);
+    // get many
+    Stream&lt;MyExtensionPoin&gt; extensions = extensionManager.getExtensions(MyExtensionPoint.class);
+</code></pre>
+<p>You can apply several filters (predicates) when asking for an extension, such as provider or
+    specific versions.</p>
+<h3>Scopes</h3>
+<p>Each extension can define a specific scope that will be used to decide whether it is necessary to
+    create a new instance or reuse an existing one. The available scopes are:</p>
+<ul>
+    <li><code>GLOBAL</code> : the same instance would be used along the lifetime of the application; this is the
+        default scope when not specified</li>
+    <li><code>LOCAL</code> : a new instance would be created each time the extension is requested</li>
+    <li><code>SESSION</code> : the same instance would be used along the lifetime of the extension manager; if
+        you create several managers, each one will reuse its own instance</li>
+</ul>
+<h3>Versioning</h3>
+<p>One major improvement over the regular <code>ServiceLoader</code> is avoiding version mismatches. Since
+    Java does not have the concept of <em>version</em> at runtime, you can end up using an implementation
+    version that is not aligned with the interface version. Thus, unexpected errors like
+    <code>NoSuchMethodError</code> may occur without any further hint of what is happening.</p>
+<p>Using <strong>jExt</strong> you can provide extra information in the annotations that helps to determine if an
+    extension is suitable for an extension point. The <code>ExtensionPoint</code> annotation has the property
+    <code>version</code>, used in the form of <code>&lt;major&gt;.&lt;minor&gt;[.&lt;patch&gt;]</code>, and the <code>Extension</code> annotation
+    has the property <code>extensionPointVersion</code> in the same manner. If the existing extension uses
+    an extension point version that is not compatible with the actual extension point version, it
+    will not be selected by the <code>ExtensionManager</code>, preventing this way potential errors.</p>
+<p>If you do not care about versioning, just ignore it; version <code>1.0.0</code> will be used by default.</p>
+<h3>Use your own extension loader</h3>
+<p>The default behaviour of any declared extension is to be loaded by means of the <code>java.util.ServiceLoader</code>
+    class. However, you can provide your own extension loading mechanism by creating a new
+    class implementing the <code>jext.ExtensionLoader</code> interface.</p>
+<p>Your custom extension loader have to be registered in the <code>ServiceLoader</code> registry,
+    writing the fully qualified name of the class in the file <code>META-INF/services/jext.ExtensionLoader</code>.
+    Package both files in a <code>jar</code> and include it in the classpath or modulepath along with the <code>jext</code>
+    library in order to be accessible.</p>
+<p>There are two constraints that external loaders should abide by:</p>
+<ul>
+    <li>Only retrieve extensions that are mark as <code>externallyManaged</code></li>
+    <li>Honour the defined scope of the extension, returning new instances or reusing ones accordingly.</li>
+</ul>
+<blockquote>
+    <p>A common scenario where custom extension loaders are required is the use of an <em>inversion of
+        control</em> framework that manage the lifecycle of components on its own. Check the
+        <a href="https://github.com/luiinge/jext-spring">jExt-Spring</a> project for an example of this.</p>
+</blockquote>
+<h3>Other considerations</h3>
+<h4>Finalizing instances</h4>
+<p>The internal extension loader keeps a cache of used extensions per session (that is, per instance
+    of <code>ExtensionManager</code>). Due to the specifics of the Java finalization process and garbage
+    collection, you must clear the cached objects manually once you are done ( by invoking
+    <code>extensionManager.clear()</code> ). Otherwise, the cached objects would remain in memory indefinitely.
+    That is not a problem when your extension manager is a singleton bound to the lifetime of the
+    application, but if you are planning to use several instances of the extension manager, this
+    becomes an issue to be aware of.</p>
+<h4>Java modules</h4>
+<p>When the Java Module System is present, extension points and extensions must be declared manually
+    in your <code>module-info.java</code> file using <code>provides</code> directive. Although it partially defeats the
+    purpose of fully automation, none straightforward solution can be applied to solve that, so
+    the only outcome is live with it. Nonetheless, the compiler can detect the lack of the required
+    directives in the module definition, and it will emit a warning message informing you of this
+    situation, similar to the following:</p>
+<pre><code>[WARNING] [jext] at jext.MyExtensionV2_6 :: jext.MyExtensionV2_6 must be declared with the directive 'provides' in module-info.java in order to be used properly
+</code></pre>
+<h2>Authors</h2>
+<ul>
+    <li>:boy: Luis Iñesta Gelabert  |  luiinge@gmail.com</li>
+</ul>
+<h2>Contributions</h2>
+<p>If you want to contribute to this project, visit the
+    <a href="https://github.com/luiinge/jext">Github project</a>. You can open a new issue / feature
+    request, or make a pull request to consider. You will be added
+    as a contributor in this very page.</p>
+<h2>Issue reporting</h2>
+<p>If you have found any defect in this software, please report it
+    in <a href="https://github.com/luiinge/jext/issues">Github project Issues</a>.
+    There is no guarantee that it would be fixed in the following version but it would
+    be addressed as soon as possible.</p>
+<h2>License</h2>
+<pre><code>    MIT License
+
+    Copyright (c) 2020 Luis Iñesta Gelabert - luiinge@gmail.com
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the &quot;Software&quot;), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+</code></pre>

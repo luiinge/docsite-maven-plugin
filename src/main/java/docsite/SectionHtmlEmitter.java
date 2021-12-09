@@ -320,6 +320,8 @@ public class SectionHtmlEmitter {
    }
 
 
-
+    public boolean replaceEmojis() {
+        return this.section.replaceEmojis();
+    }
 
 }

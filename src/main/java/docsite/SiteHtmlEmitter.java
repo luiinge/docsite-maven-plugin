@@ -73,12 +73,16 @@ public class SiteHtmlEmitter {
             HeaderTag header = section.createHeader();
             NavTag breadcrumbs = section.createBreadcrumbs();
             SectionTag content = createContentFromSource(section);
-            AsideTag toc = section.hasMarkdownSource() || section.hasHTMLSource() ?
-                createTOCFromMarkdown(section.source()) :
-                aside().withClass("hidden");
+            AsideTag toc;
+            if (section.hasMarkdownSource()) {
+                toc = createTOCFromMarkdown(section.source());
+            } else if (section.hasHTMLSource()) {
+                toc = createTOCFromHtml(section.source());
+            } else {
+                toc = aside().withClass("hidden");
+            }
             ContainerTag<?> page = buildPage(header, breadcrumbs, toc, content);
-
-            write(section.outputFile(), page, section.hasMarkdownSource());
+            write(section.outputFile(), page, section.replaceEmojis());
         }
         for (SectionHtmlEmitter subsection : section.children()) {
             writePage(subsection);
@@ -96,7 +100,7 @@ public class SiteHtmlEmitter {
         if (section.hasMarkdownSource()) {
             content = createContentFromMarkdown(section.source(), section);
          } else if (section.hasHTMLSource()){
-            content = createContentFromHTML(section.source());
+            content = createContentFromHTMLSource(section.source(), section);
         } else {
             content = createContentFromText(section.source());
         }
@@ -182,17 +186,26 @@ public class SiteHtmlEmitter {
                 .map(Heading.class::cast)
                 .forEach(heading -> heading.setAnchorRefId(hrefId(heading.getAnchorRefText())));
             String html = renderer.render(document);
-            html = replaceLocalImages(html, section);
-            return section().with(rawHtml(normalizeLinks(generateHeadersId(html)))).withClass("content");
+            return createContentFromHTML(html, section);
         }
     }
 
 
 
-    private SectionTag createContentFromHTML(String htmlSource) throws IOException {
-        try (InputStream html = ResourceUtil.open(htmlSource)) {
-            return section().with(rawHtml(normalizeLinks(ResourceUtil.read(html)))).withClass("content");
+    private SectionTag createContentFromHTMLSource(String htmlSource, SectionHtmlEmitter section) throws IOException {
+        try (InputStream htmlInputStream = ResourceUtil.open(htmlSource)) {
+            String html = ResourceUtil.read(htmlInputStream);
+            html = generateHeadersId(html);
+            return createContentFromHTML(html, section);
         }
+    }
+
+
+
+    private SectionTag createContentFromHTML(String html, SectionHtmlEmitter section) throws IOException {
+        html = normalizeLinks(html);
+        html = replaceLocalImages(html, section);
+        return section().with(rawHtml(html)).withClass("content");
     }
 
 
@@ -239,6 +252,45 @@ public class SiteHtmlEmitter {
         }
     }
 
+
+
+    public AsideTag createTOCFromHtml(String htmlSource) throws IOException {
+
+        try (InputStream htmlInputStream = ResourceUtil.open(htmlSource)) {
+
+            String html = ResourceUtil.read(htmlInputStream);
+            Matcher matcher = Pattern.compile("<h(\\d)>([^<]*)").matcher(html);
+
+            StringBuilder string = new StringBuilder();
+            int previousLevel = tocMinLevel - 1;
+
+            while (matcher.find()) {
+
+                int level = Integer.parseInt(matcher.group(1));
+                if (level < tocMinLevel || level > tocMaxLevel) {
+                    continue;
+                }
+                String name = matcher.group(2);
+                String id = hrefId(name);
+
+
+                if (previousLevel > level) {
+                    string.append("</ol>".repeat(Math.max(0, previousLevel - level)));
+                } else {
+                    string.append("<ol>".repeat(Math.max(0, level - previousLevel)));
+                }
+                string
+                    .append("<li><a class=\"internal\" href=\"#")
+                    .append(id)
+                    .append("\">")
+                    .append(name)
+                    .append("</a></li>");
+                previousLevel = level;
+            }
+            string.append("</ol>".repeat(Math.max(0, previousLevel)));
+            return aside().with(nav().with(rawHtml(string.toString())).withClass("toc"));
+        }
+    }
 
 
 

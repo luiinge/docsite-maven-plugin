@@ -128,6 +128,19 @@ public class DocSiteTest {
         testSiteGeneration(configuration);
     }
 
+
+    @Test
+    public void testHtmlIndex() throws IOException {
+
+        SiteConfiguration configuration = SiteConfiguration.builder()
+            .name("jExt")
+            .outputFolder(Paths.get("target/htmlIndex","site"))
+            .index("src/test/resources/README.html")
+            .build();
+
+        testSiteGeneration(configuration);
+    }
+
     private void testSiteGeneration(SiteConfiguration configuration) throws IOException {
 
         if (Files.exists(configuration.outputFolder())) {

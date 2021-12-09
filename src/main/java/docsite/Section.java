@@ -37,10 +37,16 @@ public class Section {
     private SectionType type;
     private String siteIndex;
     private List<Section> subsections;
+    private Boolean replaceEmojis;
 
 
     public List<Section> subsections() {
         return subsections == null ? List.of() : subsections;
+    }
+
+
+    public Boolean replaceEmojis() {
+        return Objects.requireNonNullElse(replaceEmojis, Boolean.TRUE);
     }
 
 }
