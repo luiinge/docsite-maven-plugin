@@ -1,3 +1,11 @@
+:root {
+    --menu-regular-background-color: #575757;
+    --menu-bold-background-color: #413e3e;
+    --menu-foreground-color: #f1f4f4;
+    --menu-decoration-color: #b7d4da;
+    --gui-element-color: #f08080;
+}
+
 *:focus-visible {
    border: 0.2rem solid var(--gui-element-color) !important;
    border-radius: 0.5rem;
@@ -68,7 +76,6 @@ header > nav > ul {
     justify-content: flex-end;
     margin: 0.5em;
     overflow-x: auto;
-    padding-inline-start: 0;
 }
 
 header > nav li {
@@ -195,84 +202,4 @@ a.label:hover {
     padding-right: 0.3em;
 }
 
-
-
-@media (max-width: 900px) {
-    body {
-        grid-template-columns: 1fr 3fr;
-        grid-template-rows: 6rem 1rem auto;
-        grid-template-areas:
-            'header      header'
-            'breadcrumbs breadcrumbs'
-            'aside       section';
-    }
-    header {
-        flex-direction: column;
-    }
-    header .title-and-subtitle {
-        justify-content: center;
-    }
-    header .title {
-        font-size: 1.5rem;
-        align-self: center;
-    }
-    header .subtitle {
-        display: none;
-    }
-    header > nav {
-        justify-content: space-evenly;
-        border-top-width: 0.1em;
-    }
-    header > nav > ul {
-        margin: 0;
-        justify-content: center;
-        font-size: 0.8em;
-    }
-    header > nav > ul > li:hover > ul, header > nav > ul > li:focus-within > ul {
-        top: 5.5rem
-    }
-    .breadcrumbs {
-        font-size: 0.7em
-    }
-    .label {
-        padding: .3em .8em .3em .8em
-        font-size: 0.7em
-    }
-    aside {
-        font-size: 0.8em;
-        display: inherit;
-    }
-    section {
-        font-size: 0.8em;
-    }
-}
-
-
-@media (max-width: 500px) {
-    body {
-        grid-template-columns: auto;
-        grid-template-rows: 6rem 1rem auto;
-        grid-template-areas:
-            'header'
-            'breadcrumbs'
-            'section';
-    }
-    aside {
-        display: none;
-    }
-
-}
-
-
-
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: none;
-}
-::-webkit-scrollbar-thumb {
-  background-color: var(--gui-element-color);
-  border-radius: 10px;
 }

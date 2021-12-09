@@ -35,12 +35,14 @@ public class SiteHtmlEmitter {
 
     private final Logger logger;
     private final SiteConfiguration site;
+    private final ImageRegistry images;
 
 
 
     public SiteHtmlEmitter(SiteConfiguration site, Logger logger) {
         this.logger = logger;
         this.site = site;
+        this.images = new ImageRegistry(site.outputFolder().resolve("images"));
     }
 
 
@@ -48,14 +50,14 @@ public class SiteHtmlEmitter {
 
     public void generateSite() throws IOException {
         if (site.cssFile() == null) {
-            copyResource("layout.css", site.outputFolder().resolve("css"));
+            ResourceUtil.copyResource("layout.css", site.outputFolder().resolve("css"));
         } else {
-            copyExternalFile(site.cssFile(), site.outputFolder().resolve("css"));
+            ResourceUtil.copyExternalFile(site.cssFile(), site.outputFolder().resolve("css"));
         }
-        copyResourceFolder("css",  site.outputFolder());
-        copyResourceFolder("js",  site.outputFolder());
-        copyResourceFolder("webfonts",  site.outputFolder());
-        writePage(SectionHtmlEmitter.build(site));
+        ResourceUtil.copyResourceFolder("css",  site.outputFolder());
+        ResourceUtil.copyResourceFolder("js",  site.outputFolder());
+        ResourceUtil.copyResourceFolder("webfonts",  site.outputFolder());
+        writePage(SectionHtmlEmitter.build(site,images));
     }
 
 
@@ -130,6 +132,17 @@ public class SiteHtmlEmitter {
         for (String js : ResourceUtil.getResourceFiles("js")) {
             head.with(script().attr("src","js/"+js));
         }
+        
+        String themeStyle = 
+            ":root {\n"+
+            "--menu-regular-background-color: "+site.themeColors().menuRegularBackgroundColor()+";\n"+
+            "--menu-bold-background-color: "+site.themeColors().menuBoldBackgroundColor()+";\n"+
+            "--menu-foreground-color: "+site.themeColors().menuForegroundColor()+";\n"+
+            "--menu-decoration-color: "+site.themeColors().menuDecorationColor()+";\n"+
+            "--gui-element-color: "+site.themeColors().guiElementColor()+";\n"+
+            "}";
+        head.with(style(themeStyle));
+
         return head;
     }
 
@@ -161,8 +174,8 @@ public class SiteHtmlEmitter {
 
 
     private SectionTag createContentFromMarkdown(String markdownSource) throws IOException {
-        try (InputStream markdown = open(markdownSource)) {
-            String markdownContent = read(markdown);
+        try (InputStream markdown = ResourceUtil.open(markdownSource)) {
+            String markdownContent = ResourceUtil.read(markdown);
             Node document = parser.parse(markdownContent);
             StreamSupport.stream(document.getChildren().spliterator(), false)
                 .filter(Heading.class::isInstance)
@@ -175,15 +188,15 @@ public class SiteHtmlEmitter {
 
 
     private SectionTag createContentFromHTML(String htmlSource) throws IOException {
-        try (InputStream html = open(htmlSource)) {
-            return section().with(rawHtml(normalizeLinks(read(html)))).withClass("content");
+        try (InputStream html = ResourceUtil.open(htmlSource)) {
+            return section().with(rawHtml(normalizeLinks(ResourceUtil.read(html)))).withClass("content");
         }
     }
 
 
     private SectionTag createContentFromText(String textSource) throws IOException {
-        try (InputStream text = open(textSource)) {
-            return section().with(pre(read(text)));
+        try (InputStream text = ResourceUtil.open(textSource)) {
+            return section().with(pre(ResourceUtil.read(text)));
         }
     }
 
@@ -193,8 +206,8 @@ public class SiteHtmlEmitter {
     private AsideTag createTOCFromMarkdown(String markdownSource)
     throws IOException {
 
-        try (InputStream markdown = open(markdownSource)) {
-            Node document = parser.parse(read(markdown));
+        try (InputStream markdown = ResourceUtil.open(markdownSource)) {
+            Node document = parser.parse(ResourceUtil.read(markdown));
 
             List<Heading> children = StreamSupport.stream(document.getChildren().spliterator(), false)
                 .filter(Heading.class::isInstance)
@@ -247,56 +260,7 @@ public class SiteHtmlEmitter {
 
 
 
-    private void copyResourceFolder(String folderName, Path outputFolder) throws IOException {
-        Path targetFolder = outputFolder.toAbsolutePath().resolve(folderName);
-        for (String file : ResourceUtil.getResourceFiles(folderName)) {
-            copyResource(folderName+"/"+file, targetFolder);
-        }
-    }
 
-
-    private void copyResource(String resource, Path outputFolder) throws IOException {
-        URL resourceUrl = Thread.currentThread().getContextClassLoader().getResource(resource);
-        if (resourceUrl == null) {
-            throw new FileNotFoundException(resource);
-        }
-        copyFromURL(resourceUrl, outputFolder);
-    }
-
-    private void copyExternalFile(Path path, Path outputFolder) throws IOException {
-        copyFromURL(path.toUri().toURL(), outputFolder);
-    }
-
-
-    private void copyFromURL(URL url, Path outputFolder) throws IOException {
-        outputFolder = outputFolder.toAbsolutePath();
-        Path target = outputFolder.resolve(Path.of(url.getFile()).getFileName().toString());
-        Files.createDirectories(outputFolder);
-        Files.createDirectories(target.getParent());
-        Files.copy(
-            url.openStream(),
-            target,
-            StandardCopyOption.REPLACE_EXISTING
-        );
-        logger.info.accept("Copied "+url+" to "+target);
-    }
-
-
-
-    private String read(InputStream inputStream) throws IOException {
-        try (BufferedReader reader = new BufferedReader( new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
-            return reader.lines().collect(Collectors.joining("\n"));
-        }
-    }
-
-
-    private InputStream open(String source) throws IOException {
-        try {
-            return new URL(source).openStream();
-        } catch (MalformedURLException e) {
-            return Files.newInputStream(Path.of(source));
-        }
-    }
 
 
 

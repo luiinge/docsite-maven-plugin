@@ -20,8 +20,8 @@ public class SectionHtmlEmitter {
     static final String HTML_EXTENSION = ".html";
 
 
-    public static SectionHtmlEmitter build(SiteConfiguration configuration) throws IOException {
-        return build(configuration, null, configuration.home(), Collections.emptyList());
+    public static SectionHtmlEmitter build(SiteConfiguration configuration, ImageRegistry images) throws IOException {
+        return build(configuration, null, configuration.home(), Collections.emptyList(), images);
     }
 
 
@@ -30,16 +30,17 @@ public class SectionHtmlEmitter {
         SiteConfiguration configuration,
         SectionHtmlEmitter root,
         Section section,
-        List<SectionHtmlEmitter> ancestors
+        List<SectionHtmlEmitter> ancestors,
+        ImageRegistry images
     ) throws IOException {
-        SectionHtmlEmitter emitter = new SectionHtmlEmitter(configuration,root,section,ancestors);
+        SectionHtmlEmitter emitter = new SectionHtmlEmitter(configuration,root,section,ancestors,images);
         if (root == null) {
             root = emitter;
         }
         ancestors = new ArrayList<>(ancestors);
         ancestors.add(emitter);
         for (Section subsection : section.subsections()) {
-            emitter.children.add(build(configuration, root, subsection, ancestors));
+            emitter.children.add(build(configuration, root, subsection, ancestors,images));
         }
         return emitter;
     }
@@ -52,25 +53,27 @@ public class SectionHtmlEmitter {
     private final SectionHtmlEmitter root;
     private final List<SectionHtmlEmitter> ancestors;
     private final List<SectionHtmlEmitter> children = new ArrayList<>();
-
+    private final ImageRegistry images;
 
 
     private SectionHtmlEmitter(
         SiteConfiguration site,
         SectionHtmlEmitter root,
         Section section,
-        List<SectionHtmlEmitter> ancestors
+        List<SectionHtmlEmitter> ancestors,
+        ImageRegistry images
     ) throws IOException {
         this.site = site;
         this.section = section;
         this.root = (root == null ? this : root);
         this.ancestors = ancestors;
         this.source = generateSourceIfNecessary(section,site.outputFolder());
+        this.images = images;
     }
 
 
 
-    public HeaderTag createHeader() {
+    public HeaderTag createHeader() throws IOException {
         return header().with(
             createTitleAndSubtitle(),
             createNavigation()
@@ -79,12 +82,12 @@ public class SectionHtmlEmitter {
 
 
 
-    private DivTag createTitleAndSubtitle() {
+    private DivTag createTitleAndSubtitle() throws IOException {
         return div().withClass("title-and-subtitle")
             .with(
                 h1().withClasses("title label")
                     .with(
-                        EmitterUtil.icon(site.logo()),
+                        EmitterUtil.icon(site.logo(), images),
                         span(site.title())
                     ),
                 span(site.description()).withClass("subtitle")
@@ -110,22 +113,29 @@ public class SectionHtmlEmitter {
 
     private LiTag createNavigationSection(boolean selected) {
 
-        UlTag dropdownMenu = ul().withClass("dropdown");
-        for (SectionHtmlEmitter child : children) {
-            dropdownMenu.with(li().with(child.createLinkToSection()));
+        if (!children.isEmpty()) {
+            UlTag dropdownMenu = ul().withClass("dropdown");
+            for (SectionHtmlEmitter child : children) {
+                dropdownMenu.with(li().with(child.createLinkToSection()));
+            }
+            return li()
+                .withCondClass(selected, "selected")
+                .with(createLinkToSection())
+                .with(dropdownMenu);
+        } else {
+            return li()
+                .withCondClass(selected, "selected")
+                .with(createLinkToSection());
         }
-        return li()
-            .withCondClass(selected, "selected")
-            .with(createLinkToSection())
-            .with(dropdownMenu);
+
     }
 
 
 
     private ATag createLinkToSection() {
         return hasType(SectionType.GENERATED,SectionType.GROUP) ?
-            internalLinkWithIcon(name(), page(), icon()) :
-            externalLinkWithIcon(name(), page(), icon());
+            internalLinkWithIcon(name(), page(), icon(), images) :
+            externalLinkWithIcon(name(), page(), icon(), images);
     }
 
 

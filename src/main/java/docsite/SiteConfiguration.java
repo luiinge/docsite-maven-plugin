@@ -5,7 +5,7 @@ import java.util.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-@Builder @Getter @Accessors(fluent = true)
+@Builder @Getter @Setter @Accessors(fluent = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class SiteConfiguration {
 
@@ -14,6 +14,7 @@ public class SiteConfiguration {
     private String description;
     private String logo;
     private Path cssFile;
+    private ThemeColors themeColors;
     private String index;
     private List<Section> sections;
     private Path outputFolder;
@@ -21,12 +22,23 @@ public class SiteConfiguration {
 
 
     public String title() {
-        return (title == null || title.isBlank()) ? name : title;
+        return Objects.requireNonNullElse(title,name);
     }
 
 
     public Section home() {
         return Section.generated("index").source(index).subsections(sections()).build();
     }
+
+
+    public String description() {
+        return Objects.requireNonNullElse(description,"");
+    }
+
+
+    public ThemeColors themeColors() {
+        return Objects.requireNonNullElse(themeColors,ThemeColors.DEFAULT);
+    }
+
 
 }

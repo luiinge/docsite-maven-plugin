@@ -15,6 +15,10 @@ public class DocSiteTest {
         System.err::println
     );
 
+    
+    
+
+    
     @Test
     public void testMarkdownToHtml() throws IOException {
 
@@ -22,8 +26,8 @@ public class DocSiteTest {
         .name("jExt")
         .title("jExt - A Java library")
         .description("This is the description of the library")
-        .logo("accessible-icon")
-        .outputFolder(Paths.get("target","site"))
+        .logo("fab:accessible-icon")
+        .outputFolder(Paths.get("target/default","site"))
         .index("src/test/resources/README.md")
         .sections(List.of(
             generated("Changelog")
@@ -50,28 +54,93 @@ public class DocSiteTest {
             link()
                 .name("Github")
                 .source("https://github.com/luiinge/jext")
-                .icon("github")
+                .icon("fab:github")
                 .build()
         ))
         .build();
 
+        testSiteGeneration(configuration);
+    }
 
 
+    @Test
+    public void testExternalCss() throws IOException {
+
+        SiteConfiguration configuration = SiteConfiguration.builder()
+            .name("jExt")
+            .title("jExt - A Java library")
+            .description("This is the description of the library")
+            .cssFile(Path.of("src/test/resources/external-layout.css"))
+            .outputFolder(Paths.get("target/externalCss","site"))
+            .index("src/test/resources/README.md")
+            .build();
+
+        testSiteGeneration(configuration);
+    }
+
+
+    @Test
+    public void testCustomColors() throws IOException {
+
+        SiteConfiguration configuration = SiteConfiguration.builder()
+            .name("jExt")
+            .title("jExt - A Java library")
+            .description("This is the description of the library")
+            .outputFolder(Paths.get("target/colors","site"))
+            .index("src/test/resources/README.md")
+            .themeColors(ThemeColors.builder()
+                .menuRegularBackgroundColor("red")
+                .menuBoldBackgroundColor("green")
+                .menuForegroundColor("black")
+                .menuDecorationColor("yellow")
+                .guiElementColor("orange")
+                .build()
+            )
+            .build();
+
+        testSiteGeneration(configuration);
+    }
+
+
+    @Test
+    public void testExternalIcons() throws IOException {
+
+        SiteConfiguration configuration = SiteConfiguration.builder()
+            .name("jExt")
+            .title("jExt - A Java library")
+            .logo("src/test/resources/external-icon.png")
+            .outputFolder(Paths.get("target/externalIcon","site"))
+            .index("src/test/resources/README.md")
+            .sections(List.of(
+                link()
+                    .name("Github")
+                    .source("https://github.com/luiinge/jext")
+                    .icon("fab:github")
+                    .build(),
+                link()
+                    .name("Other link")
+                    .source("https://github.com")
+                    .icon("src/test/resources/external-icon.png")
+                    .build()
+            ))
+            .build();
+
+        testSiteGeneration(configuration);
+    }
+
+    private void testSiteGeneration(SiteConfiguration configuration) throws IOException {
 
         if (Files.exists(configuration.outputFolder())) {
             Files.walk(configuration.outputFolder())
-            .sorted(Comparator.reverseOrder())
-            .map(Path::toFile)
-            .forEach(File::delete);
+                .sorted(Comparator.reverseOrder())
+                .map(Path::toFile)
+                .forEach(File::delete);
         }
 
         if (!Files.exists(configuration.outputFolder())) {
-           Files.createDirectory(configuration.outputFolder());
+            Files.createDirectories(configuration.outputFolder());
         }
 
         new SiteHtmlEmitter(configuration,LOGGER).generateSite();
     }
-
-
-
 }

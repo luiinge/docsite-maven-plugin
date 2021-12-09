@@ -10,10 +10,15 @@ body, div, a, p, header, nav, aside, main, section, ol {
 .hidden {
     display: none;
 }
-ul {
-    padding-inline-start: 0;
-}
+
 
 .fa-blank {
     visibility:hidden !important;
+}
+
+.external-icon {
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 1.2em;
+    height: 1.2em;
 }
