@@ -31,6 +31,7 @@ avoiding using wrong jar versions
 - When extending an extension via inheritance, you may either override the parent class or
 use both superclass and subclass independently
 
+![](screenshot.png)
 
 Usage
 -----------------------------------------------------------------------------------------

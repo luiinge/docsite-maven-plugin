@@ -22,3 +22,8 @@ body, div, a, p, header, nav, aside, main, section, ol {
     width: 1.2em;
     height: 1.2em;
 }
+
+section img {
+    max-width: 100%;
+    height: auto;
+}

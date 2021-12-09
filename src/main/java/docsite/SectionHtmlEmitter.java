@@ -10,7 +10,6 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import docsite.Section.SectionType;
-import j2html.tags.ContainerTag;
 import j2html.tags.specialized.*;
 
 
@@ -19,6 +18,7 @@ public class SectionHtmlEmitter {
     private static final String INDEX_FILE = "index.html";
     static final String HTML_EXTENSION = ".html";
 
+    private final ImageRegistry localImages;
 
     public static SectionHtmlEmitter build(SiteConfiguration configuration, ImageRegistry images) throws IOException {
         return build(configuration, null, configuration.home(), Collections.emptyList(), images);
@@ -53,7 +53,7 @@ public class SectionHtmlEmitter {
     private final SectionHtmlEmitter root;
     private final List<SectionHtmlEmitter> ancestors;
     private final List<SectionHtmlEmitter> children = new ArrayList<>();
-    private final ImageRegistry images;
+    private final ImageRegistry globalImages;
 
 
     private SectionHtmlEmitter(
@@ -68,7 +68,11 @@ public class SectionHtmlEmitter {
         this.root = (root == null ? this : root);
         this.ancestors = ancestors;
         this.source = generateSourceIfNecessary(section,site.outputFolder());
-        this.images = images;
+        this.globalImages = images;
+        this.localImages = new ImageRegistry(
+            site.outputFolder().resolve("images").resolve(section.name()),
+            Path.of(source)
+        );
     }
 
 
@@ -87,7 +91,7 @@ public class SectionHtmlEmitter {
             .with(
                 h1().withClasses("title label")
                     .with(
-                        EmitterUtil.icon(site.logo(), images),
+                        EmitterUtil.icon(site.logo(), globalImages),
                         span(site.title())
                     ),
                 span(site.description()).withClass("subtitle")
@@ -134,8 +138,8 @@ public class SectionHtmlEmitter {
 
     private ATag createLinkToSection() {
         return hasType(SectionType.GENERATED,SectionType.GROUP) ?
-            internalLinkWithIcon(name(), page(), icon(), images) :
-            externalLinkWithIcon(name(), page(), icon(), images);
+            internalLinkWithIcon(name(), page(), icon(), globalImages) :
+            externalLinkWithIcon(name(), page(), icon(), globalImages);
     }
 
 
@@ -311,7 +315,9 @@ public class SectionHtmlEmitter {
     }
 
 
-
+   public ImageRegistry images() {
+        return this.localImages;
+   }
 
 
 

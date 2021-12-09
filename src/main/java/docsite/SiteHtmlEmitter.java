@@ -94,7 +94,7 @@ public class SiteHtmlEmitter {
     private SectionTag createContentFromSource(SectionHtmlEmitter section) throws IOException {
         SectionTag content;
         if (section.hasMarkdownSource()) {
-            content = createContentFromMarkdown(section.source());
+            content = createContentFromMarkdown(section.source(), section);
          } else if (section.hasHTMLSource()){
             content = createContentFromHTML(section.source());
         } else {
@@ -173,7 +173,7 @@ public class SiteHtmlEmitter {
 
 
 
-    private SectionTag createContentFromMarkdown(String markdownSource) throws IOException {
+    private SectionTag createContentFromMarkdown(String markdownSource, SectionHtmlEmitter section) throws IOException {
         try (InputStream markdown = ResourceUtil.open(markdownSource)) {
             String markdownContent = ResourceUtil.read(markdown);
             Node document = parser.parse(markdownContent);
@@ -182,9 +182,11 @@ public class SiteHtmlEmitter {
                 .map(Heading.class::cast)
                 .forEach(heading -> heading.setAnchorRefId(hrefId(heading.getAnchorRefText())));
             String html = renderer.render(document);
+            html = replaceLocalImages(html, section);
             return section().with(rawHtml(normalizeLinks(generateHeadersId(html)))).withClass("content");
         }
     }
+
 
 
     private SectionTag createContentFromHTML(String htmlSource) throws IOException {
@@ -259,6 +261,17 @@ public class SiteHtmlEmitter {
     }
 
 
+    private String replaceLocalImages(String html, SectionHtmlEmitter section) {
+        Matcher matcher = Pattern.compile("<img .*src=\"([^\"]+)\".*>").matcher(html);
+        while (matcher.find()) {
+            String src = matcher.group(1);
+            if (src.startsWith("http")) {
+                continue;
+            }
+            html = html.replace("src=\""+src+"\"", "src=\""+section.images().imageFile(src)+"\"");
+         }
+        return html;
+    }
 
 
 
