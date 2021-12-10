@@ -49,4 +49,19 @@ public class Section {
         return Objects.requireNonNullElse(replaceEmojis, Boolean.TRUE);
     }
 
+
+    public boolean isValid() {
+        switch (type) {
+            case GENERATED:
+            case EMBEDDED_SITE:
+                return ResourceUtil.existsSource(source);
+            case LINK:
+                return source != null;
+            case GROUP:
+                return !subsections().isEmpty();
+            default:
+                return true;
+        }
+    }
+
 }

@@ -22,7 +22,7 @@ public class DocSiteTest {
     @Test
     public void testMarkdownToHtml() throws IOException {
 
-        SiteConfiguration configuration = SiteConfiguration.builder()
+        Docsite configuration = Docsite.builder()
         .name("jExt")
         .title("jExt - A Java library")
         .description("This is the description of the library")
@@ -45,7 +45,7 @@ public class DocSiteTest {
                         .name("Javadoc")
                         .source("src/test/resources/apidocs")
                         .siteIndex("index.html")
-                        .icon("java")
+                        .icon("fab:java")
                         .build()
                 )).build(),
             generated("License")
@@ -66,7 +66,7 @@ public class DocSiteTest {
     @Test
     public void testExternalCss() throws IOException {
 
-        SiteConfiguration configuration = SiteConfiguration.builder()
+        Docsite configuration = Docsite.builder()
             .name("jExt")
             .title("jExt - A Java library")
             .description("This is the description of the library")
@@ -82,7 +82,7 @@ public class DocSiteTest {
     @Test
     public void testCustomColors() throws IOException {
 
-        SiteConfiguration configuration = SiteConfiguration.builder()
+        Docsite configuration = Docsite.builder()
             .name("jExt")
             .title("jExt - A Java library")
             .description("This is the description of the library")
@@ -105,7 +105,7 @@ public class DocSiteTest {
     @Test
     public void testExternalIcons() throws IOException {
 
-        SiteConfiguration configuration = SiteConfiguration.builder()
+        Docsite configuration = Docsite.builder()
             .name("jExt")
             .title("jExt - A Java library")
             .logo("src/test/resources/external-icon.png")
@@ -132,7 +132,7 @@ public class DocSiteTest {
     @Test
     public void testHtmlIndex() throws IOException {
 
-        SiteConfiguration configuration = SiteConfiguration.builder()
+        Docsite configuration = Docsite.builder()
             .name("jExt")
             .outputFolder(Paths.get("target/htmlIndex","site"))
             .index("src/test/resources/README.html")
@@ -141,7 +141,7 @@ public class DocSiteTest {
         testSiteGeneration(configuration);
     }
 
-    private void testSiteGeneration(SiteConfiguration configuration) throws IOException {
+    private void testSiteGeneration(Docsite configuration) throws IOException {
 
         if (Files.exists(configuration.outputFolder())) {
             Files.walk(configuration.outputFolder())
@@ -154,6 +154,6 @@ public class DocSiteTest {
             Files.createDirectories(configuration.outputFolder());
         }
 
-        new SiteHtmlEmitter(configuration,LOGGER).generateSite();
+        new DocsiteEmitter(configuration,LOGGER).generateSite();
     }
 }

@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 
 @Builder @Getter @Setter @Accessors(fluent = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class SiteConfiguration {
+public class Docsite {
 
     private String name;
     private String title;
@@ -40,5 +40,9 @@ public class SiteConfiguration {
         return Objects.requireNonNullElse(themeColors,ThemeColors.DEFAULT);
     }
 
+
+    public Path outputImageFolder() {
+        return outputFolder.resolve("images");
+    }
 
 }

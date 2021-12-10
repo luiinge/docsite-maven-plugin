@@ -39,7 +39,7 @@ public class DocsiteMojo extends AbstractMojo {
 
 
     public void execute() throws MojoExecutionException, MojoFailureException {
-        SiteConfiguration siteConfiguration = SiteConfiguration.builder()
+        Docsite siteConfiguration = Docsite.builder()
         .name(name)
         .title(title)
         .description(description)
@@ -49,7 +49,7 @@ public class DocsiteMojo extends AbstractMojo {
         .build();
 
         try {
-            new SiteHtmlEmitter(siteConfiguration,logger()).generateSite();
+            new DocsiteEmitter(siteConfiguration,logger()).generateSite();
         } catch (IOException e) {
             throw new MojoFailureException("Error generating site",e);
         }

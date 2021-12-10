@@ -5,7 +5,7 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.*;
 
 public final class ResourceUtil {
 
@@ -86,18 +86,51 @@ public final class ResourceUtil {
 
 
 
-    static String read(InputStream inputStream) throws IOException {
+    public static String read(InputStream inputStream) throws IOException {
         try (BufferedReader reader = new BufferedReader( new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             return reader.lines().collect(Collectors.joining("\n"));
         }
     }
 
 
-    static InputStream open(String source) throws IOException {
+    public static InputStream open(String source) throws IOException {
         try {
             return new URL(source).openStream();
         } catch (MalformedURLException e) {
             return Files.newInputStream(Path.of(source));
         }
     }
+
+
+    public static boolean existsSource(String source) {
+        if (source == null || source.isBlank()) {
+            return false;
+        }
+        if (Files.exists(Path.of(source))) {
+            return true;
+        }
+        try (InputStream stream = new URL(source).openStream()) {
+            return stream != null;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+
+    public static void copyFolder(Path siteFolder, Path outputFolder)  {
+        try(Stream<Path> walker = Files.walk(siteFolder)) {
+            Files.createDirectory(outputFolder);
+            walker.forEach(sourcePath -> {
+                try {
+                    Path targetPath = outputFolder.resolve(siteFolder.relativize(sourcePath));
+                    Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

@@ -4,19 +4,19 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 
-public class ImageRegistry {
+public class ImageResolver {
 
     private final Map<String,String> images = new HashMap<>();
     private final Path imageFolder;
     private final Path source;
 
 
-    public ImageRegistry(Path imageFolder, Path source) {
+    public ImageResolver(Path imageFolder, Path source) {
         this.imageFolder = imageFolder;
         this.source = source;
     }
 
-    public ImageRegistry(Path imageFolder) {
+    public ImageResolver(Path imageFolder) {
         this(imageFolder, null);
     }
 

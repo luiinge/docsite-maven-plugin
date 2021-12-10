@@ -16,7 +16,7 @@ public final class EmitterUtil {
     }
 
 
-    public static ATag internalLinkWithIcon(String title, String url, String icon, ImageRegistry images) {
+    public static ATag internalLinkWithIcon(String title, String url, String icon, ImageResolver images) {
         return a()
             .withClasses("label internal")
             .withHref(url)
@@ -27,7 +27,7 @@ public final class EmitterUtil {
     }
 
 
-    static ATag externalLinkWithIcon(String title, String url, String icon, ImageRegistry images) {
+    public static ATag externalLinkWithIcon(String title, String url, String icon, ImageResolver images) {
         return a()
             .withClasses("label external")
             .withHref(url)
@@ -40,7 +40,7 @@ public final class EmitterUtil {
     }
 
 
-    public static ITag icon(String icon, ImageRegistry images) {
+    public static ITag icon(String icon, ImageResolver images) {
         if (icon == null || icon.isBlank()) {
             return i().withClass("hidden");
         }
@@ -66,14 +66,12 @@ public final class EmitterUtil {
 
 
 
-
-
-    static String href(String name) {
+    public static String href(String name) {
         return name.strip().toLowerCase().replace(" ", "-");
     }
 
 
-    static String href(Section section) {
+    public static String href(Section section) {
         if (section.type() == Section.SectionType.EMBEDDED_SITE) {
             return href(section.name()+"/"+section.siteIndex());
         } else {
@@ -82,21 +80,10 @@ public final class EmitterUtil {
     }
 
 
-    static String page(String name) {
-        return href(name)+ SectionHtmlEmitter.HTML_EXTENSION;
+    public static String page(String name) {
+        return href(name)+ ".html";
     }
 
 
-    static String normalizeLinks(String html) {
-        return html
-        .replaceAll(
-            "<a href([^>]*)>([^<]*)<([^<]*)</a>",
-            "<a target=\"_blank\" rel=\"external noreferrer noopener nofollow\" href$1>$2<$3</a>"
-        )
-        .replaceAll(
-            "<a href([^>]*)>([^<]*)</a>",
-            "<a class=\"external\" target=\"_blank\" rel=\"external noreferrer noopener nofollow\" href$1>$2</a>"
-        );
-    }
 
 }

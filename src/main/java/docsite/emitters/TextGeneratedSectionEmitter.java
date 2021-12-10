@@ -1,0 +1,33 @@
+package docsite.emitters;
+
+
+import java.io.*;
+
+import docsite.*;
+import j2html.tags.specialized.*;
+import static j2html.TagCreator.*;
+
+public class TextGeneratedSectionEmitter extends GeneratedSectionEmitter {
+
+    public TextGeneratedSectionEmitter(EmitterBuildParams params) {
+        super(params);
+    }
+
+
+
+    @Override
+    protected SectionTag createSectionContent() {
+        try (InputStream text = ResourceUtil.open(origin)) {
+            return section().with(pre(ResourceUtil.read(text)));
+        }  catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @Override
+    protected AsideTag createTableOfContents() {
+        return aside();
+    }
+
+}
