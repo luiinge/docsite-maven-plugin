@@ -23,8 +23,10 @@ public class EmbeddedSiteSectionEmitter extends SectionEmitter {
 
 
     @Override
-    protected ATag createLinkToSection() {
-        return internalLinkWithIcon(section.name(), url(), section.icon(), globalImages);
+    public ATag createLinkToSection(boolean withIcon) {
+        return withIcon ?
+            internalLinkWithIcon(section.name(), url(), section.icon(), globalImages) :
+            internalLink(section.name(), url());
     }
 
 
@@ -37,14 +39,14 @@ public class EmbeddedSiteSectionEmitter extends SectionEmitter {
 
 
     @Override
-    protected AsideTag createTableOfContents() {
+    protected AsideTag createTableOfContents(SectionTag section) {
         return aside();
     }
 
 
     @Override
     protected Path outputPath() {
-        return site.outputFolder().resolve(href()+".html");
+        return outputFolder.resolve(href()+".html");
     }
 
 

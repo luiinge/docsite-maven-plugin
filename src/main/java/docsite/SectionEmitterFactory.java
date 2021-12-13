@@ -1,7 +1,9 @@
 package docsite;
 
+import java.nio.file.Path;
 import java.util.*;
 import docsite.emitters.*;
+import org.jetbrains.annotations.NotNull;
 
 
 public class SectionEmitterFactory {
@@ -12,10 +14,14 @@ public class SectionEmitterFactory {
     public SectionEmitterFactory(
         Docsite site,
         ImageResolver globalImages,
+        ThemeColors themeColors,
+        Path outputFolder,
         Logger logger
     ) {
         this.buildParams = new EmitterBuildParams()
             .site(site)
+            .themeColors(themeColors)
+            .outputFolder(outputFolder)
             .globalImages(globalImages)
             .logger(logger);
     }
@@ -50,25 +56,34 @@ public class SectionEmitterFactory {
 
     private SectionEmitter newEmitterInstance(EmitterBuildParams params) {
         switch (params.section().type()) {
-            case LINK:
+            case link:
                 return new LinkSectionEmitter(params);
-            case GROUP:
+            case group:
                 return new GroupSectionEmitter(params);
-            case EMBEDDED_SITE:
+            case embedded:
                 return new EmbeddedSiteSectionEmitter(params);
-            case GENERATED:
-                if (params.section().source().toLowerCase().endsWith(".md")) {
-                    return new MarkdownGeneratedSectionEmitter(params);
-                } else if (
-                    params.section().source().toLowerCase().endsWith(".html") ||
-                    params.section().source().toLowerCase().endsWith(".htm")
-                ) {
-                    return new HtmlGeneratedSectionEmitter(params);
-                } else {
-                    return new TextGeneratedSectionEmitter(params);
-                }
+            case generated:
+                return newGeneratedSectionEmitter(params);
             default:
                 throw new UnsupportedOperationException();
+        }
+    }
+
+
+    @NotNull
+    private GeneratedSectionEmitter newGeneratedSectionEmitter(EmitterBuildParams params) {
+
+        if (params.section().template() != null) {
+            return new TemplateSectionEmitter(params);
+        }
+
+        String source = params.section().source().toLowerCase();
+        if (source.endsWith(".md")) {
+            return new MarkdownGeneratedSectionEmitter(params);
+        } else if (source.endsWith(".html") || source.endsWith(".htm")) {
+            return new HtmlGeneratedSectionEmitter(params);
+        } else {
+            return new TextGeneratedSectionEmitter(params);
         }
     }
 

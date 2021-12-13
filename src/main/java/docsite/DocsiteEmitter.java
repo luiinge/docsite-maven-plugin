@@ -9,46 +9,57 @@ public class DocsiteEmitter {
     private final Logger logger;
     private final Docsite site;
     private final ImageResolver globalImages;
+    private final ThemeColors themeColors;
+    private final Path outputFolder;
+    private final Path cssFile;
 
 
-
-    public DocsiteEmitter(Docsite site, Logger logger) {
+    public DocsiteEmitter(
+        Docsite docsite,
+        ThemeColors themeColors,
+        Path cssFile,
+        Path outputFolder,
+        Logger logger
+    ) {
         this.logger = logger;
-        this.site = site;
-        this.globalImages = new ImageResolver(site.outputImageFolder());
+        this.site = docsite;
+        this.themeColors = themeColors;
+        this.cssFile = cssFile;
+        this.outputFolder = outputFolder;
+        this.globalImages = new ImageResolver(logger, outputFolder.resolve("images"));
     }
-
 
 
     public void generateSite() throws IOException {
         prepareCommonResources();
         SectionEmitterFactory emitterFactory = new SectionEmitterFactory(
-            site, globalImages, logger
+            site, globalImages, themeColors, outputFolder, logger
         );
-        emitterFactory.createEmitter(site.home()).emitHTML();
+        emitterFactory.createEmitter(site.home()).emitHTML(true);
    }
 
 
 
     private void prepareCommonResources() throws IOException {
-        if (site.cssFile() == null) {
-            ResourceUtil.copyResource("layout.css", site.outputFolder().resolve("css"));
+        Path cssFolder = outputFolder.resolve("css");
+        if (cssFile == null) {
+            ResourceUtil.copyResource("style.css", cssFolder);
         } else {
-            ResourceUtil.copyExternalFile(site.cssFile(), site.outputFolder().resolve("css"));
+            ResourceUtil.copyExternalFileWithAnotherName(cssFile, cssFolder, "style.css");
         }
-        ResourceUtil.copyResourceFolder("css",  site.outputFolder());
-        ResourceUtil.copyResourceFolder("js",  site.outputFolder());
-        ResourceUtil.copyResourceFolder("webfonts",  site.outputFolder());
+        ResourceUtil.copyResourceFolder("css", outputFolder);
+        ResourceUtil.copyResourceFolder("js",  outputFolder);
+        ResourceUtil.copyResourceFolder("webfonts",  outputFolder);
 
         site.sections().forEach(this::copyEmbeddedSites);
     }
 
 
     private void copyEmbeddedSites(Section section) {
-        if (section.type() == Section.SectionType.EMBEDDED_SITE && section.isValid()) {
+        if (section.type() == Section.SectionType.embedded && section.isValid()) {
             ResourceUtil.copyFolder(
                 Path.of(section.source()),
-                site.outputFolder().resolve(EmitterUtil.href(section.name()))
+                outputFolder.resolve(EmitterUtil.href(section.name()))
             );
         }
         section.subsections().forEach(this::copyEmbeddedSites);

@@ -72,7 +72,7 @@ public final class EmitterUtil {
 
 
     public static String href(Section section) {
-        if (section.type() == Section.SectionType.EMBEDDED_SITE) {
+        if (section.type() == Section.SectionType.embedded) {
             return href(section.name()+"/"+section.siteIndex());
         } else {
             return href(section.name());

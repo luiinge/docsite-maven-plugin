@@ -22,8 +22,10 @@ public class GroupSectionEmitter extends SectionEmitter {
 
 
     @Override
-    protected ATag createLinkToSection() {
-        return internalLinkWithIcon(section.name(), url(), section.icon(), globalImages);
+    public ATag createLinkToSection(boolean withIcon) {
+        return withIcon ?
+            internalLinkWithIcon(section.name(), url(), section.icon(), globalImages) :
+            internalLink(section.name(), url());
     }
 
 
@@ -37,16 +39,13 @@ public class GroupSectionEmitter extends SectionEmitter {
 
 
     @Override
-    protected AsideTag createTableOfContents() {
+    protected AsideTag createTableOfContents(SectionTag sectionTag) {
         return aside().with(nav().with(subsectionList(ol())).withClass("toc"));
     }
 
-
     private <T extends ContainerTag<T>> ContainerTag<T> subsectionList(ContainerTag<T> container) {
-        for (Section subsection : section.subsections()) {
-            container.with(li(
-                a(subsection.name()).withClass("internal").withHref(EmitterUtil.href(subsection))
-            ));
+        for (SectionEmitter subsection : childEmitters) {
+            container.with(li(subsection.createLinkToSection(false)));
         }
         return container;
     }

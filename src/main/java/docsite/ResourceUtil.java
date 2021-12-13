@@ -11,30 +11,37 @@ public final class ResourceUtil {
 
     private ResourceUtil() {   }
 
+    private static final Map<String,List<String>> STATIC_RESOURCES = Map.of(
+        "css", List.of(
+            "common.css",
+            "font-awesome-all.css",
+            "prism-light.css"
+        ),
+        "js", List.of(
+            "prism.js"
+        ),
+        "webfonts", List.of(
+            "fa-brands-400.eot",
+            "fa-brands-400.svg",
+            "fa-brands-400.ttf",
+            "fa-brands-400.woff",
+            "fa-brands-400.woff2",
+            "fa-regular-400.eot",
+            "fa-regular-400.svg",
+            "fa-regular-400.ttf",
+            "fa-regular-400.woff",
+            "fa-regular-400.woff2",
+            "fa-solid-900.eot",
+            "fa-solid-900.svg",
+            "fa-solid-900.ttf",
+            "fa-solid-900.woff",
+            "fa-solid-900.woff2"
+        )
+    );
 
-    public static List<String> getResourceFiles(String path) throws IOException {
-        List<String> filenames = new ArrayList<>();
-        try (
-            InputStream in = getResourceAsStream(path);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in))
-        ) {
-            String resource;
-            while ((resource = br.readLine()) != null) {
-                filenames.add(resource);
-            }
-        }
-        return filenames;
-    }
 
-
-    private static InputStream getResourceAsStream(String resource) {
-        InputStream in = classLoader().getResourceAsStream(resource);
-        return in == null ? ResourceUtil.class.getResourceAsStream(resource) : in;
-    }
-
-
-    private static ClassLoader classLoader() {
-        return Thread.currentThread().getContextClassLoader();
+    public static List<String> getResourceFiles(String path) {
+        return STATIC_RESOURCES.get(path);
     }
 
 
@@ -46,16 +53,17 @@ public final class ResourceUtil {
     }
 
 
-    static void copyResource(String resource, Path outputFolder) throws IOException {
+    public static boolean existsResource(String resource) {
+        return Thread.currentThread().getContextClassLoader().getResource(resource) != null;
+    }
+
+
+    public static void copyResource(String resource, Path outputFolder) throws IOException {
         URL resourceUrl = Thread.currentThread().getContextClassLoader().getResource(resource);
         if (resourceUrl == null) {
             throw new FileNotFoundException(resource);
         }
         copyFromURLToFolder(resourceUrl, outputFolder);
-    }
-
-    static void copyExternalFile(Path path, Path outputFolder) throws IOException {
-        copyFromURLToFolder(path.toUri().toURL(), outputFolder);
     }
 
 

@@ -1,9 +1,9 @@
 package docsite;
 
 import java.io.*;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
+import java.time.LocalDate;
 import java.util.*;
 import com.vdurmont.emoji.EmojiParser;
 import com.vladsch.flexmark.html.HtmlRenderer;
@@ -42,10 +42,13 @@ public abstract class SectionEmitter {
     protected final List<SectionEmitter> ancestorEmitters;
     protected final List<SectionEmitter> childEmitters;
 
+    protected final ThemeColors themeColors;
+    protected final Path outputFolder;
     protected final Logger logger;
 
 
     protected SectionEmitter(EmitterBuildParams params) {
+        this.logger = params.logger();
         this.site = params.site();
         this.section = params.section();
         this.rootEmitter = Objects.requireNonNullElse(params.rootEmitter(), this);
@@ -53,21 +56,23 @@ public abstract class SectionEmitter {
         this.childEmitters = new ArrayList<>();
         this.origin = section.source();
         this.globalImages = params.globalImages();
+        this.themeColors = params.themeColors();
+        this.outputFolder = params.outputFolder();
         this.sectionImages = origin == null ? null : new ImageResolver(
-            site.outputImageFolder().resolve(section.name()),
+            logger,
+            outputFolder.resolve("images").resolve(section.name()),
             Path.of(origin)
         );
-        this.logger = params.logger();
     }
 
 
     protected abstract String url();
 
-    protected abstract ATag createLinkToSection();
+    public abstract ATag createLinkToSection(boolean withIcon);
 
     protected abstract SectionTag createSectionContent();
 
-    protected abstract AsideTag createTableOfContents();
+    protected abstract AsideTag createTableOfContents(SectionTag section);
 
 
     public String href() {
@@ -75,10 +80,16 @@ public abstract class SectionEmitter {
     }
 
     protected Path outputPath() {
-        return site.outputFolder().resolve(url());
+        return outputFolder.resolve(url());
     }
 
+
     public void emitHTML() throws IOException {
+        emitHTML(false);
+    }
+
+
+    public void emitHTML(boolean includeFooter) throws IOException {
 
         if (!section.isValid()) {
             logger.warn("Section {} is not valid and would not be included", section.name());
@@ -87,8 +98,16 @@ public abstract class SectionEmitter {
 
         HeaderTag header = createHeader();
         NavTag breadcrumbs = createBreadcrumbs();
-        AsideTag tableOfContents = createTableOfContents();
         SectionTag sectionContent = createSectionContent();
+        if (includeFooter) {
+            sectionContent.with(rawHtml(
+                "<div>"+
+                "Generated with <a href=\"https://github.com/luiinge/docsite-maven-plugin\">Docsite</a>. "+
+                "Last published on "+ LocalDate.now()+
+                "</div>"
+            ));
+        }
+        AsideTag tableOfContents = createTableOfContents(sectionContent);
 
         HtmlTag htmlObject = html().with(
             htmlHead(),
@@ -109,7 +128,7 @@ public abstract class SectionEmitter {
     }
 
 
-    private HeaderTag createHeader() throws IOException {
+    private HeaderTag createHeader() {
         return header().with(
             createTitleAndSubtitle(),
             createNavigation()
@@ -131,7 +150,7 @@ public abstract class SectionEmitter {
             while (iterator.hasNext()) {
                 path = iterator.next();
                 if (path.section.isValid()) {
-                    container.with(li().with(internalLink(path.section.name(),path.url())));
+                    container.with(li().with(path.createLinkToSection(false)));
                 } else {
                     container.with(li().with(a(path.section.name())));
                 }
@@ -147,7 +166,7 @@ public abstract class SectionEmitter {
 
 
 
-    private HeadTag htmlHead() throws IOException {
+    private HeadTag htmlHead() {
         HeadTag head = head()
             .with(title(site.title()))
             .with(meta().withCharset("UTF-8"))
@@ -156,8 +175,7 @@ public abstract class SectionEmitter {
         for (String css : ResourceUtil.getResourceFiles("css")) {
             head.with(link().attr("href","css/"+css).attr("rel","stylesheet"));
         }
-        Path cssFile = Objects.requireNonNullElse(site.cssFile(), Path.of("layout.css"));
-        head.with(link().attr("href","css/"+cssFile.getFileName().toString()).attr("rel","stylesheet"));
+        head.with(link().attr("href","css/style.css").attr("rel","stylesheet"));
 
         for (String js : ResourceUtil.getResourceFiles("js")) {
             head.with(script().attr("src","js/"+js));
@@ -165,11 +183,11 @@ public abstract class SectionEmitter {
 
         String themeStyle =
             ":root {\n"+
-                "--menu-regular-background-color: "+site.themeColors().menuRegularBackgroundColor()+";\n"+
-                "--menu-bold-background-color: "+site.themeColors().menuBoldBackgroundColor()+";\n"+
-                "--menu-foreground-color: "+site.themeColors().menuForegroundColor()+";\n"+
-                "--menu-decoration-color: "+site.themeColors().menuDecorationColor()+";\n"+
-                "--gui-element-color: "+site.themeColors().guiElementColor()+";\n"+
+                "--menu-regular-background-color: "+themeColors.menuRegularBackgroundColor()+";\n"+
+                "--menu-bold-background-color: "+themeColors.menuBoldBackgroundColor()+";\n"+
+                "--menu-foreground-color: "+themeColors.menuForegroundColor()+";\n"+
+                "--menu-decoration-color: "+themeColors.menuDecorationColor()+";\n"+
+                "--gui-element-color: "+themeColors.guiElementColor()+";\n"+
                 "}";
         head.with(style(themeStyle));
 
@@ -218,35 +236,19 @@ public abstract class SectionEmitter {
         if (!childEmitters.isEmpty()) {
             UlTag dropdownMenu = ul().withClass("dropdown");
             for (SectionEmitter child : childEmitters) {
-                dropdownMenu.with(li().with(child.createLinkToSection()));
+                dropdownMenu.with(li().with(child.createLinkToSection(true)));
             }
             return li()
                 .withCondClass(selected, "selected")
-                .with(createLinkToSection())
+                .with(createLinkToSection(true))
                 .with(dropdownMenu);
         } else {
             return li()
                 .withCondClass(selected, "selected")
-                .with(createLinkToSection());
+                .with(createLinkToSection(true));
         }
 
     }
-
-
-    private static boolean existsSource (String source) {
-        if (source == null || source.isBlank()) {
-            return false;
-        }
-        if (Files.exists(Path.of(source))) {
-            return true;
-        }
-        try (InputStream stream = new URL(source).openStream()) {
-            return stream != null;
-        } catch (IOException e) {
-            return false;
-        }
-    }
-
 
 
 

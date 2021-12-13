@@ -9,6 +9,16 @@ html {
     font-size: inherit;
 }
 
+table {
+    margin: 1rem;
+    border-spacing: 0;
+    border: 0.05em solid var(--menu-regular-background-color);
+}
+td, th {
+    border: 0.05em solid var(--menu-regular-background-color);
+    padding: 0.2rem;
+}
+
 body {
     display: grid;
     grid-template-areas:
@@ -216,7 +226,7 @@ a.label:hover {
 
 @media (max-width: 900px) {
     body {
-        grid-template-columns: 1fr 3fr;
+        grid-template-columns: 8rem auto;
         grid-template-rows: 6rem 1rem auto;
         grid-template-areas:
             'header      header'

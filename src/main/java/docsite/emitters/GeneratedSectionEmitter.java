@@ -6,6 +6,7 @@ import java.util.regex.*;
 import docsite.*;
 import j2html.tags.specialized.*;
 import static docsite.EmitterUtil.*;
+import static j2html.TagCreator.*;
 
 public abstract class GeneratedSectionEmitter extends SectionEmitter {
 
@@ -21,12 +22,17 @@ public abstract class GeneratedSectionEmitter extends SectionEmitter {
 
 
     @Override
-    protected ATag createLinkToSection() {
-        return internalLinkWithIcon(section.name(), url(), section.icon(), globalImages);
+    public ATag createLinkToSection(boolean withIcon) {
+        return withIcon ?
+            internalLinkWithIcon(section.name(), url(), section.icon(), globalImages) :
+            internalLink(section.name(), url());
     }
 
 
-
+    @Override
+    protected AsideTag createTableOfContents(SectionTag section) {
+        return createTableOfContentsFromHtml(section.render());
+    }
 
 
     protected String replaceLocalImages(String html) {
@@ -66,8 +72,59 @@ public abstract class GeneratedSectionEmitter extends SectionEmitter {
             String tag = matcher.group(1);
             String name = matcher.group(2);
             String id = hrefId(name);
-            html = html.replace("<"+tag+">"+name,"<"+tag+" id=\""+id+"\">"+name);
+            if (!id.isEmpty()) {
+                html = html.replace("<" + tag + ">" + name, "<" + tag + " id=\"" + id + "\">" + name);
+            }
         }
         return html;
     }
+
+
+
+
+
+    protected AsideTag createTableOfContentsFromHtml(String html) {
+
+        Matcher matcher = Pattern.compile("<h(\\d)[^>]*>([^<]*)<").matcher(html);
+
+        StringBuilder string = new StringBuilder();
+        int previousLevel = TOC_MIN_LEVEL - 1;
+
+        boolean empty = true;
+
+        while (matcher.find()) {
+
+            int level = Integer.parseInt(matcher.group(1));
+            String name = matcher.group(2);
+            String id = hrefId(name);
+
+            if (level < TOC_MIN_LEVEL || level > TOC_MAX_LEVEL || id.isEmpty()) {
+                continue;
+            }
+
+            if (previousLevel > level) {
+                string.append("</ol>".repeat(Math.max(0, previousLevel - level)));
+            } else {
+                string.append("<ol>".repeat(Math.max(0, level - previousLevel)));
+            }
+            string
+                .append("<li><a class=\"internal\" href=\"#")
+                .append(id)
+                .append("\">")
+                .append(name)
+                .append("</a></li>");
+
+            previousLevel = level;
+            empty = false;
+        }
+
+        if (empty) {
+            return aside();
+        } else {
+            string.append("</ol>".repeat(previousLevel));
+            return aside().with(nav().with(rawHtml(string.toString())).withClass("toc"));
+        }
+
+    }
+
 }

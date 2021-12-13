@@ -4,7 +4,7 @@ package docsite.emitters;
 import java.io.IOException;
 import docsite.*;
 import j2html.tags.specialized.*;
-import static docsite.EmitterUtil.externalLinkWithIcon;
+import static docsite.EmitterUtil.*;
 import static j2html.TagCreator.*;
 
 public class LinkSectionEmitter extends SectionEmitter {
@@ -22,8 +22,10 @@ public class LinkSectionEmitter extends SectionEmitter {
 
 
     @Override
-    protected ATag createLinkToSection() {
-        return externalLinkWithIcon(section.name(), url(), section.icon(), globalImages);
+    public ATag createLinkToSection(boolean withIcon) {
+        return withIcon ?
+            externalLinkWithIcon(section.name(), url(), section.icon(), globalImages) :
+            externalLink(section.name(), url());
     }
 
 
@@ -34,7 +36,7 @@ public class LinkSectionEmitter extends SectionEmitter {
 
 
     @Override
-    protected AsideTag createTableOfContents() {
+    protected AsideTag createTableOfContents(SectionTag section) {
         return aside();
     }
 

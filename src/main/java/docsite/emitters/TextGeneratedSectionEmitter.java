@@ -26,7 +26,7 @@ public class TextGeneratedSectionEmitter extends GeneratedSectionEmitter {
 
 
     @Override
-    protected AsideTag createTableOfContents() {
+    protected AsideTag createTableOfContents(SectionTag sectionTag) {
         return aside();
     }
 
