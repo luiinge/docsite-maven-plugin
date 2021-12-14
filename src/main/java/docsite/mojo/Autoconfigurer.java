@@ -21,7 +21,6 @@ public class Autoconfigurer {
     public Docsite configuration() throws MojoExecutionException {
         Docsite.DocsiteBuilder builder = Docsite.builder();
 
-        builder.name(nonNull(project.getName(),project.getArtifactId()));
         builder.title(nonNull(project.getName(),project.getArtifactId()));
         builder.description(nonNull(project.getDescription(),""));
         builder.index(searchIndex());
@@ -79,6 +78,7 @@ public class Autoconfigurer {
             ) {
                 return Optional.of(
                     Section.generated("Changelog")
+                        .description("Log of modifications on new versions")
                         .source(file)
                         .icon("fas:clipboard-list")
                         .build()
@@ -121,6 +121,7 @@ public class Autoconfigurer {
             Optional.empty() :
             Optional.of(
                 Section.group("Reports")
+                    .description("Collection of technical reports about this project")
                     .icon("fas:file-medical-alt")
                     .subsections(reports)
                     .build()
@@ -134,6 +135,7 @@ public class Autoconfigurer {
             return Optional.of(
                 Section.site()
                     .name("Javadoc")
+                    .description("Javadoc documentation for this project")
                     .source(javadocFolder.toString())
                     .siteIndex("index.html")
                     .icon("fab:java")
@@ -149,6 +151,7 @@ public class Autoconfigurer {
         if (Files.exists(dependenciesFile)) {
             return Optional.of(
                 Section.generated("Dependencies")
+                    .description("Collection of artifacts that this project uses")
                     .source(dependenciesFile.toString())
                     .build()
             );
@@ -163,6 +166,7 @@ public class Autoconfigurer {
             return Optional.of(
                 Section.site()
                     .name("Coverage")
+                    .description("Report of code coverage according the executed tests")
                     .source(jacocoFolder.toString())
                     .siteIndex("index.html")
                     .build()
@@ -177,6 +181,7 @@ public class Autoconfigurer {
         if (Files.exists(report)) {
             return Optional.of(
                 Section.generated("Test Results")
+                    .description("Results of the automatic tests executed in this project")
                     .source(report.toString())
                     .build()
             );
@@ -193,6 +198,7 @@ public class Autoconfigurer {
         if (Files.exists(pluginDescriptor)) {
             return Optional.of(
                 Section.generated("Plugin Goals")
+                    .description("Description of goals and available parameters for this plugin")
                     .template("maven-plugin-descriptor")
                     .source(pluginDescriptor.toString())
                     .build()

@@ -6,7 +6,8 @@ import java.nio.file.Path;
 public class DocsiteEmitter {
 
 
-    private final Logger logger;
+    private static final Logger logger = Logger.instance();
+
     private final Docsite site;
     private final ImageResolver globalImages;
     private final ThemeColors themeColors;
@@ -18,22 +19,23 @@ public class DocsiteEmitter {
         Docsite docsite,
         ThemeColors themeColors,
         Path cssFile,
-        Path outputFolder,
-        Logger logger
+        Path outputFolder
     ) {
-        this.logger = logger;
         this.site = docsite;
         this.themeColors = themeColors;
         this.cssFile = cssFile;
         this.outputFolder = outputFolder;
-        this.globalImages = new ImageResolver(logger, outputFolder.resolve("images"));
+        this.globalImages = new ImageResolver(outputFolder.resolve("images"));
     }
 
 
     public void generateSite() throws IOException {
         prepareCommonResources();
         SectionEmitterFactory emitterFactory = new SectionEmitterFactory(
-            site, globalImages, themeColors, outputFolder, logger
+            site,
+            globalImages,
+            themeColors,
+            outputFolder
         );
         emitterFactory.createEmitter(site.home()).emitHTML(true);
    }
@@ -41,6 +43,7 @@ public class DocsiteEmitter {
 
 
     private void prepareCommonResources() throws IOException {
+        logger.debug("Copying common resources...");
         Path cssFolder = outputFolder.resolve("css");
         if (cssFile == null) {
             ResourceUtil.copyResource("style.css", cssFolder);
@@ -56,6 +59,7 @@ public class DocsiteEmitter {
 
 
     private void copyEmbeddedSites(Section section) {
+        logger.debug("Copying embedded site {}", section.source());
         if (section.type() == Section.SectionType.embedded && section.isValid()) {
             ResourceUtil.copyFolder(
                 Path.of(section.source()),

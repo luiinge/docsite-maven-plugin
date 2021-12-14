@@ -13,7 +13,6 @@ public class EmitterBuildParams {
     private ImageResolver globalImages;
     private ThemeColors themeColors;
     private Path outputFolder;
-    private Logger logger;
 
 
     public EmitterBuildParams(
@@ -23,8 +22,7 @@ public class EmitterBuildParams {
         List<SectionEmitter> ancestorEmitters,
         ImageResolver globalImages,
         ThemeColors themeColors,
-        Path outputFolder,
-        Logger logger
+        Path outputFolder
     ) {
         this.site = site;
         this.rootEmitter = rootEmitter;
@@ -33,7 +31,6 @@ public class EmitterBuildParams {
         this.globalImages = globalImages;
         this.themeColors = themeColors;
         this.outputFolder = outputFolder;
-        this.logger = logger;
     }
 
 
@@ -76,12 +73,6 @@ public class EmitterBuildParams {
     }
 
 
-    public Logger logger() {
-        return this.logger;
-    }
-
-
-
     public EmitterBuildParams withRootEmitter(SectionEmitter rootEmitter) {
         return this.rootEmitter == rootEmitter ?
             this :
@@ -92,8 +83,7 @@ public class EmitterBuildParams {
                 this.ancestorEmitters,
                 this.globalImages,
                 this.themeColors,
-                this.outputFolder,
-                this.logger
+                this.outputFolder
             );
     }
 
@@ -108,8 +98,7 @@ public class EmitterBuildParams {
                 this.ancestorEmitters,
                 this.globalImages,
                 this.themeColors,
-                this.outputFolder,
-                this.logger
+                this.outputFolder
             );
     }
 
@@ -124,8 +113,7 @@ public class EmitterBuildParams {
                 ancestorEmitters,
                 this.globalImages,
                 this.themeColors,
-                this.outputFolder,
-                this.logger
+                this.outputFolder
             );
     }
 
@@ -166,10 +154,5 @@ public class EmitterBuildParams {
         return this;
     }
 
-
-    public EmitterBuildParams logger(Logger logger) {
-        this.logger = logger;
-        return this;
-    }
 
 }

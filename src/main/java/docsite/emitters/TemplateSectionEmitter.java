@@ -6,6 +6,7 @@ import java.nio.file.*;
 import java.util.*;
 import docsite.*;
 import docsite.mojo.XmlUtil;
+import freemarker.core.PlainTextOutputFormat;
 import freemarker.template.*;
 import j2html.tags.specialized.*;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +36,7 @@ public class TemplateSectionEmitter extends GeneratedSectionEmitter {
             template.process(documentMap(), output);
             return section().with(rawHtml(output.toString()));
         } catch (IOException | TemplateException e) {
-            throw new RuntimeException(e);
+            throw new DocsiteException(e);
         }
 
     }
@@ -50,6 +51,8 @@ public class TemplateSectionEmitter extends GeneratedSectionEmitter {
         cfg.setLogTemplateExceptions(false);
         cfg.setWrapUncheckedExceptions(true);
         cfg.setFallbackOnNullLoopVariable(false);
+        cfg.setAutoEscapingPolicy(Configuration.DISABLE_AUTO_ESCAPING_POLICY);
+        cfg.setOutputFormat(PlainTextOutputFormat.INSTANCE);
         return cfg;
     }
 
@@ -75,16 +78,19 @@ public class TemplateSectionEmitter extends GeneratedSectionEmitter {
 
 
     private static Path locateTemplate(String fromTemplate) {
-        String internalTemplate = "templates/"+fromTemplate+".ftlh";
+        String internalTemplate = "templates/"+fromTemplate+".ftl";
         if (ResourceUtil.existsResource(internalTemplate)) {
             try {
                 Path tempFile = Files.createTempDirectory("docsite").resolve(internalTemplate);
                 ResourceUtil.copyResource(internalTemplate, tempFile.getParent());
                 return tempFile;
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new DocsiteException(e);
             }
         } else {
+            if (!Files.exists(Path.of(fromTemplate))) {
+                throw new DocsiteException("Template "+fromTemplate+" is neither an existing file nor a built-in template");
+            }
             return Path.of(fromTemplate);
         }
     }

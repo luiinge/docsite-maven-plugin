@@ -20,7 +20,7 @@ public class TextGeneratedSectionEmitter extends GeneratedSectionEmitter {
         try (InputStream text = ResourceUtil.open(origin)) {
             return section().with(pre(ResourceUtil.read(text)));
         }  catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new DocsiteException(e);
         }
     }
 

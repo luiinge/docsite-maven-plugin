@@ -61,7 +61,18 @@
           <since>1.0</since>
           <required>false</required>
           <editable>true</editable>
-          <description>Set the color theme that would be applied to the site</description>
+          <description>Set the color theme that would be applied to the site.&lt;br/&gt;
+            Value formats accepted are defined by
+            &lt;a href=&quot;https://developer.mozilla.org/es/docs/Web/CSS/color_value&quot;&gt;CSS colors&lt;/a&gt;.
+            &lt;pre&gt;
+            &amp;lt;themeColors&amp;gt;
+              &amp;lt;menuRegularBackgroundColor&amp;gt;&amp;lt;/menuRegularBackgroundColor&amp;gt;
+              &amp;lt;menuBoldBackgroundColor&amp;gt;&amp;lt;/menuBoldBackgroundColor&amp;gt;
+              &amp;lt;menuForegroundColor&amp;gt;&amp;lt;/menuForegroundColor&amp;gt;
+              &amp;lt;menuDecorationColor&amp;gt;&amp;lt;/menuDecorationColor&amp;gt;
+              &amp;lt;guiElementColor&amp;gt;&amp;lt;/guiElementColor&amp;gt;
+            &amp;lt;/themeColors&amp;gt;
+            &lt;/pre&gt;</description>
         </parameter>
       </parameters>
       <configuration>
@@ -388,6 +399,36 @@
       <artifactId>commons-lang3</artifactId>
       <type>jar</type>
       <version>3.8.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.freemarker</groupId>
+      <artifactId>freemarker</artifactId>
+      <type>jar</type>
+      <version>2.3.31</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <type>jar</type>
+      <version>2.13.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <type>jar</type>
+      <version>2.13.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <type>jar</type>
+      <version>2.13.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <type>jar</type>
+      <version>1.29</version>
     </dependency>
   </dependencies>
 </plugin>

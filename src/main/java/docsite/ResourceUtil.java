@@ -133,11 +133,11 @@ public final class ResourceUtil {
                     Path targetPath = outputFolder.resolve(siteFolder.relativize(sourcePath));
                     Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new DocsiteException(e);
                 }
             });
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new DocsiteException(e);
         }
     }
 

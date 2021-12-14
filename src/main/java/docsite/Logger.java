@@ -1,8 +1,25 @@
 package docsite;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class Logger {
+
+    private static Logger instance;
+
+    public static Logger instance() {
+        return Objects.requireNonNull(instance);
+    }
+
+    public static void initialize(
+        Consumer<String> debug,
+        Consumer<String> info,
+        Consumer<String> warn,
+        Consumer<String> error
+    ) {
+        instance = new Logger(debug, info, warn, error);
+    }
+
 
     private final Consumer<String> debug;
     private final Consumer<String> info;
@@ -10,7 +27,12 @@ public class Logger {
     private final Consumer<String> error;
 
 
-    public Logger(Consumer<String> debug, Consumer<String> info, Consumer<String> warn, Consumer<String> error) {
+    private Logger(
+        Consumer<String> debug,
+        Consumer<String> info,
+        Consumer<String> warn,
+        Consumer<String> error
+    ) {
         this.debug = debug;
         this.info = info;
         this.warn = warn;

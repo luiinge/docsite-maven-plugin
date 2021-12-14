@@ -3,17 +3,21 @@ package docsite;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
-import org.junit.Test;
+import org.junit.*;
 import static docsite.Section.*;
 
 public class DocSiteTest {
 
-    private static final Logger LOGGER = new Logger(
-        System.out::println,
-        System.out::println,
-        System.out::println,
-        System.err::println
-    );
+    @BeforeClass
+    public static void setUp() {
+        Logger.initialize(
+            System.out::println,
+            System.out::println,
+            System.out::println,
+            System.err::println
+        );
+    }
+
 
     
     
@@ -23,7 +27,6 @@ public class DocSiteTest {
     public void testMarkdownToHtml() throws IOException {
 
         Docsite docsite = Docsite.builder()
-        .name("jExt")
         .title("jExt - A Java library")
         .description("This is the description of the library")
         .logo("fab:accessible-icon")
@@ -66,7 +69,6 @@ public class DocSiteTest {
     public void testExternalCss() throws IOException {
 
         Docsite docsite = Docsite.builder()
-            .name("jExt")
             .title("jExt - A Java library")
             .description("This is the description of the library")
             .index("src/test/resources/README.md")
@@ -85,7 +87,6 @@ public class DocSiteTest {
     public void testCustomColors() throws IOException {
 
         Docsite docsite = Docsite.builder()
-            .name("jExt")
             .title("jExt - A Java library")
             .description("This is the description of the library")
             .index("src/test/resources/README.md")
@@ -108,7 +109,6 @@ public class DocSiteTest {
     public void testExternalIcons() throws IOException {
 
         Docsite docsite = Docsite.builder()
-            .name("jExt")
             .title("jExt - A Java library")
             .logo("src/test/resources/external-icon.png")
             .index("src/test/resources/README.md")
@@ -134,7 +134,7 @@ public class DocSiteTest {
     public void testHtmlIndex() throws IOException {
 
         Docsite docsite = Docsite.builder()
-            .name("jExt")
+            .title("jExt")
             .index("src/test/resources/README.html")
             .build();
 
@@ -148,7 +148,7 @@ public class DocSiteTest {
     public void testTemplate() throws IOException {
 
         Docsite docsite = Docsite.builder()
-            .name("jExt")
+            .title("jExt")
             .index("src/test/resources/README.html")
             .sections(List.of(
                 Section.generated("maven")
@@ -186,6 +186,6 @@ public class DocSiteTest {
             Files.createDirectories(outputFolder);
         }
 
-        new DocsiteEmitter(configuration,themeColors,cssFile,outputFolder,LOGGER).generateSite();
+        new DocsiteEmitter(configuration,themeColors,cssFile,outputFolder).generateSite();
     }
 }

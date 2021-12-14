@@ -22,7 +22,7 @@ public class HtmlGeneratedSectionEmitter extends GeneratedSectionEmitter {
             html = replaceLocalImages(html);
             return section().with(rawHtml(html)).withClass("content");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new DocsiteException(e);
         }
     }
 

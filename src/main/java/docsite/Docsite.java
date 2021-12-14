@@ -1,12 +1,10 @@
 package docsite;
 
-import java.nio.file.Path;
 import java.util.*;
 
 
 public class Docsite {
 
-    private String name;
     private String title;
     private String description;
     private String logo;
@@ -19,14 +17,12 @@ public class Docsite {
     }
 
     public Docsite(
-        String name,
         String title,
         String description,
         String logo,
         String index,
         List<Section> sections
     ) {
-        this.name = name;
         this.title = title;
         this.description = description;
         this.logo = logo;
@@ -41,22 +37,21 @@ public class Docsite {
 
 
     public String title() {
-        return Objects.requireNonNullElse(title,name);
+        return Objects.requireNonNull(title);
     }
 
 
     public Section home() {
-        return Section.generated("index").source(index).subsections(sections()).build();
+        return Section.generated("index")
+            .description(description)
+            .source(index)
+            .subsections(sections())
+            .build();
     }
 
 
     public String description() {
         return Objects.requireNonNullElse(description,"");
-    }
-
-
-    public String name() {
-        return this.name;
     }
 
 
@@ -72,12 +67,6 @@ public class Docsite {
 
     public List<Section> sections() {
         return this.sections;
-    }
-
-
-    public Docsite name(String name) {
-        this.name = name;
-        return this;
     }
 
 
@@ -114,7 +103,6 @@ public class Docsite {
 
     public static class DocsiteBuilder {
 
-        private String name;
         private String title;
         private String description;
         private String logo;
@@ -125,11 +113,6 @@ public class Docsite {
         DocsiteBuilder() {
         }
 
-
-        public DocsiteBuilder name(String name) {
-            this.name = name;
-            return this;
-        }
 
 
         public DocsiteBuilder title(String title) {
@@ -166,7 +149,6 @@ public class Docsite {
 
         public Docsite build() {
             return new Docsite(
-                name,
                 title,
                 description,
                 logo,

@@ -24,13 +24,7 @@ public abstract class SectionEmitter {
     protected static final Parser parser = Parser.builder(options).build();
     protected static final HtmlRenderer renderer = HtmlRenderer.builder(options).build();
 
-
-
-
-
-
-
-
+    protected static final Logger logger = Logger.instance();
 
     protected final Docsite site;
     protected final Section section;
@@ -44,11 +38,9 @@ public abstract class SectionEmitter {
 
     protected final ThemeColors themeColors;
     protected final Path outputFolder;
-    protected final Logger logger;
 
 
     protected SectionEmitter(EmitterBuildParams params) {
-        this.logger = params.logger();
         this.site = params.site();
         this.section = params.section();
         this.rootEmitter = Objects.requireNonNullElse(params.rootEmitter(), this);
@@ -59,7 +51,6 @@ public abstract class SectionEmitter {
         this.themeColors = params.themeColors();
         this.outputFolder = params.outputFolder();
         this.sectionImages = origin == null ? null : new ImageResolver(
-            logger,
             outputFolder.resolve("images").resolve(section.name()),
             Path.of(origin)
         );
@@ -139,7 +130,7 @@ public abstract class SectionEmitter {
     public NavTag createBreadcrumbs() {
 
         OlTag container = ol();
-        container.with(li().with(internalLink(site.name(),INDEX_FILE)));
+        container.with(li().with(internalLink(site.title(),INDEX_FILE)));
 
         if (!ancestorEmitters.isEmpty()) {
             Iterator<SectionEmitter> iterator = ancestorEmitters.iterator();
@@ -167,8 +158,16 @@ public abstract class SectionEmitter {
 
 
     private HeadTag htmlHead() {
-        HeadTag head = head()
-            .with(title(site.title()))
+        String title = site.title();
+        if (!section.name().equalsIgnoreCase(title)) {
+            title += " - "+section.name();
+        }
+        String description = section.description();
+        if (description == null || description.isEmpty()) {
+            description = site.description();
+        }        HeadTag head = head()
+            .with(title(title))
+            .with(meta().withName("description").withContent(description))
             .with(meta().withCharset("UTF-8"))
             .with(meta().withName("viewport").withContent("width=device-width, initial-scale=1.0"))
             ;

@@ -6,20 +6,20 @@ import java.util.*;
 
 public class ImageResolver {
 
+    public static final Logger logger = Logger.instance();
+
     private final Map<String,String> images = new HashMap<>();
     private final Path imageFolder;
     private final Path source;
-    private final Logger logger;
 
 
-    public ImageResolver(Logger logger, Path imageFolder, Path source) {
-        this.logger = logger;
+    public ImageResolver(Path imageFolder, Path source) {
         this.imageFolder = imageFolder;
         this.source = source;
     }
 
-    public ImageResolver(Logger logger, Path imageFolder) {
-        this(logger, imageFolder, null);
+    public ImageResolver(Path imageFolder) {
+        this(imageFolder, null);
     }
 
 

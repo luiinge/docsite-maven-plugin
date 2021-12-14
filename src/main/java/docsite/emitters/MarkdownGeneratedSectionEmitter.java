@@ -2,8 +2,6 @@ package docsite.emitters;
 
 
 import java.io.*;
-import java.nio.file.Path;
-import java.util.List;
 import java.util.stream.*;
 
 import com.vladsch.flexmark.ast.Heading;
@@ -35,7 +33,7 @@ public class MarkdownGeneratedSectionEmitter extends GeneratedSectionEmitter {
             html = replaceLocalImages(html);
             return section().with(rawHtml(html)).withClass("content");
         }  catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new DocsiteException(e);
         }
     }
 

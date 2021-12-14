@@ -26,7 +26,7 @@ Below there is a list of available goals provided by this plugin:
         </tr>
         <tr>
           <td><a href="#${mojo.goal}"><@mojoGoal mojo/></a></td>
-          <td>${(mojo.description)!}</td>
+          <td><@html ${mojo.description}/></td>
         </tr>
     </#list>
 </table>
@@ -43,7 +43,7 @@ Below there is a list of available goals provided by this plugin:
     <h3 id="${mojo.goal}"><@mojoGoal mojo/></h3>
 
     <div class="mojo" style="margin-left: 1rem">
-        ${(mojo.description)!""}
+        <@html ${mojo.description}/>
 
 
 
@@ -54,7 +54,7 @@ Below there is a list of available goals provided by this plugin:
         <#items as parameter>
             <#if parameter.editable == 'false'><#continue></#if>
             <h5 style="border-bottom: 1px solid;">${parameter.name}</h5>
-            ${parameter.description}
+            <@html ${parameter.description}/>
             <ul style="font-size: 0.8em">
                 <li><b>Type:</b> <tt>${parameter.type}</tt></li>
                 <li><b>Required:</b> ${parameter.required}</li>
@@ -109,3 +109,7 @@ Below there is a list of available goals provided by this plugin:
         </#if>
     </#if>
 </#function>
+
+<#macro html value>
+    <#if value??>value?html</#if>
+</#macro>

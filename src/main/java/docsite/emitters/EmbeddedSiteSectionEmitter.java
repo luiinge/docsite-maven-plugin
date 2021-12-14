@@ -1,7 +1,6 @@
 package docsite.emitters;
 
 
-import java.io.IOException;
 import java.nio.file.Path;
 import static docsite.EmitterUtil.*;
 import static j2html.TagCreator.*;

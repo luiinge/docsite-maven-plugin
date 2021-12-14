@@ -15,15 +15,13 @@ public class SectionEmitterFactory {
         Docsite site,
         ImageResolver globalImages,
         ThemeColors themeColors,
-        Path outputFolder,
-        Logger logger
+        Path outputFolder
     ) {
         this.buildParams = new EmitterBuildParams()
             .site(site)
             .themeColors(themeColors)
             .outputFolder(outputFolder)
-            .globalImages(globalImages)
-            .logger(logger);
+            .globalImages(globalImages);
     }
 
 

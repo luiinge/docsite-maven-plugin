@@ -13,6 +13,7 @@ public class Section {
     }
 
     private String name;
+    private String description;
     private String icon;
     private String source;
     private SectionType type;
@@ -29,6 +30,7 @@ public class Section {
 
     public Section(
         String name,
+        String description,
         String icon,
         String source,
         SectionType type,
@@ -38,6 +40,7 @@ public class Section {
         String template
     ) {
         this.name = name;
+        this.description = description;
         this.icon = icon;
         this.source = source;
         this.type = type;
@@ -65,6 +68,7 @@ public class Section {
     }
 
 
+
     public static SectionBuilder builder() {
         return new SectionBuilder();
     }
@@ -72,6 +76,11 @@ public class Section {
 
     public String name() {
         return Objects.requireNonNullElse(this.name,"");
+    }
+
+
+    public String description() {
+        return this.description;
     }
 
 
@@ -129,6 +138,7 @@ public class Section {
     public static class SectionBuilder {
 
         private String name;
+        private String description;
         private String icon;
         private String source;
         private SectionType type;
@@ -144,6 +154,12 @@ public class Section {
 
         public SectionBuilder name(String name) {
             this.name = name;
+            return this;
+        }
+
+
+        public SectionBuilder description(String description) {
+            this.description = description;
             return this;
         }
 
@@ -191,7 +207,7 @@ public class Section {
 
 
         public Section build() {
-            return new Section(name, icon, source, type, siteIndex, subsections, replaceEmojis, template);
+            return new Section(name, description, icon, source, type, siteIndex, subsections, replaceEmojis, template);
         }
 
 
