@@ -76,8 +76,10 @@
         </parameter>
       </parameters>
       <configuration>
-        <outputFolder implementation="java.io.File" default-value="${project.build.directory}/docsite"/>
-        <project implementation="org.apache.maven.project.MavenProject" default-value="${project}"/>
+        <cssFile implementation="java.io.File">${docsite.cssFile}</cssFile>
+        <forceDelete implementation="boolean" default-value="false">${docsite.forceDelete}</forceDelete>
+        <outputFolder implementation="java.io.File" default-value="${project.build.directory}/docsite">${docsite.outputFolder}</outputFolder>
+        <project implementation="org.apache.maven.project.MavenProject" default-value="${project}"/>>
       </configuration>
     </mojo>
   </mojos>

@@ -2,6 +2,7 @@ package docsite;
 
 import java.nio.file.Path;
 import java.util.List;
+import docsite.util.ImageResolver;
 
 
 public class EmitterBuildParams {

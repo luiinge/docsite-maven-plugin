@@ -1,0 +1,182 @@
+<html><head><title>Docsite Maven Plugin - index</title><meta name="description" content="A Maven plugin that generates static documentation sites"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="css/common.css" rel="stylesheet"><link href="css/font-awesome-all.css" rel="stylesheet"><link href="css/prism-light.css" rel="stylesheet"><link href="css/style.css" rel="stylesheet"><script src="js/prism.js"></script><style>:root {
+--menu-regular-background-color: #575757;
+--menu-bold-background-color: #413e3e;
+--menu-foreground-color: #f1f4f4;
+--menu-decoration-color: #b7d4da;
+--gui-element-color: #f08080;
+}</style></head><body><header><div class="title-and-subtitle"><h1 class="title label"><i class="hidden"></i><span>Docsite Maven Plugin</span></h1><span class="subtitle">A Maven plugin that generates static documentation sites</span></div><nav class="sections"><ul><li><a class="label internal" href="changelog.html"><i class="fas fa-clipboard-list"></i><span>Changelog</span></a></li><li><a class="label internal" href="reports.html"><i class="fas fa-file-medical-alt"></i><span>Reports</span></a><ul class="dropdown"><li><a class="label internal" href="plugin-goals.html"><i class="hidden"></i><span>Plugin Goals</span></a></li><li><a class="label internal" href="javadoc.html"><i class="fab fa-java"></i><span>Javadoc</span></a></li><li><a class="label internal" href="dependencies.html"><i class="hidden"></i><span>Dependencies</span></a></li><li><a class="label internal" href="test-coverage.html"><i class="hidden"></i><span>Test Coverage</span></a></li></ul></li><li><a class="label external" href="https://github.com/luiinge/docsite-maven-plugin" target="_blank" rel="external noreferrer noopener nofollow"><i class="fab fa-github"></i><span>Source</span></a></li><li><a class="label internal" href="license.html"><i class="fas fa-balance-scale"></i><span>License</span></a></li></ul></nav></header><nav class="breadcrumbs"><ol><li><a class="internal" href="index.html">Docsite Maven Plugin</a></li></ol></nav><aside><nav class="toc"><ol><li><a class="internal" href="#usage">Usage</a></li><ol><li><a class="internal" href="#documentation-sections">Documentation sections</a></li><li><a class="internal" href="#icons">Icons</a></li><li><a class="internal" href="#auto-configured-sites">Auto-configured sites</a></li><li><a class="internal" href="#github-emojis">Github emojis</a></li></ol><li><a class="internal" href="#contributing">Contributing</a></li><li><a class="internal" href="#authors">Authors</a></li><li><a class="internal" href="#license">License</a></li><li><a class="internal" href="#references">References</a></li></ol></ol></nav></aside><section class="content"><h1 id="docsite-maven-plugin">Docsite Maven Plugin</h1>
+<p><img src="https://img.shields.io/github/license/luiinge/docsite-maven-plugin?style=plastic" alt="GitHub" />
+<img src="https://img.shields.io/github/workflow/status/luiinge/docsite-maven-plugin/quality%20check/master?style=plastic" alt="GitHub Workflow Status (branch)" />
+<img src="https://img.shields.io/maven-central/v/io.github.luiinge/docsite-maven-plugin?style=plastic" alt="Maven Central" /></p>
+<p><a target="_blank" rel="external noreferrer noopener nofollow" href="https://sonarcloud.io/dashboard?id=luiinge_docsite-maven-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=luiinge_docsite-maven-plugin&amp;metric=alert_status" alt="Quality Gate Status" /></a>
+<a target="_blank" rel="external noreferrer noopener nofollow" href="https://sonarcloud.io/dashboard?id=luiinge_docsite-maven-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=luiinge_docsite-maven-plugin&amp;metric=ncloc" alt="Lines of Code" /></a>
+<a target="_blank" rel="external noreferrer noopener nofollow" href="https://sonarcloud.io/dashboard?id=luiinge_docsite-maven-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=luiinge_docsite-maven-plugin&amp;metric=coverage" alt="Coverage" /></a>
+<a target="_blank" rel="external noreferrer noopener nofollow" href="https://sonarcloud.io/dashboard?id=luiinge_docsite-maven-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=luiinge_docsite-maven-plugin&amp;metric=bugs" alt="Bugs" /></a>
+<a target="_blank" rel="external noreferrer noopener nofollow" href="https://sonarcloud.io/dashboard?id=luiinge_docsite-maven-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=luiinge_docsite-maven-plugin&amp;metric=code_smells" alt="Code Smells" /></a>
+<a target="_blank" rel="external noreferrer noopener nofollow" href="https://sonarcloud.io/dashboard?id=luiinge_docsite-maven-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=luiinge_docsite-maven-plugin&amp;metric=duplicated_lines_density" alt="Duplicated Lines (%)" /></a>
+<a target="_blank" rel="external noreferrer noopener nofollow" href="https://sonarcloud.io/dashboard?id=luiinge_maven-docsite-maven-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=luiinge_docsite-maven-plugin&amp;metric=sqale_index" alt="Technical Debt" /></a></p>
+<p>Docsite is a Maven plugin that generates static documentation sites
+with minimal effort. It is an alternative to the standard Maven site generation,
+providing the following benefits:</p>
+<ul>
+<li>No extra configuration files required</li>
+<li>Markdown and HTML document integration (including <em>Table of Content</em> generation)</li>
+<li>Not bound to any Maven reporting plugin</li>
+<li>Easily customizable</li>
+<li>Responsiveness</li>
+<li>Aimed to get good SEO positioning</li>
+</ul>
+<h2 id="usage">Usage</h2>
+<p>You can provide the documentation site configuration just after the declaration of
+the plugin within the <code>pom</code>.</p>
+<pre><code class="language-xml">    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;io.github.luiinge&lt;/groupId&gt;
+                &lt;artifactId&gt;docsite-maven-plugin&lt;/artifactId&gt;
+                &lt;version&gt;1.0.0&lt;/version&gt;
+                &lt;configuration&gt;
+                    &lt;docsite&gt;
+                        ...
+                        &lt;sections&gt;
+                            &lt;section&gt;
+                                ...
+                            &lt;/section&gt;
+                        &lt;/sections&gt;
+                    &lt;/docsite&gt;
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+</code></pre>
+<p>Check the <a class="external" target="_blank" rel="external noreferrer noopener nofollow" href="plugin-goals.html">goal documentation</a> for an exhaustive
+list of every configuration parameter.</p>
+<h3 id="documentation-sections">Documentation sections</h3>
+<p>Apart from the landing page, you can define different sections for the
+documentation site. Each section would generate its own page and also
+an entry in the navigation menu at the header.
+Each section must define the type of strategy that would be used in order
+to generate the proper output. The available section types are:</p>
+<h4 id="generated-page">Generated page</h4>
+<p>A single HTML page would be generated from a source file. Markdown,
+HTML and raw text sources are processed directly, whereas XML, JSON and YAML sources
+requires a <a class="external" target="_blank" rel="external noreferrer noopener nofollow" href="https://freemarker.apache.org/">Freemarker</a> transformation template.</p>
+<pre><code class="language-xml">&lt;section&gt;
+    &lt;type&gt;generated&lt;/type&gt;
+    &lt;name&gt;Changelog&lt;/name&gt;
+    &lt;source&gt;CHANGELOG.md&lt;/source&gt;
+&lt;/section&gt;
+</code></pre>
+<pre><code class="language-xml">&lt;section&gt;
+    &lt;type&gt;generated&lt;/type&gt;
+    &lt;name&gt;Dependencies&lt;/name&gt;
+    &lt;source&gt;target/dependencies.xml&lt;/source&gt;
+    &lt;template&gt;templates/dependencies.ftl&lt;/template&gt;
+&lt;/section&gt;
+</code></pre>
+<h4 id="embedded-site">Embedded site</h4>
+<p>A complete site (from a local folder) would be copied into the
+documentation site, and shown inside an embedded <code>iframe</code> component.</p>
+<pre><code class="language-xml">&lt;section&gt;
+    &lt;type&gt;embedded&lt;/type&gt;
+    &lt;name&gt;Javadoc&lt;/name&gt;
+    &lt;source&gt;target/site/apidocs&lt;/source&gt;
+    &lt;siteIndex&gt;index.html&lt;/siteIndex&gt;
+&lt;/section&gt;
+</code></pre>
+<h4 id="section-group">Section Group</h4>
+<p>A simple HTML page would be generated including links to other sections
+of the documentation site. These linked sections are defined hierarchically in
+the <code>subsections</code> property of the section. Also, a dropdown menu would be used
+in the navigation header.</p>
+<pre><code class="language-xml">&lt;section&gt;
+    &lt;type&gt;group&lt;/type&gt;
+    &lt;name&gt;Reports&lt;/name&gt;
+    &lt;subsections&gt;
+        &lt;section&gt;
+            ...
+        &lt;/section&gt;
+        &lt;section&gt;
+            ...
+        &lt;/section&gt;
+    &lt;/subsections&gt;
+&lt;/section&gt;
+</code></pre>
+<p>####Link
+No specific page is generated, but rather a simple link in the navigation
+header.</p>
+<pre><code class="language-xml">&lt;section&gt;
+    &lt;type&gt;link&lt;/type&gt;
+    &lt;name&gt;Company Site&lt;/name&gt;
+    &lt;source&gt;http://my.company.com&lt;/source&gt;
+&lt;/section&gt;
+</code></pre>
+<h3 id="icons">Icons</h3>
+<p>For the main property <code>logo</code>, as well as the section property <code>icon</code>, you can choose among
+three different sources according the property value:</p>
+<ul>
+<li>Starting with <code>http:</code> or <code>https:</code>, the image source would be an external link to the given URL</li>
+<li>Starting with <code>fa:</code>, <code>fas:</code>, <code>far:</code> or <code>fab:</code>, the image would be a
+<a class="external" target="_blank" rel="external noreferrer noopener nofollow" href="http://https://fontawesome.com/v5.15/icons">Font Awesome 5</a> icon</li>
+<li>Otherwise, a local image file would be expected</li>
+</ul>
+<h3 id="auto-configured-sites">Auto-configured sites</h3>
+<p>In absence of a site configuration, the plugin would generate one for you.
+Although not fully compliant with every posible scenario, it would make an attempt
+to generate a good-enough site according the resources found in the project:</p>
+<ul>
+<li>The project name and description set in the <code>pom.xml</code> file would be used as the title in
+the site header</li>
+<li>In presence of a main <code>README.*</code> file, it would be used as the landing
+page of the site.</li>
+<li>In presence of a <code>CHANGELOG.*</code> file, a <em>Changelog</em> section would be created</li>
+<li>In presence of a <code>LICENSE</code> file, a <em>License</em> section would be created</li>
+<li>In presence of the <code>target/site/apidocs</code> directory, a subsection <em>Javadoc</em> would be
+created within the main report section</li>
+<li>In presence of the <code>target/site/dependencies.html</code> file, a subsection <em>Dependencies</em> would be
+created within the main report section</li>
+<li>In presence of the <code>target/site/surefire-report.html</code> file, a subsection <em>Test Results</em> would be
+created within the main report section</li>
+<li>In presence of the <code>target/site/jacoco</code> directory, a subsection <em>Coverage</em> would be
+created within the main report section</li>
+<li>In presence of the <code>target/classes/META-INF/maven/plugin.xml</code> (specific for Maven plugin
+projects), a subsection <em>Plugin Goals</em> would be created within the main report section.</li>
+<li>If the <code>scm</code> section of the <code>pom.xml</code> file is filled, a link to the corresponding version control
+site would be added (with custom icons for Github, Gitlab and Bitbucket)</li>
+</ul>
+<h3 id="github-emojis">Github emojis</h3>
+<p><a class="external" target="_blank" rel="external noreferrer noopener nofollow" href="https://github.com">Github</a> uses a mechanism that replaces specific text markups with icons when
+displaying
+certain documents. The pages generated with Docsite would apply the same transformations by
+default in order to emulate such representation. However, it is possible that some documents
+use those markups without any emoji intention and hence the generated page would contain
+unexpected images. If you experience this problem, simply disable the emoji replacement by setting
+the property <code>&lt;replaceEmojis&gt;false&lt;/replaceEmojis&gt;</code> in the problematic section.</p>
+<h2 id="contributing">Contributing</h2>
+<h2 id="authors">Authors</h2>
+<ul>
+<li>Luis Iñesta Gelabert - luiinge@gmail.com</li>
+</ul>
+<h2 id="license">License</h2>
+<p>MIT License</p>
+<p>Copyright (c) 2021 Luis Iñesta Gelabert - luiinge@gmail.com</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</p>
+<h2 id="references">References</h2>
+<ul>
+<li>[<strong>1</strong>] <em>Apache Commons Configuration</em> - https://commons.apache.org/proper/commons-configuration</li>
+</ul>
+<div>Generated with <a href="https://github.com/luiinge/docsite-maven-plugin">Docsite</a>. Last published on 2021-12-15</div></section></body></html>

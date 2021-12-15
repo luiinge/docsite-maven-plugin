@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Section.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Docsite Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">docsite</a> &gt; <span class="el_source">Section.java</span></div><h1>Section.java</h1><pre class="source lang-java linenums">package docsite;
+
+import java.util.*;
+import docsite.util.ResourceUtil;
+
+
+public class Section {
+
+<span class="fc" id="L9">    public enum SectionType {</span>
+<span class="fc" id="L10">        generated,</span>
+<span class="fc" id="L11">        embedded,</span>
+<span class="fc" id="L12">        group,</span>
+<span class="fc" id="L13">        link</span>
+    }
+
+    private String name;
+    private String description;
+    private String icon;
+    private String source;
+    private SectionType type;
+    private String siteIndex;
+    private List&lt;Section&gt; subsections;
+    private Boolean replaceEmojis;
+    private String template;
+
+
+
+<span class="nc" id="L28">    public Section() {</span>
+
+<span class="nc" id="L30">    }</span>
+
+    public Section(
+        String name,
+        String description,
+        String icon,
+        String source,
+        SectionType type,
+        String siteIndex,
+        List&lt;Section&gt; subsections,
+        Boolean replaceEmojis,
+        String template
+<span class="fc" id="L42">    ) {</span>
+<span class="fc" id="L43">        this.name = name;</span>
+<span class="fc" id="L44">        this.description = description;</span>
+<span class="fc" id="L45">        this.icon = icon;</span>
+<span class="fc" id="L46">        this.source = source;</span>
+<span class="fc" id="L47">        this.type = type;</span>
+<span class="fc" id="L48">        this.siteIndex = siteIndex;</span>
+<span class="fc" id="L49">        this.subsections = subsections;</span>
+<span class="fc" id="L50">        this.replaceEmojis = replaceEmojis;</span>
+<span class="fc" id="L51">        this.template = template;</span>
+<span class="fc" id="L52">    }</span>
+
+
+    public static Section.SectionBuilder generated(String name) {
+<span class="fc" id="L56">        return builder().type(SectionType.generated).name(name);</span>
+    }
+
+    public static Section.SectionBuilder site() {
+<span class="fc" id="L60">        return builder().type(SectionType.embedded);</span>
+    }
+
+    public static Section.SectionBuilder group(String name) {
+<span class="fc" id="L64">        return builder().type(SectionType.group).name(name);</span>
+    }
+
+    public static Section.SectionBuilder link() {
+<span class="fc" id="L68">        return builder().type(SectionType.link);</span>
+    }
+
+
+
+    public static SectionBuilder builder() {
+<span class="fc" id="L74">        return new SectionBuilder();</span>
+    }
+
+
+    public String name() {
+<span class="fc" id="L79">        return Objects.requireNonNullElse(this.name,&quot;&quot;);</span>
+    }
+
+
+    public String description() {
+<span class="fc" id="L84">        return this.description;</span>
+    }
+
+
+    public String icon() {
+<span class="fc" id="L89">        return this.icon;</span>
+    }
+
+
+    public String source() {
+<span class="fc" id="L94">        return this.source;</span>
+    }
+
+
+    public SectionType type() {
+<span class="fc" id="L99">        return this.type;</span>
+    }
+
+
+    public String siteIndex() {
+<span class="fc" id="L104">        return this.siteIndex;</span>
+    }
+
+
+    public String template() {
+<span class="fc" id="L109">        return this.template;</span>
+    }
+
+
+
+    public List&lt;Section&gt; subsections() {
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        return subsections == null ? List.of() : subsections;</span>
+    }
+
+
+    public Boolean replaceEmojis() {
+<span class="fc" id="L120">        return Objects.requireNonNullElse(replaceEmojis, Boolean.TRUE);</span>
+    }
+
+
+    public boolean isValid() {
+<span class="pc bpc" id="L125" title="1 of 4 branches missed.">        switch (type) {</span>
+            case generated:
+            case embedded:
+<span class="fc" id="L128">                return ResourceUtil.existsSource(source);</span>
+            case link:
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">                return source != null;</span>
+            case group:
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">                return !subsections().isEmpty();</span>
+            default:
+<span class="nc" id="L134">                return true;</span>
+        }
+    }
+
+
+    public static class SectionBuilder {
+
+        private String name;
+        private String description;
+        private String icon;
+        private String source;
+        private SectionType type;
+        private String siteIndex;
+        private List&lt;Section&gt; subsections;
+        private Boolean replaceEmojis;
+        private String template;
+
+
+<span class="fc" id="L152">        SectionBuilder() {</span>
+<span class="fc" id="L153">        }</span>
+
+
+        public SectionBuilder name(String name) {
+<span class="fc" id="L157">            this.name = name;</span>
+<span class="fc" id="L158">            return this;</span>
+        }
+
+
+        public SectionBuilder description(String description) {
+<span class="fc" id="L163">            this.description = description;</span>
+<span class="fc" id="L164">            return this;</span>
+        }
+
+
+        public SectionBuilder icon(String icon) {
+<span class="fc" id="L169">            this.icon = icon;</span>
+<span class="fc" id="L170">            return this;</span>
+        }
+
+
+        public SectionBuilder source(String source) {
+<span class="fc" id="L175">            this.source = source;</span>
+<span class="fc" id="L176">            return this;</span>
+        }
+
+
+        public SectionBuilder type(SectionType type) {
+<span class="fc" id="L181">            this.type = type;</span>
+<span class="fc" id="L182">            return this;</span>
+        }
+
+
+        public SectionBuilder siteIndex(String siteIndex) {
+<span class="fc" id="L187">            this.siteIndex = siteIndex;</span>
+<span class="fc" id="L188">            return this;</span>
+        }
+
+
+        public SectionBuilder subsections(List&lt;Section&gt; subsections) {
+<span class="fc" id="L193">            this.subsections = subsections;</span>
+<span class="fc" id="L194">            return this;</span>
+        }
+
+
+        public SectionBuilder replaceEmojis(Boolean replaceEmojis) {
+<span class="nc" id="L199">            this.replaceEmojis = replaceEmojis;</span>
+<span class="nc" id="L200">            return this;</span>
+        }
+
+
+        public SectionBuilder template(String template) {
+<span class="fc" id="L205">            this.template = template;</span>
+<span class="fc" id="L206">            return this;</span>
+        }
+
+
+        public Section build() {
+<span class="fc" id="L211">            return new Section(name, description, icon, source, type, siteIndex, subsections, replaceEmojis, template);</span>
+        }
+
+
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

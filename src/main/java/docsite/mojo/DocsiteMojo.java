@@ -3,7 +3,10 @@ package docsite.mojo;
 import static java.util.Objects.requireNonNullElse;
 
 import java.io.*;
+import java.nio.file.*;
+import java.util.Objects;
 
+import docsite.util.ResourceUtil;
 import org.apache.maven.plugin.*;
 import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -18,8 +21,24 @@ public class DocsiteMojo extends AbstractMojo {
      * The folder where the documentation site would be generated.
      * @since 1.0
      */
-    @Parameter(name = "outputFolder", required = true, defaultValue = "${project.build.directory}/docsite")
+    @Parameter(
+        name = "outputFolder",
+        required = true,
+        defaultValue = "${project.build.directory}/docsite",
+        property = "docsite.outputFolder"
+    )
     File outputFolder;
+
+
+    /**
+     * Forces deletion of output folder.<br/>
+     * A safety mechanism is implemented in order to prevent accidental deletion of directories,
+     * but setting this property to <tt>true</tt> will bypass such feature.
+     *
+     * @since 1.0
+     */
+    @Parameter(name = "forceDelete", defaultValue = "false", property = "docsite.forceDelete")
+    boolean forceDelete;
 
 
     /**
@@ -99,7 +118,7 @@ public class DocsiteMojo extends AbstractMojo {
      * to use a totally different layout.
      * @since 1.0
      */
-    @Parameter(name = "cssFile")
+    @Parameter(name = "cssFile", property = "docsite.cssFile")
     File cssFile;
 
 
@@ -112,19 +131,39 @@ public class DocsiteMojo extends AbstractMojo {
 
         initializeLogger();
 
-        themeColors = requireNonNullElse(themeColors, ThemeColors.DEFAULT);
-
-        if (docsite == null) {
-            docsite = new Autoconfigurer(project).configuration();
-        }
+        File[] outputFolderContent = Objects.requireNonNullElse(
+            outputFolder.listFiles(),
+            new File[0]
+        );
 
         try {
+            if (outputFolder.exists() && outputFolderContent.length > 0) {
+                if (forceDelete) {
+                    Logger.instance().warn("The contents of output folder {} will be deleted", outputFolder);
+                    ResourceUtil.deleteDirectory(outputFolder.toPath());
+                } else {
+                    Logger.instance().error(
+                        "As a safety mechanism, the output folder must be empty. " +
+                        "You can disable this check using -Ddocsite.forceDelete"
+                    );
+                    throw new MojoFailureException("The output folder "+outputFolder+" is not empty");
+                }
+            }
+            Files.createDirectories(outputFolder.toPath());
+
+            themeColors = requireNonNullElse(themeColors, ThemeColors.DEFAULT);
+
+            if (docsite == null) {
+                docsite = new Autoconfigurer(project).configuration();
+            }
+
             new DocsiteEmitter(
                 docsite,
                 themeColors,
                 cssFile != null ? cssFile.toPath() : null,
                 outputFolder.toPath()
             ).generateSite();
+
         } catch (IOException e) {
             throw new MojoFailureException("Error generating site",e);
         }
@@ -134,7 +173,13 @@ public class DocsiteMojo extends AbstractMojo {
 
 
     private void initializeLogger() {
-        Logger.initialize(getLog()::debug,getLog()::info,getLog()::warn,getLog()::error);
+        Logger.initialize(new Logger(
+            getLog()::debug,
+            getLog()::debug,
+            getLog()::info,
+            getLog()::warn,
+            getLog()::error
+        ));
     }
 
 }

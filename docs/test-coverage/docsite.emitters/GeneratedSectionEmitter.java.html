@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GeneratedSectionEmitter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Docsite Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">docsite.emitters</a> &gt; <span class="el_source">GeneratedSectionEmitter.java</span></div><h1>GeneratedSectionEmitter.java</h1><pre class="source lang-java linenums">package docsite.emitters;
+
+
+import java.util.regex.*;
+
+import docsite.*;
+import docsite.util.EmitterUtil;
+import j2html.tags.specialized.*;
+import static docsite.util.EmitterUtil.*;
+import static j2html.TagCreator.*;
+
+public abstract class GeneratedSectionEmitter extends SectionEmitter {
+
+    GeneratedSectionEmitter(EmitterBuildParams params) {
+<span class="fc" id="L15">        super(params);</span>
+<span class="fc" id="L16">    }</span>
+
+
+    @Override
+    protected String url() {
+<span class="fc" id="L21">        return EmitterUtil.page(section.name());</span>
+    }
+
+
+    @Override
+    public ATag createLinkToSection(boolean withIcon) {
+<span class="fc bfc" id="L27" title="All 2 branches covered.">        return withIcon ?</span>
+<span class="fc" id="L28">            internalLinkWithIcon(section.name(), url(), section.icon(), globalImages) :</span>
+<span class="fc" id="L29">            internalLink(section.name(), url());</span>
+    }
+
+
+    @Override
+    protected AsideTag createTableOfContents(SectionTag section) {
+<span class="fc" id="L35">        return createTableOfContentsFromHtml(section.render());</span>
+    }
+
+
+    protected String replaceLocalImages(String html) {
+<span class="fc" id="L40">        Matcher matcher = Pattern.compile(&quot;&lt;img .*src=\&quot;([^\&quot;]+)\&quot;.*&gt;&quot;).matcher(html);</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        while (matcher.find()) {</span>
+<span class="fc" id="L42">            String src = matcher.group(1);</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">            if (src.startsWith(&quot;http&quot;)) {</span>
+<span class="fc" id="L44">                continue;</span>
+            }
+<span class="fc" id="L46">            html = html.replace(&quot;src=\&quot;&quot;+src+&quot;\&quot;&quot;, &quot;src=\&quot;&quot;+sectionImages.imageFile(src)+&quot;\&quot;&quot;);</span>
+<span class="fc" id="L47">        }</span>
+<span class="fc" id="L48">        return html;</span>
+    }
+
+
+    protected String hrefId(String name) {
+<span class="fc" id="L53">        return name.strip().toLowerCase().replace(&quot; &quot;, &quot;-&quot;);</span>
+    }
+
+
+    protected String normalizeLinks(String html) {
+<span class="fc" id="L58">        return html</span>
+<span class="fc" id="L59">            .replaceAll(</span>
+                &quot;&lt;a href([^&gt;]*)&gt;([^&lt;]*)&lt;([^&lt;]*)&lt;/a&gt;&quot;,
+                &quot;&lt;a target=\&quot;_blank\&quot; rel=\&quot;external noreferrer noopener nofollow\&quot; href$1&gt;$2&lt;$3&lt;/a&gt;&quot;
+            )
+<span class="fc" id="L63">            .replaceAll(</span>
+                &quot;&lt;a href([^&gt;]*)&gt;([^&lt;]*)&lt;/a&gt;&quot;,
+                &quot;&lt;a class=\&quot;external\&quot; target=\&quot;_blank\&quot; rel=\&quot;external noreferrer noopener nofollow\&quot; href$1&gt;$2&lt;/a&gt;&quot;
+            );
+    }
+
+
+    protected String generateHeadersId(String html) {
+<span class="fc" id="L71">        Matcher matcher = Pattern.compile(&quot;&lt;(h\\d)&gt;([^&lt;]*)&quot;).matcher(html);</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">        while (matcher.find()) {</span>
+<span class="fc" id="L73">            String tag = matcher.group(1);</span>
+<span class="fc" id="L74">            String name = matcher.group(2);</span>
+<span class="fc" id="L75">            String id = hrefId(name);</span>
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">            if (!id.isEmpty()) {</span>
+<span class="fc" id="L77">                html = html.replace(&quot;&lt;&quot; + tag + &quot;&gt;&quot; + name, &quot;&lt;&quot; + tag + &quot; id=\&quot;&quot; + id + &quot;\&quot;&gt;&quot; + name);</span>
+            }
+<span class="fc" id="L79">        }</span>
+<span class="fc" id="L80">        return html;</span>
+    }
+
+
+
+
+
+    protected AsideTag createTableOfContentsFromHtml(String html) {
+
+<span class="fc" id="L89">        Matcher matcher = Pattern.compile(&quot;&lt;h(\\d)[^&gt;]*&gt;([^&lt;]*)&lt;&quot;).matcher(html);</span>
+
+<span class="fc" id="L91">        StringBuilder string = new StringBuilder();</span>
+<span class="fc" id="L92">        int previousLevel = TOC_MIN_LEVEL - 1;</span>
+
+<span class="fc" id="L94">        boolean empty = true;</span>
+
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        while (matcher.find()) {</span>
+
+<span class="fc" id="L98">            int level = Integer.parseInt(matcher.group(1));</span>
+<span class="fc" id="L99">            String name = matcher.group(2);</span>
+<span class="fc" id="L100">            String id = hrefId(name);</span>
+
+<span class="pc bpc" id="L102" title="1 of 6 branches missed.">            if (level &lt; TOC_MIN_LEVEL || level &gt; TOC_MAX_LEVEL || id.isEmpty()) {</span>
+<span class="nc" id="L103">                continue;</span>
+            }
+
+<span class="fc bfc" id="L106" title="All 2 branches covered.">            if (previousLevel &gt; level) {</span>
+<span class="fc" id="L107">                string.append(&quot;&lt;/ol&gt;&quot;.repeat(Math.max(0, previousLevel - level)));</span>
+            } else {
+<span class="fc" id="L109">                string.append(&quot;&lt;ol&gt;&quot;.repeat(Math.max(0, level - previousLevel)));</span>
+            }
+<span class="fc" id="L111">            string</span>
+<span class="fc" id="L112">                .append(&quot;&lt;li&gt;&lt;a class=\&quot;internal\&quot; href=\&quot;#&quot;)</span>
+<span class="fc" id="L113">                .append(id)</span>
+<span class="fc" id="L114">                .append(&quot;\&quot;&gt;&quot;)</span>
+<span class="fc" id="L115">                .append(name)</span>
+<span class="fc" id="L116">                .append(&quot;&lt;/a&gt;&lt;/li&gt;&quot;);</span>
+
+<span class="fc" id="L118">            previousLevel = level;</span>
+<span class="fc" id="L119">            empty = false;</span>
+<span class="fc" id="L120">        }</span>
+
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        if (empty) {</span>
+<span class="nc" id="L123">            return aside();</span>
+        } else {
+<span class="fc" id="L125">            string.append(&quot;&lt;/ol&gt;&quot;.repeat(previousLevel));</span>
+<span class="fc" id="L126">            return aside().with(nav().with(rawHtml(string.toString())).withClass(&quot;toc&quot;));</span>
+        }
+
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

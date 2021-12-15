@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Logger.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Docsite Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">docsite</a> &gt; <span class="el_source">Logger.java</span></div><h1>Logger.java</h1><pre class="source lang-java linenums">package docsite;
+
+import java.util.Objects;
+import java.util.function.Consumer;
+
+public class Logger {
+
+    private static Logger instance;
+
+    public static Logger instance() {
+<span class="fc" id="L11">        return Objects.requireNonNull(instance);</span>
+    }
+
+    public static void initialize(Logger logger) {
+<span class="pc bpc" id="L15" title="1 of 2 branches missed.">        if (instance != null) {</span>
+<span class="nc" id="L16">            throw new IllegalStateException(&quot;Logger already initialized&quot;);</span>
+        }
+<span class="fc" id="L18">        instance = Objects.requireNonNull(logger);</span>
+<span class="fc" id="L19">    }</span>
+
+
+    private final Consumer&lt;Throwable&gt; debugStackMessager;
+    private final Consumer&lt;String&gt; debugMessager;
+    private final Consumer&lt;String&gt; infoMessager;
+    private final Consumer&lt;String&gt; warnMessager;
+    private final Consumer&lt;String&gt; errorMessager;
+
+
+    public Logger(
+        Consumer&lt;Throwable&gt; debugStackMessager,
+        Consumer&lt;String&gt; debugMessager,
+        Consumer&lt;String&gt; infoMessager,
+        Consumer&lt;String&gt; warnMessager,
+        Consumer&lt;String&gt; errorMessager
+<span class="fc" id="L35">    ) {</span>
+<span class="fc" id="L36">        this.debugStackMessager = debugStackMessager;</span>
+<span class="fc" id="L37">        this.debugMessager = debugMessager;</span>
+<span class="fc" id="L38">        this.infoMessager = infoMessager;</span>
+<span class="fc" id="L39">        this.warnMessager = warnMessager;</span>
+<span class="fc" id="L40">        this.errorMessager = errorMessager;</span>
+<span class="fc" id="L41">    }</span>
+
+
+    public void debug(String message, Object...args) {
+<span class="fc" id="L45">        debugMessager.accept(format(message,args));</span>
+<span class="fc" id="L46">    }</span>
+
+    public void debug(Throwable e) {
+<span class="nc" id="L49">        debugStackMessager.accept(e);</span>
+<span class="nc" id="L50">    }</span>
+
+    public void info(String message, Object...args) {
+<span class="fc" id="L53">        infoMessager.accept(format(message,args));</span>
+<span class="fc" id="L54">    }</span>
+
+    public void warn(String message, Object... args) {
+<span class="fc" id="L57">        warnMessager.accept(format(message,args));</span>
+<span class="fc" id="L58">    }</span>
+
+    public void error(String message, Object...args) {
+<span class="nc" id="L61">        errorMessager.accept(format(message,args));</span>
+<span class="nc" id="L62">    }</span>
+
+    private static String format (String message, Object[] args) {
+<span class="fc" id="L65">        return String.format(message.replace(&quot;{}&quot;,&quot;%s&quot;),args);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

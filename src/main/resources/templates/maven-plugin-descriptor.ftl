@@ -59,6 +59,7 @@ Below there is a list of available goals provided by this plugin:
                 <li><b>Type:</b> <tt>${parameter.type}</tt></li>
                 <li><b>Required:</b> ${parameter.required}</li>
                 <@searchDefaultValue mojo parameter/>
+                <@searchProperty mojo parameter/>
                 <#if parameter.since??><li><b>Since:</b> ${parameter.since}</li></#if>
             </ul>
         </#items>
@@ -84,7 +85,21 @@ Below there is a list of available goals provided by this plugin:
 
 <#macro searchDefaultValue mojo parameter>
     <#if mojo.configuration?? &&  mojo.configuration[parameter.name]?? >
-     <li><b>Default value:</b> <tt>${mojo.configuration[parameter.name]['default-value']}</tt></li>
+        <#list mojo.configuration[parameter.name] as key,value>
+            <#if key == 'default-value'>
+                <li><b>Default value:</b> <tt>${value}</tt></li>
+            </#if>
+        </#list>
+    </#if>
+</#macro>
+
+<#macro searchProperty mojo parameter>
+    <#if mojo.configuration?? &&  mojo.configuration[parameter.name]?? >
+        <#list mojo.configuration[parameter.name] as key,value>
+            <#if key == 'value'>
+                <li><b>User property:</b> <tt>${value?replace("${","")?replace("}","")}</tt></li>
+            </#if>
+        </#list>
     </#if>
 </#macro>
 

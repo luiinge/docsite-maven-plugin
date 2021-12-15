@@ -4,7 +4,7 @@ package docsite.emitters;
 import java.io.IOException;
 import docsite.*;
 import j2html.tags.specialized.*;
-import static docsite.EmitterUtil.*;
+import static docsite.util.EmitterUtil.*;
 import static j2html.TagCreator.*;
 
 public class LinkSectionEmitter extends SectionEmitter {

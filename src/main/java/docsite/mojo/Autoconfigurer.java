@@ -153,6 +153,7 @@ public class Autoconfigurer {
                 Section.generated("Dependencies")
                     .description("Collection of artifacts that this project uses")
                     .source(dependenciesFile.toString())
+                    .replaceEmojis(false)
                     .build()
             );
         }
@@ -165,7 +166,7 @@ public class Autoconfigurer {
         if (Files.exists(jacocoFolder)) {
             return Optional.of(
                 Section.site()
-                    .name("Coverage")
+                    .name("Test Coverage")
                     .description("Report of code coverage according the executed tests")
                     .source(jacocoFolder.toString())
                     .siteIndex("index.html")

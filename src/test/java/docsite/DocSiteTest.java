@@ -10,12 +10,13 @@ public class DocSiteTest {
 
     @BeforeClass
     public static void setUp() {
-        Logger.initialize(
+        Logger.initialize(new Logger(
+            Throwable::printStackTrace,
             System.out::println,
             System.out::println,
             System.out::println,
             System.err::println
-        );
+        ));
     }
 
 

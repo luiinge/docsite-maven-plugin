@@ -4,6 +4,7 @@ package docsite.emitters;
 import java.io.*;
 
 import docsite.*;
+import docsite.util.ResourceUtil;
 import j2html.tags.specialized.*;
 import static j2html.TagCreator.*;
 

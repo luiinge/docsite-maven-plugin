@@ -4,8 +4,9 @@ package docsite.emitters;
 import java.util.regex.*;
 
 import docsite.*;
+import docsite.util.EmitterUtil;
 import j2html.tags.specialized.*;
-import static docsite.EmitterUtil.*;
+import static docsite.util.EmitterUtil.*;
 import static j2html.TagCreator.*;
 
 public abstract class GeneratedSectionEmitter extends SectionEmitter {

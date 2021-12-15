@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DocsiteEmitter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Docsite Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">docsite</a> &gt; <span class="el_source">DocsiteEmitter.java</span></div><h1>DocsiteEmitter.java</h1><pre class="source lang-java linenums">package docsite;
+
+import java.io.*;
+import java.nio.file.*;
+import docsite.util.*;
+
+public class DocsiteEmitter {
+
+
+<span class="fc" id="L10">    private static final Logger logger = Logger.instance();</span>
+
+    private final Docsite site;
+    private final ImageResolver globalImages;
+    private final ThemeColors themeColors;
+    private final Path outputFolder;
+    private final Path cssFile;
+
+
+    public DocsiteEmitter(
+        Docsite docsite,
+        ThemeColors themeColors,
+        Path cssFile,
+        Path outputFolder
+<span class="fc" id="L24">    ) {</span>
+<span class="fc" id="L25">        this.site = docsite;</span>
+<span class="fc" id="L26">        this.themeColors = themeColors;</span>
+<span class="fc" id="L27">        this.cssFile = cssFile;</span>
+<span class="fc" id="L28">        this.outputFolder = outputFolder;</span>
+<span class="fc" id="L29">        this.globalImages = new ImageResolver(outputFolder.resolve(&quot;images&quot;));</span>
+<span class="fc" id="L30">    }</span>
+
+
+    public void generateSite() throws IOException {
+<span class="fc" id="L34">        prepareCommonResources();</span>
+<span class="fc" id="L35">        SectionEmitterFactory emitterFactory = new SectionEmitterFactory(</span>
+            site,
+            globalImages,
+            themeColors,
+            outputFolder
+        );
+<span class="fc" id="L41">        emitterFactory.createEmitter(site.home()).emitHTML(true);</span>
+<span class="fc" id="L42">   }</span>
+
+
+
+    private void prepareCommonResources() throws IOException {
+<span class="fc" id="L47">        logger.debug(&quot;Copying common resources...&quot;);</span>
+<span class="fc" id="L48">        Path cssFolder = outputFolder.resolve(&quot;css&quot;);</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        if (cssFile == null) {</span>
+<span class="fc" id="L50">            ResourceUtil.copyResource(&quot;style.css&quot;, cssFolder);</span>
+        } else {
+<span class="fc" id="L52">            ResourceUtil.copyExternalFileWithAnotherName(cssFile, cssFolder, &quot;style.css&quot;);</span>
+        }
+<span class="fc" id="L54">        ResourceUtil.copyResourceFolder(&quot;css&quot;, outputFolder);</span>
+<span class="fc" id="L55">        ResourceUtil.copyResourceFolder(&quot;js&quot;,  outputFolder);</span>
+<span class="fc" id="L56">        ResourceUtil.copyResourceFolder(&quot;webfonts&quot;,  outputFolder);</span>
+
+<span class="fc" id="L58">        site.sections().forEach(this::copyEmbeddedSites);</span>
+<span class="fc" id="L59">    }</span>
+
+
+    private void copyEmbeddedSites(Section section) {
+<span class="fc" id="L63">        logger.debug(&quot;Copying embedded site {}&quot;, section.source());</span>
+<span class="pc bpc" id="L64" title="1 of 4 branches missed.">        if (section.type() == Section.SectionType.embedded &amp;&amp; section.isValid()) {</span>
+<span class="fc" id="L65">            ResourceUtil.copyFolder(</span>
+<span class="fc" id="L66">                Path.of(section.source()),</span>
+<span class="fc" id="L67">                outputFolder.resolve(EmitterUtil.href(section.name()))</span>
+            );
+        }
+<span class="fc" id="L70">        section.subsections().forEach(this::copyEmbeddedSites);</span>
+<span class="fc" id="L71">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

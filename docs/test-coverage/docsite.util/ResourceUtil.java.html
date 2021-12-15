@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ResourceUtil.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Docsite Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">docsite.util</a> &gt; <span class="el_source">ResourceUtil.java</span></div><h1>ResourceUtil.java</h1><pre class="source lang-java linenums">package docsite.util;
+
+import java.io.*;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.util.*;
+import java.util.stream.*;
+import docsite.DocsiteException;
+
+public final class ResourceUtil {
+
+    private ResourceUtil() {   }
+
+<span class="fc" id="L15">    private static final Map&lt;String,List&lt;String&gt;&gt; STATIC_RESOURCES = Map.of(</span>
+<span class="fc" id="L16">        &quot;css&quot;, List.of(</span>
+            &quot;common.css&quot;,
+            &quot;font-awesome-all.css&quot;,
+            &quot;prism-light.css&quot;
+        ),
+<span class="fc" id="L21">        &quot;js&quot;, List.of(</span>
+            &quot;prism.js&quot;
+        ),
+<span class="fc" id="L24">        &quot;webfonts&quot;, List.of(</span>
+            &quot;fa-brands-400.eot&quot;,
+            &quot;fa-brands-400.svg&quot;,
+            &quot;fa-brands-400.ttf&quot;,
+            &quot;fa-brands-400.woff&quot;,
+            &quot;fa-brands-400.woff2&quot;,
+            &quot;fa-regular-400.eot&quot;,
+            &quot;fa-regular-400.svg&quot;,
+            &quot;fa-regular-400.ttf&quot;,
+            &quot;fa-regular-400.woff&quot;,
+            &quot;fa-regular-400.woff2&quot;,
+            &quot;fa-solid-900.eot&quot;,
+            &quot;fa-solid-900.svg&quot;,
+            &quot;fa-solid-900.ttf&quot;,
+            &quot;fa-solid-900.woff&quot;,
+            &quot;fa-solid-900.woff2&quot;
+        )
+    );
+
+
+    public static List&lt;String&gt; getResourceFiles(String path) {
+<span class="fc" id="L45">        return STATIC_RESOURCES.get(path);</span>
+    }
+
+
+    public static void copyResourceFolder(String folderName, Path outputFolder) throws IOException {
+<span class="fc" id="L50">        Path targetFolder = outputFolder.toAbsolutePath().resolve(folderName);</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        for (String file : ResourceUtil.getResourceFiles(folderName)) {</span>
+<span class="fc" id="L52">            copyResource(folderName+&quot;/&quot;+file, targetFolder);</span>
+<span class="fc" id="L53">        }</span>
+<span class="fc" id="L54">    }</span>
+
+
+    public static boolean existsResource(String resource) {
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">        return Thread.currentThread().getContextClassLoader().getResource(resource) != null;</span>
+    }
+
+
+    public static void copyResource(String resource, Path outputFolder) throws IOException {
+<span class="fc" id="L63">        URL resourceUrl = Thread.currentThread().getContextClassLoader().getResource(resource);</span>
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">        if (resourceUrl == null) {</span>
+<span class="nc" id="L65">            throw new FileNotFoundException(resource);</span>
+        }
+<span class="fc" id="L67">        copyFromURLToFolder(resourceUrl, outputFolder);</span>
+<span class="fc" id="L68">    }</span>
+
+
+    public static void copyExternalFileWithAnotherName(Path path, Path outputFolder, String newName)
+    throws IOException {
+<span class="fc" id="L73">        outputFolder = outputFolder.toAbsolutePath();</span>
+<span class="fc" id="L74">        Path target = outputFolder.resolve(newName);</span>
+<span class="fc" id="L75">        copyFromURL(path.toUri().toURL(), target);</span>
+<span class="fc" id="L76">    }</span>
+
+
+    private static void copyFromURLToFolder(URL url, Path outputFolder) throws IOException {
+<span class="fc" id="L80">        outputFolder = outputFolder.toAbsolutePath();</span>
+<span class="fc" id="L81">        Path target = outputFolder.resolve(Path.of(url.getFile()).getFileName().toString());</span>
+<span class="fc" id="L82">        copyFromURL(url, target);</span>
+<span class="fc" id="L83">    }</span>
+
+
+    private static void copyFromURL(URL url, Path target) throws IOException {
+
+<span class="fc" id="L88">        Files.createDirectories(target.getParent());</span>
+<span class="fc" id="L89">        Files.copy(</span>
+<span class="fc" id="L90">            url.openStream(),</span>
+            target,
+            StandardCopyOption.REPLACE_EXISTING
+        );
+<span class="fc" id="L94">    }</span>
+
+
+
+    public static String read(InputStream inputStream) throws IOException {
+<span class="fc" id="L99">        try (BufferedReader reader = new BufferedReader( new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {</span>
+<span class="fc" id="L100">            return reader.lines().collect(Collectors.joining(&quot;\n&quot;));</span>
+        }
+    }
+
+
+    public static InputStream open(String source) throws IOException {
+        try {
+<span class="nc" id="L107">            return new URL(source).openStream();</span>
+<span class="fc" id="L108">        } catch (MalformedURLException e) {</span>
+<span class="fc" id="L109">            return Files.newInputStream(Path.of(source));</span>
+        }
+    }
+
+
+    public static boolean existsSource(String source) {
+<span class="pc bpc" id="L115" title="2 of 4 branches missed.">        if (source == null || source.isBlank()) {</span>
+<span class="nc" id="L116">            return false;</span>
+        }
+<span class="fc bfc" id="L118" title="All 2 branches covered.">        if (Files.exists(Path.of(source))) {</span>
+<span class="fc" id="L119">            return true;</span>
+        }
+<span class="nc" id="L121">        try (InputStream stream = new URL(source).openStream()) {</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">            return stream != null;</span>
+<span class="fc" id="L123">        } catch (IOException e) {</span>
+<span class="fc" id="L124">            return false;</span>
+        }
+    }
+
+
+    public static void copyFolder(Path siteFolder, Path outputFolder)  {
+<span class="fc" id="L130">        try(Stream&lt;Path&gt; walker = Files.walk(siteFolder)) {</span>
+<span class="fc" id="L131">            Files.createDirectory(outputFolder);</span>
+<span class="fc" id="L132">            walker.forEach(sourcePath -&gt; {</span>
+                try {
+<span class="fc" id="L134">                    Path targetPath = outputFolder.resolve(siteFolder.relativize(sourcePath));</span>
+<span class="fc" id="L135">                    Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);</span>
+<span class="nc" id="L136">                } catch (IOException e) {</span>
+<span class="nc" id="L137">                    throw new DocsiteException(e);</span>
+<span class="fc" id="L138">                }</span>
+<span class="fc" id="L139">            });</span>
+<span class="nc" id="L140">        } catch (IOException e) {</span>
+<span class="nc" id="L141">            throw new DocsiteException(e);</span>
+<span class="fc" id="L142">        }</span>
+<span class="fc" id="L143">    }</span>
+
+
+    public static void deleteDirectory(Path path) {
+<span class="nc" id="L147">        try(Stream&lt;Path&gt; walker = Files.walk(path)) {</span>
+<span class="nc" id="L148">            walker</span>
+<span class="nc" id="L149">                .sorted(Comparator.reverseOrder())</span>
+<span class="nc" id="L150">                .forEach(sourcePath -&gt; {</span>
+                    try {
+<span class="nc" id="L152">                        Files.delete(sourcePath);</span>
+<span class="nc" id="L153">                    } catch (IOException e) {</span>
+<span class="nc" id="L154">                        throw new DocsiteException(e);</span>
+<span class="nc" id="L155">                    }</span>
+<span class="nc" id="L156">                });</span>
+<span class="nc" id="L157">        } catch (IOException e) {</span>
+<span class="nc" id="L158">            throw new DocsiteException(e);</span>
+<span class="nc" id="L159">        }</span>
+<span class="nc" id="L160">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

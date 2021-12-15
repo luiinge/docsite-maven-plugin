@@ -7,6 +7,7 @@ import java.util.stream.*;
 import com.vladsch.flexmark.ast.Heading;
 import com.vladsch.flexmark.util.ast.Node;
 import docsite.*;
+import docsite.util.ResourceUtil;
 import j2html.tags.specialized.*;
 import static j2html.TagCreator.*;
 

@@ -2,10 +2,11 @@ package docsite.emitters;
 
 
 import java.nio.file.Path;
-import static docsite.EmitterUtil.*;
+import static docsite.util.EmitterUtil.*;
 import static j2html.TagCreator.*;
 
 import docsite.*;
+import docsite.util.EmitterUtil;
 import j2html.tags.specialized.*;
 
 public class EmbeddedSiteSectionEmitter extends SectionEmitter {

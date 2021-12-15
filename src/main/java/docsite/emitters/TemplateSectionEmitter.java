@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 import docsite.*;
-import docsite.mojo.XmlUtil;
+import docsite.util.*;
 import freemarker.core.PlainTextOutputFormat;
 import freemarker.template.*;
 import j2html.tags.specialized.*;
@@ -63,7 +63,7 @@ public class TemplateSectionEmitter extends GeneratedSectionEmitter {
         try (InputStream inputStream = ResourceUtil.open(origin)) {
             switch (extension) {
                 case "xml":
-                    return XmlUtil.parse(inputStream);
+                    return new XmlParser().parse(inputStream);
                 case "json":
                     return new ObjectMapper().readValue(inputStream, Map.class);
                 case "yaml":

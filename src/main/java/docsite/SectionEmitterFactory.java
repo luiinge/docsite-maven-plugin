@@ -3,6 +3,7 @@ package docsite;
 import java.nio.file.Path;
 import java.util.*;
 import docsite.emitters.*;
+import docsite.util.ImageResolver;
 import org.jetbrains.annotations.NotNull;
 
 

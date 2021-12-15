@@ -1,7 +1,8 @@
 package docsite;
 
 import java.io.*;
-import java.nio.file.Path;
+import java.nio.file.*;
+import docsite.util.*;
 
 public class DocsiteEmitter {
 

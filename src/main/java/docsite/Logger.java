@@ -11,49 +11,54 @@ public class Logger {
         return Objects.requireNonNull(instance);
     }
 
-    public static void initialize(
-        Consumer<String> debug,
-        Consumer<String> info,
-        Consumer<String> warn,
-        Consumer<String> error
+    public static void initialize(Logger logger) {
+        if (instance != null) {
+            throw new IllegalStateException("Logger already initialized");
+        }
+        instance = Objects.requireNonNull(logger);
+    }
+
+
+    private final Consumer<Throwable> debugStackMessager;
+    private final Consumer<String> debugMessager;
+    private final Consumer<String> infoMessager;
+    private final Consumer<String> warnMessager;
+    private final Consumer<String> errorMessager;
+
+
+    public Logger(
+        Consumer<Throwable> debugStackMessager,
+        Consumer<String> debugMessager,
+        Consumer<String> infoMessager,
+        Consumer<String> warnMessager,
+        Consumer<String> errorMessager
     ) {
-        instance = new Logger(debug, info, warn, error);
+        this.debugStackMessager = debugStackMessager;
+        this.debugMessager = debugMessager;
+        this.infoMessager = infoMessager;
+        this.warnMessager = warnMessager;
+        this.errorMessager = errorMessager;
     }
 
 
-    private final Consumer<String> debug;
-    private final Consumer<String> info;
-    private final Consumer<String> warn;
-    private final Consumer<String> error;
-
-
-    private Logger(
-        Consumer<String> debug,
-        Consumer<String> info,
-        Consumer<String> warn,
-        Consumer<String> error
-    ) {
-        this.debug = debug;
-        this.info = info;
-        this.warn = warn;
-        this.error = error;
+    public void debug(String message, Object...args) {
+        debugMessager.accept(format(message,args));
     }
 
-
-    void debug(String message, Object...args) {
-        debug.accept(format(message,args));
+    public void debug(Throwable e) {
+        debugStackMessager.accept(e);
     }
 
-    void info(String message, Object...args) {
-        info.accept(format(message,args));
+    public void info(String message, Object...args) {
+        infoMessager.accept(format(message,args));
     }
 
-    void warn(String message, Object...args) {
-        warn.accept(format(message,args));
+    public void warn(String message, Object... args) {
+        warnMessager.accept(format(message,args));
     }
 
-    void error(String message, Object...args) {
-        error.accept(format(message,args));
+    public void error(String message, Object...args) {
+        errorMessager.accept(format(message,args));
     }
 
     private static String format (String message, Object[] args) {

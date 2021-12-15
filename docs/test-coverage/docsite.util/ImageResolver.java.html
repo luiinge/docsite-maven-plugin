@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ImageResolver.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Docsite Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">docsite.util</a> &gt; <span class="el_source">ImageResolver.java</span></div><h1>ImageResolver.java</h1><pre class="source lang-java linenums">package docsite.util;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.*;
+import docsite.Logger;
+import docsite.util.ResourceUtil;
+
+public class ImageResolver {
+
+<span class="fc" id="L11">    public static final Logger logger = Logger.instance();</span>
+
+<span class="fc" id="L13">    private final Map&lt;String,String&gt; images = new HashMap&lt;&gt;();</span>
+    private final Path imageFolder;
+    private final Path source;
+
+
+<span class="fc" id="L18">    public ImageResolver(Path imageFolder, Path source) {</span>
+<span class="fc" id="L19">        this.imageFolder = imageFolder;</span>
+<span class="fc" id="L20">        this.source = source;</span>
+<span class="fc" id="L21">    }</span>
+
+    public ImageResolver(Path imageFolder) {
+<span class="fc" id="L24">        this(imageFolder, null);</span>
+<span class="fc" id="L25">    }</span>
+
+
+    public String imageFile(String image) {
+        try {
+<span class="fc bfc" id="L30" title="All 2 branches covered.">            if (source == null) {</span>
+<span class="fc" id="L31">                return imageFileFromWorkingDir(image);</span>
+            } else {
+<span class="fc" id="L33">                return imageFileFromRelativeSource(image);</span>
+            }
+<span class="nc" id="L35">        } catch (IOException e) {</span>
+<span class="nc" id="L36">            logger.warn(&quot;Cannot retrieve image {} : {}&quot;, image, e.getMessage());</span>
+<span class="nc" id="L37">            logger.debug(e);</span>
+<span class="nc" id="L38">            return &quot;&quot;;</span>
+        }
+    }
+
+
+    private String imageFileFromWorkingDir(String image) throws IOException{
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        if (!images.containsKey(image)) {</span>
+<span class="fc" id="L45">            String extension = image.substring(image.lastIndexOf('.')+1);</span>
+<span class="fc" id="L46">            String id = &quot;image-&quot; + (images.size() + 1) + &quot;.&quot; + extension;</span>
+<span class="fc" id="L47">            String actualFile = imageFolder.getParent().relativize(imageFolder.resolve(id)).toString();</span>
+<span class="fc" id="L48">            ResourceUtil.copyExternalFileWithAnotherName(Path.of(image), imageFolder, id);</span>
+<span class="fc" id="L49">            images.put(image, actualFile);</span>
+<span class="fc" id="L50">            return actualFile;</span>
+        } else {
+<span class="fc" id="L52">            return images.get(image);</span>
+        }
+    }
+
+
+
+    private String imageFileFromRelativeSource(String image) throws IOException{
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">        if (!images.containsKey(image)) {</span>
+<span class="fc" id="L60">            String extension = image.substring(image.lastIndexOf('.')+1);</span>
+<span class="fc" id="L61">            String id = &quot;image-&quot; + (images.size() + 1) + &quot;.&quot; + extension;</span>
+<span class="fc" id="L62">            String actualFile = imageFolder.getParent().getParent().relativize(imageFolder.resolve(id)).toString();</span>
+<span class="fc" id="L63">            Path relativeSource = source.getParent().resolve(image);</span>
+<span class="fc" id="L64">            ResourceUtil.copyExternalFileWithAnotherName(relativeSource, imageFolder, id);</span>
+<span class="fc" id="L65">            images.put(image, actualFile);</span>
+<span class="fc" id="L66">            return actualFile;</span>
+        } else {
+<span class="nc" id="L68">            return images.get(image);</span>
+        }
+    }
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

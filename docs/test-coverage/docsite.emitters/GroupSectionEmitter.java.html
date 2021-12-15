@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GroupSectionEmitter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Docsite Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">docsite.emitters</a> &gt; <span class="el_source">GroupSectionEmitter.java</span></div><h1>GroupSectionEmitter.java</h1><pre class="source lang-java linenums">package docsite.emitters;
+
+
+import static docsite.util.EmitterUtil.*;
+import static j2html.TagCreator.*;
+
+import docsite.*;
+import docsite.util.EmitterUtil;
+import j2html.tags.ContainerTag;
+import j2html.tags.specialized.*;
+
+public class GroupSectionEmitter extends SectionEmitter {
+
+    public GroupSectionEmitter(EmitterBuildParams params) {
+<span class="fc" id="L15">        super(params);</span>
+<span class="fc" id="L16">    }</span>
+
+
+    @Override
+    protected String url() {
+<span class="fc" id="L21">        return EmitterUtil.page(section.name());</span>
+    }
+
+
+    @Override
+    public ATag createLinkToSection(boolean withIcon) {
+<span class="fc bfc" id="L27" title="All 2 branches covered.">        return withIcon ?</span>
+<span class="fc" id="L28">            internalLinkWithIcon(section.name(), url(), section.icon(), globalImages) :</span>
+<span class="fc" id="L29">            internalLink(section.name(), url());</span>
+    }
+
+
+    @Override
+    protected SectionTag createSectionContent() {
+<span class="fc" id="L35">       return section().with(</span>
+<span class="fc" id="L36">            h1(section.name()),</span>
+<span class="fc" id="L37">            subsectionList(ul())</span>
+        );
+    }
+
+
+    @Override
+    protected AsideTag createTableOfContents(SectionTag sectionTag) {
+<span class="fc" id="L44">        return aside().with(nav().with(subsectionList(ol())).withClass(&quot;toc&quot;));</span>
+    }
+
+    private &lt;T extends ContainerTag&lt;T&gt;&gt; ContainerTag&lt;T&gt; subsectionList(ContainerTag&lt;T&gt; container) {
+<span class="fc bfc" id="L48" title="All 2 branches covered.">        for (SectionEmitter subsection : childEmitters) {</span>
+<span class="fc" id="L49">            container.with(li(subsection.createLinkToSection(false)));</span>
+<span class="fc" id="L50">        }</span>
+<span class="fc" id="L51">        return container;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

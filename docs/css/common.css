@@ -1,0 +1,29 @@
+body, div, a, p, header, nav, aside, main, section, ol, iframe {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 1rem;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+.hidden {
+    display: none;
+}
+
+
+.fa-blank {
+    visibility:hidden !important;
+}
+
+.external-icon {
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 1.2em;
+    height: 1.2em;
+}
+
+section img {
+    max-width: 100%;
+    height: auto;
+}

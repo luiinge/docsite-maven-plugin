@@ -9,8 +9,9 @@ import com.vdurmont.emoji.EmojiParser;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.data.MutableDataSet;
+import docsite.util.*;
 import j2html.tags.specialized.*;
-import static docsite.EmitterUtil.*;
+import static docsite.util.EmitterUtil.*;
 import static j2html.TagCreator.*;
 
 public abstract class SectionEmitter {

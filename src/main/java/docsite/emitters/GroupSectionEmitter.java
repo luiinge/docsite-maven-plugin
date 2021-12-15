@@ -1,10 +1,11 @@
 package docsite.emitters;
 
 
-import static docsite.EmitterUtil.*;
+import static docsite.util.EmitterUtil.*;
 import static j2html.TagCreator.*;
 
 import docsite.*;
+import docsite.util.EmitterUtil;
 import j2html.tags.ContainerTag;
 import j2html.tags.specialized.*;
 
