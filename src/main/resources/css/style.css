@@ -94,9 +94,7 @@ header > nav > ul > li {
 header > nav > ul > li > ul{
     display: none;
 }
-header > nav > ul > li:hover {
-    border-bottom: 0.1em solid var(--menu-bold-background-color);
-}
+
 header > nav > ul > li:hover > ul, header > nav > ul > li:focus-within > ul {
     position: absolute;
     display: inline-block;
@@ -199,7 +197,9 @@ section.embedded > iframe {
     width: 100%;
     height: 100%;
 }
-
+section ol {
+    padding-inline-start: 1em;
+}
 
 .label {
     color: var(--menu-foreground-color);
@@ -222,6 +222,17 @@ a.label:hover {
     padding-right: 0.3em;
 }
 
+pre {
+    font-size: 0.9em !important;
+}
+
+div.footer {
+    font-size: 0.7rem;
+    text-align: right;
+    border-top: 0.1em solid var(--menu-regular-background-color);
+    padding-top: 1em;
+    margin-top: 1em;
+}
 
 
 @media (max-width: 900px) {

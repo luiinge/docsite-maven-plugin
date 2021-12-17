@@ -17,7 +17,7 @@ providing the following benefits:
 - Responsiveness
 - Usage of HTML5 semantic tags (aimed to get good SEO positioning)
 
-This very site has been generated using Docsite (check [the site](https://luiinge.github.io/docsite-maven-plugin/) 
+> This very site has been generated using Docsite (check [the site](https://luiinge.github.io/docsite-maven-plugin/) 
 in case you are reading this document from Github).
 
 Usage
