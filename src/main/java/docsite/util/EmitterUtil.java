@@ -1,16 +1,21 @@
 package docsite.util;
 
 import java.nio.file.*;
+import java.util.Map;
 import java.util.regex.*;
 import static j2html.TagCreator.*;
 import docsite.*;
+import j2html.tags.DomContent;
 import j2html.tags.specialized.*;
 
 public final class EmitterUtil {
 
     private EmitterUtil() { /*avoid instantiation */ }
 
+
     private static Pattern faPattern = Pattern.compile("(fa.?):([^:]+)");
+
+
 
     public static ATag internalLink(String title, String url) {
         return a(title).withClass("internal").withHref(url);
@@ -86,5 +91,8 @@ public final class EmitterUtil {
     }
 
 
+    public static LinkTag stylesheet(String href) {
+        return link().attr("href",href).attr("rel","stylesheet");
+    }
 
 }

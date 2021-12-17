@@ -62,8 +62,23 @@ public class DocSiteTest {
         ))
         .build();
 
-        testSiteGeneration(docsite,"default");
+        testSiteGeneration(docsite,"default",true);
     }
+
+
+    @Test
+    public void testNoCDNl() throws IOException {
+
+        Docsite docsite = Docsite.builder()
+            .title("jExt - A Java library")
+            .description("This is the description of the library")
+            .logo("fab:accessible-icon")
+            .index("src/test/resources/README.md")
+            .build();
+
+        testSiteGeneration(docsite,"nocdn",false);
+    }
+
 
 
     @Test
@@ -79,7 +94,8 @@ public class DocSiteTest {
             docsite,
             ThemeColors.DEFAULT,
             Path.of("src/test/resources/external-layout.css"),
-            "externalCss"
+            "externalCss",
+            true
         );
     }
 
@@ -101,7 +117,7 @@ public class DocSiteTest {
             .guiElementColor("orange")
             .build();
 
-        testSiteGeneration(docsite, themeColors, null, "colors");
+        testSiteGeneration(docsite, themeColors, null, "colors", true);
 
     }
 
@@ -127,7 +143,7 @@ public class DocSiteTest {
             ))
             .build();
 
-        testSiteGeneration(docsite, "externalIcon");
+        testSiteGeneration(docsite, "externalIcon", true);
     }
 
 
@@ -139,7 +155,7 @@ public class DocSiteTest {
             .index("src/test/resources/README.html")
             .build();
 
-        testSiteGeneration(docsite, "htmlIndex");
+        testSiteGeneration(docsite, "htmlIndex", true);
 
     }
 
@@ -158,13 +174,14 @@ public class DocSiteTest {
                     .build()
             )).build();
 
-        testSiteGeneration(docsite, "template");
+        testSiteGeneration(docsite, "template", true);
 
     }
 
 
-    private void testSiteGeneration(Docsite docsite, String outputFolderName) throws IOException {
-        testSiteGeneration(docsite, ThemeColors.DEFAULT, null, outputFolderName);
+    private void testSiteGeneration(Docsite docsite, String outputFolderName, boolean useCDN)
+    throws IOException {
+        testSiteGeneration(docsite, ThemeColors.DEFAULT, null, outputFolderName, useCDN);
     }
 
 
@@ -172,7 +189,8 @@ public class DocSiteTest {
         Docsite configuration,
         ThemeColors themeColors,
         Path cssFile,
-        String outputFolderName
+        String outputFolderName,
+        boolean useCDN
     ) throws IOException {
 
         Path outputFolder = Path.of("target/testsites").resolve(outputFolderName);
@@ -187,6 +205,8 @@ public class DocSiteTest {
             Files.createDirectories(outputFolder);
         }
 
-        new DocsiteEmitter(configuration,themeColors,cssFile,outputFolder).generateSite();
+        new DocsiteEmitter(configuration,themeColors,cssFile,useCDN,outputFolder).generateSite();
+
+        Logger.instance().info("file://"+outputFolder.resolve("index.html").toAbsolutePath().toString());
     }
 }

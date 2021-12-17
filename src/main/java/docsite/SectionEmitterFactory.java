@@ -16,13 +16,16 @@ public class SectionEmitterFactory {
         Docsite site,
         ImageResolver globalImages,
         ThemeColors themeColors,
-        Path outputFolder
+        Path outputFolder,
+        boolean useCDN
     ) {
         this.buildParams = new EmitterBuildParams()
             .site(site)
             .themeColors(themeColors)
             .outputFolder(outputFolder)
-            .globalImages(globalImages);
+            .globalImages(globalImages)
+            .useCDN(useCDN)
+        ;
     }
 
 

@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.regex.*;
 import com.vdurmont.emoji.EmojiParser;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
@@ -32,6 +33,7 @@ public abstract class SectionEmitter {
     protected final String origin;
     protected final ImageResolver sectionImages;
     protected final ImageResolver globalImages;
+    protected final boolean useCDN;
 
     protected final SectionEmitter rootEmitter;
     protected final List<SectionEmitter> ancestorEmitters;
@@ -55,6 +57,7 @@ public abstract class SectionEmitter {
             outputFolder.resolve("images").resolve(section.name()),
             Path.of(origin)
         );
+        this.useCDN = params.useCDN();
     }
 
 
@@ -93,16 +96,21 @@ public abstract class SectionEmitter {
         SectionTag sectionContent = createSectionContent();
         if (includeFooter) {
             sectionContent.with(rawHtml(
-                "<div>"+
-                "Generated with <a href=\"https://github.com/luiinge/docsite-maven-plugin\">Docsite</a>. "+
+                "<div class=\"footer\">"+
+                "Generated with <a href=\"https://luiinge.github.io/docsite-maven-plugin/\">Docsite</a>. "+
                 "Last published on "+ LocalDate.now()+
                 "</div>"
             ));
         }
         AsideTag tableOfContents = createTableOfContents(sectionContent);
 
+        HeadTag head = htmlHead();
+        if (useCDN) {
+            addPrismComponents(head, sectionContent);
+        }
+
         HtmlTag htmlObject = html().with(
-            htmlHead(),
+            head,
             body()
                 .withCondClass(tableOfContents.getNumChildren() == 0, "empty-aside")
                 .with(
@@ -172,14 +180,21 @@ public abstract class SectionEmitter {
             .with(meta().withCharset("UTF-8"))
             .with(meta().withName("viewport").withContent("width=device-width, initial-scale=1.0"))
             ;
-        for (String css : ResourceUtil.getResourceFiles("css")) {
-            head.with(link().attr("href","css/"+css).attr("rel","stylesheet"));
-        }
-        head.with(link().attr("href","css/style.css").attr("rel","stylesheet"));
 
-        for (String js : ResourceUtil.getResourceFiles("js")) {
-            head.with(script().attr("src","js/"+js));
+        if (useCDN) {
+            CDNResources.css("fontawesome.min").ifPresent(head::with);
+            CDNResources.css("prism.min").ifPresent(head::with);
+            CDNResources.js("prism.min").ifPresent(head::with);
+        } else {
+            head.with(stylesheet("css/font-awesome-all.css"));
+            head.with(script().attr("src","js/prism.js"));
+            head.with(stylesheet("css/prism.min.css"));
         }
+
+
+        head.with(stylesheet("css/common.css"));
+        head.with(stylesheet("css/style.css"));
+
 
         String themeStyle =
             ":root {\n"+
@@ -262,4 +277,15 @@ public abstract class SectionEmitter {
         logger.info("Written file {}", outputPath());
     }
 
+
+    private void addPrismComponents(HeadTag head, SectionTag section) {
+        Pattern pattern = Pattern.compile("<code\\s*class=\"\\s*language-([^\\s\"]+)");
+        String html = section.render();
+        Matcher matcher = pattern.matcher(html);
+        Set<String> languages = new HashSet<>();
+        while (matcher.find()) {
+            languages.add("prism."+matcher.group(1));
+        }
+        languages.forEach(lang -> CDNResources.js(lang).ifPresent(head::with));
+    }
 }

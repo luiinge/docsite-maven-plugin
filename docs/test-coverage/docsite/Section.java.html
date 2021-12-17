@@ -70,68 +70,69 @@ public class Section {
 
 
 
+
     public static SectionBuilder builder() {
-<span class="fc" id="L74">        return new SectionBuilder();</span>
+<span class="fc" id="L75">        return new SectionBuilder();</span>
     }
 
 
     public String name() {
-<span class="fc" id="L79">        return Objects.requireNonNullElse(this.name,&quot;&quot;);</span>
+<span class="fc" id="L80">        return Objects.requireNonNullElse(this.name,&quot;&quot;);</span>
     }
 
 
     public String description() {
-<span class="fc" id="L84">        return this.description;</span>
+<span class="fc" id="L85">        return this.description;</span>
     }
 
 
     public String icon() {
-<span class="fc" id="L89">        return this.icon;</span>
+<span class="fc" id="L90">        return this.icon;</span>
     }
 
 
     public String source() {
-<span class="fc" id="L94">        return this.source;</span>
+<span class="fc" id="L95">        return this.source;</span>
     }
 
 
     public SectionType type() {
-<span class="fc" id="L99">        return this.type;</span>
-    }
-
-
-    public String siteIndex() {
-<span class="fc" id="L104">        return this.siteIndex;</span>
+<span class="fc" id="L100">        return this.type;</span>
     }
 
 
     public String template() {
-<span class="fc" id="L109">        return this.template;</span>
+<span class="fc" id="L105">        return this.template;</span>
     }
 
 
 
     public List&lt;Section&gt; subsections() {
-<span class="fc bfc" id="L115" title="All 2 branches covered.">        return subsections == null ? List.of() : subsections;</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        return subsections == null ? List.of() : subsections;</span>
     }
 
 
     public Boolean replaceEmojis() {
-<span class="fc" id="L120">        return Objects.requireNonNullElse(replaceEmojis, Boolean.TRUE);</span>
+<span class="fc" id="L116">        return Objects.requireNonNullElse(replaceEmojis, Boolean.TRUE);</span>
+    }
+
+
+    public String siteIndex() {
+<span class="fc" id="L121">        return Objects.requireNonNullElse(siteIndex, &quot;index.html&quot;);</span>
     }
 
 
     public boolean isValid() {
-<span class="pc bpc" id="L125" title="1 of 4 branches missed.">        switch (type) {</span>
+<span class="pc bpc" id="L126" title="1 of 4 branches missed.">        switch (type) {</span>
             case generated:
             case embedded:
-<span class="fc" id="L128">                return ResourceUtil.existsSource(source);</span>
+<span class="fc" id="L129">                return ResourceUtil.existsSource(source);</span>
             case link:
-<span class="pc bpc" id="L130" title="1 of 2 branches missed.">                return source != null;</span>
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">                return source != null;</span>
             case group:
-<span class="pc bpc" id="L132" title="1 of 2 branches missed.">                return !subsections().isEmpty();</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">                return !subsections().isEmpty();</span>
             default:
-<span class="nc" id="L134">                return true;</span>
+<span class="nc" id="L135">                return true;</span>
         }
     }
 
@@ -149,66 +150,66 @@ public class Section {
         private String template;
 
 
-<span class="fc" id="L152">        SectionBuilder() {</span>
-<span class="fc" id="L153">        }</span>
+<span class="fc" id="L153">        SectionBuilder() {</span>
+<span class="fc" id="L154">        }</span>
 
 
         public SectionBuilder name(String name) {
-<span class="fc" id="L157">            this.name = name;</span>
-<span class="fc" id="L158">            return this;</span>
+<span class="fc" id="L158">            this.name = name;</span>
+<span class="fc" id="L159">            return this;</span>
         }
 
 
         public SectionBuilder description(String description) {
-<span class="fc" id="L163">            this.description = description;</span>
-<span class="fc" id="L164">            return this;</span>
+<span class="fc" id="L164">            this.description = description;</span>
+<span class="fc" id="L165">            return this;</span>
         }
 
 
         public SectionBuilder icon(String icon) {
-<span class="fc" id="L169">            this.icon = icon;</span>
-<span class="fc" id="L170">            return this;</span>
+<span class="fc" id="L170">            this.icon = icon;</span>
+<span class="fc" id="L171">            return this;</span>
         }
 
 
         public SectionBuilder source(String source) {
-<span class="fc" id="L175">            this.source = source;</span>
-<span class="fc" id="L176">            return this;</span>
+<span class="fc" id="L176">            this.source = source;</span>
+<span class="fc" id="L177">            return this;</span>
         }
 
 
         public SectionBuilder type(SectionType type) {
-<span class="fc" id="L181">            this.type = type;</span>
-<span class="fc" id="L182">            return this;</span>
+<span class="fc" id="L182">            this.type = type;</span>
+<span class="fc" id="L183">            return this;</span>
         }
 
 
         public SectionBuilder siteIndex(String siteIndex) {
-<span class="fc" id="L187">            this.siteIndex = siteIndex;</span>
-<span class="fc" id="L188">            return this;</span>
+<span class="fc" id="L188">            this.siteIndex = siteIndex;</span>
+<span class="fc" id="L189">            return this;</span>
         }
 
 
         public SectionBuilder subsections(List&lt;Section&gt; subsections) {
-<span class="fc" id="L193">            this.subsections = subsections;</span>
-<span class="fc" id="L194">            return this;</span>
+<span class="fc" id="L194">            this.subsections = subsections;</span>
+<span class="fc" id="L195">            return this;</span>
         }
 
 
         public SectionBuilder replaceEmojis(Boolean replaceEmojis) {
-<span class="nc" id="L199">            this.replaceEmojis = replaceEmojis;</span>
-<span class="nc" id="L200">            return this;</span>
+<span class="nc" id="L200">            this.replaceEmojis = replaceEmojis;</span>
+<span class="nc" id="L201">            return this;</span>
         }
 
 
         public SectionBuilder template(String template) {
-<span class="fc" id="L205">            this.template = template;</span>
-<span class="fc" id="L206">            return this;</span>
+<span class="fc" id="L206">            this.template = template;</span>
+<span class="fc" id="L207">            return this;</span>
         }
 
 
         public Section build() {
-<span class="fc" id="L211">            return new Section(name, description, icon, source, type, siteIndex, subsections, replaceEmojis, template);</span>
+<span class="fc" id="L212">            return new Section(name, description, icon, source, type, siteIndex, subsections, replaceEmojis, template);</span>
         }
 
 

@@ -14,61 +14,68 @@ public class DocsiteEmitter {
     private final ThemeColors themeColors;
     private final Path outputFolder;
     private final Path cssFile;
+    private final boolean useCDN;
 
 
     public DocsiteEmitter(
         Docsite docsite,
         ThemeColors themeColors,
         Path cssFile,
+        boolean useCDN,
         Path outputFolder
-<span class="fc" id="L24">    ) {</span>
-<span class="fc" id="L25">        this.site = docsite;</span>
-<span class="fc" id="L26">        this.themeColors = themeColors;</span>
-<span class="fc" id="L27">        this.cssFile = cssFile;</span>
-<span class="fc" id="L28">        this.outputFolder = outputFolder;</span>
-<span class="fc" id="L29">        this.globalImages = new ImageResolver(outputFolder.resolve(&quot;images&quot;));</span>
-<span class="fc" id="L30">    }</span>
+<span class="fc" id="L26">    ) {</span>
+<span class="fc" id="L27">        this.site = docsite;</span>
+<span class="fc" id="L28">        this.themeColors = themeColors;</span>
+<span class="fc" id="L29">        this.cssFile = cssFile;</span>
+<span class="fc" id="L30">        this.outputFolder = outputFolder;</span>
+<span class="fc" id="L31">        this.globalImages = new ImageResolver(outputFolder.resolve(&quot;images&quot;));</span>
+<span class="fc" id="L32">        this.useCDN = useCDN;</span>
+<span class="fc" id="L33">    }</span>
 
 
     public void generateSite() throws IOException {
-<span class="fc" id="L34">        prepareCommonResources();</span>
-<span class="fc" id="L35">        SectionEmitterFactory emitterFactory = new SectionEmitterFactory(</span>
+<span class="fc" id="L37">        prepareCommonResources();</span>
+<span class="fc" id="L38">        SectionEmitterFactory emitterFactory = new SectionEmitterFactory(</span>
             site,
             globalImages,
             themeColors,
-            outputFolder
+            outputFolder,
+            useCDN
         );
-<span class="fc" id="L41">        emitterFactory.createEmitter(site.home()).emitHTML(true);</span>
-<span class="fc" id="L42">   }</span>
+<span class="fc" id="L45">        emitterFactory.createEmitter(site.home()).emitHTML(true);</span>
+<span class="fc" id="L46">   }</span>
 
 
 
     private void prepareCommonResources() throws IOException {
-<span class="fc" id="L47">        logger.debug(&quot;Copying common resources...&quot;);</span>
-<span class="fc" id="L48">        Path cssFolder = outputFolder.resolve(&quot;css&quot;);</span>
-<span class="fc bfc" id="L49" title="All 2 branches covered.">        if (cssFile == null) {</span>
-<span class="fc" id="L50">            ResourceUtil.copyResource(&quot;style.css&quot;, cssFolder);</span>
+<span class="fc" id="L51">        logger.debug(&quot;Copying common resources...&quot;);</span>
+<span class="fc" id="L52">        Path cssFolder = outputFolder.resolve(&quot;css&quot;);</span>
+<span class="fc" id="L53">        Path jsFolder = outputFolder.resolve(&quot;js&quot;);</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        if (cssFile == null) {</span>
+<span class="fc" id="L55">            ResourceUtil.copyResource(&quot;css/style.css&quot;, cssFolder);</span>
         } else {
-<span class="fc" id="L52">            ResourceUtil.copyExternalFileWithAnotherName(cssFile, cssFolder, &quot;style.css&quot;);</span>
+<span class="fc" id="L57">            ResourceUtil.copyExternalFileWithAnotherName(cssFile, cssFolder, &quot;style.css&quot;);</span>
         }
-<span class="fc" id="L54">        ResourceUtil.copyResourceFolder(&quot;css&quot;, outputFolder);</span>
-<span class="fc" id="L55">        ResourceUtil.copyResourceFolder(&quot;js&quot;,  outputFolder);</span>
-<span class="fc" id="L56">        ResourceUtil.copyResourceFolder(&quot;webfonts&quot;,  outputFolder);</span>
-
-<span class="fc" id="L58">        site.sections().forEach(this::copyEmbeddedSites);</span>
-<span class="fc" id="L59">    }</span>
+<span class="fc" id="L59">        ResourceUtil.copyResource(&quot;css/common.css&quot;, cssFolder);</span>
+<span class="fc" id="L60">        ResourceUtil.copyResource(&quot;css/prism.min.css&quot;, cssFolder);</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        if (!useCDN) {</span>
+<span class="fc" id="L62">            ResourceUtil.copyResource(&quot;js/prism.js&quot;, jsFolder);</span>
+<span class="fc" id="L63">            ResourceUtil.copyResourceFolder(&quot;webfonts&quot;,  outputFolder);</span>
+        }
+<span class="fc" id="L65">        site.sections().forEach(this::copyEmbeddedSites);</span>
+<span class="fc" id="L66">    }</span>
 
 
     private void copyEmbeddedSites(Section section) {
-<span class="fc" id="L63">        logger.debug(&quot;Copying embedded site {}&quot;, section.source());</span>
-<span class="pc bpc" id="L64" title="1 of 4 branches missed.">        if (section.type() == Section.SectionType.embedded &amp;&amp; section.isValid()) {</span>
-<span class="fc" id="L65">            ResourceUtil.copyFolder(</span>
-<span class="fc" id="L66">                Path.of(section.source()),</span>
-<span class="fc" id="L67">                outputFolder.resolve(EmitterUtil.href(section.name()))</span>
+<span class="fc" id="L70">        logger.debug(&quot;Copying embedded site {}&quot;, section.source());</span>
+<span class="pc bpc" id="L71" title="1 of 4 branches missed.">        if (section.type() == Section.SectionType.embedded &amp;&amp; section.isValid()) {</span>
+<span class="fc" id="L72">            ResourceUtil.copyFolder(</span>
+<span class="fc" id="L73">                Path.of(section.source()),</span>
+<span class="fc" id="L74">                outputFolder.resolve(EmitterUtil.href(section.name()))</span>
             );
         }
-<span class="fc" id="L70">        section.subsections().forEach(this::copyEmbeddedSites);</span>
-<span class="fc" id="L71">    }</span>
+<span class="fc" id="L77">        section.subsections().forEach(this::copyEmbeddedSites);</span>
+<span class="fc" id="L78">    }</span>
 
 
 }

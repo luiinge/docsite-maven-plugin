@@ -122,6 +122,9 @@ import docsite.*;
     File cssFile;
 
 
+    @Parameter(name = &quot;useCDN&quot;, defaultValue = &quot;true&quot;, property = &quot;docsite.useCDN&quot;)
+    boolean useCDN;
+
 
     @Parameter( defaultValue = &quot;${project}&quot;, readonly = true )
     MavenProject project;
@@ -129,58 +132,59 @@ import docsite.*;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
 
-<span class="nc" id="L132">        initializeLogger();</span>
+<span class="nc" id="L135">        initializeLogger();</span>
 
-<span class="nc" id="L134">        File[] outputFolderContent = Objects.requireNonNullElse(</span>
-<span class="nc" id="L135">            outputFolder.listFiles(),</span>
+<span class="nc" id="L137">        File[] outputFolderContent = Objects.requireNonNullElse(</span>
+<span class="nc" id="L138">            outputFolder.listFiles(),</span>
             new File[0]
         );
 
         try {
-<span class="nc bnc" id="L140" title="All 4 branches missed.">            if (outputFolder.exists() &amp;&amp; outputFolderContent.length &gt; 0) {</span>
-<span class="nc bnc" id="L141" title="All 2 branches missed.">                if (forceDelete) {</span>
-<span class="nc" id="L142">                    Logger.instance().warn(&quot;The contents of output folder {} will be deleted&quot;, outputFolder);</span>
-<span class="nc" id="L143">                    ResourceUtil.deleteDirectory(outputFolder.toPath());</span>
+<span class="nc bnc" id="L143" title="All 4 branches missed.">            if (outputFolder.exists() &amp;&amp; outputFolderContent.length &gt; 0) {</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed.">                if (forceDelete) {</span>
+<span class="nc" id="L145">                    Logger.instance().warn(&quot;The contents of output folder {} will be deleted&quot;, outputFolder);</span>
+<span class="nc" id="L146">                    ResourceUtil.deleteDirectory(outputFolder.toPath());</span>
                 } else {
-<span class="nc" id="L145">                    Logger.instance().error(</span>
+<span class="nc" id="L148">                    Logger.instance().error(</span>
                         &quot;As a safety mechanism, the output folder must be empty. &quot; +
                         &quot;You can disable this check using -Ddocsite.forceDelete&quot;
                     );
-<span class="nc" id="L149">                    throw new MojoFailureException(&quot;The output folder &quot;+outputFolder+&quot; is not empty&quot;);</span>
+<span class="nc" id="L152">                    throw new MojoFailureException(&quot;The output folder &quot;+outputFolder+&quot; is not empty&quot;);</span>
                 }
             }
-<span class="nc" id="L152">            Files.createDirectories(outputFolder.toPath());</span>
+<span class="nc" id="L155">            Files.createDirectories(outputFolder.toPath());</span>
 
-<span class="nc" id="L154">            themeColors = requireNonNullElse(themeColors, ThemeColors.DEFAULT);</span>
+<span class="nc" id="L157">            themeColors = requireNonNullElse(themeColors, ThemeColors.DEFAULT);</span>
 
-<span class="nc bnc" id="L156" title="All 2 branches missed.">            if (docsite == null) {</span>
-<span class="nc" id="L157">                docsite = new Autoconfigurer(project).configuration();</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">            if (docsite == null) {</span>
+<span class="nc" id="L160">                docsite = new Autoconfigurer(project).configuration();</span>
             }
 
-<span class="nc" id="L160">            new DocsiteEmitter(</span>
+<span class="nc" id="L163">            new DocsiteEmitter(</span>
                 docsite,
                 themeColors,
-<span class="nc bnc" id="L163" title="All 2 branches missed.">                cssFile != null ? cssFile.toPath() : null,</span>
-<span class="nc" id="L164">                outputFolder.toPath()</span>
-<span class="nc" id="L165">            ).generateSite();</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">                cssFile != null ? cssFile.toPath() : null,</span>
+                useCDN,
+<span class="nc" id="L168">                outputFolder.toPath()</span>
+<span class="nc" id="L169">            ).generateSite();</span>
 
-<span class="nc" id="L167">        } catch (IOException e) {</span>
-<span class="nc" id="L168">            throw new MojoFailureException(&quot;Error generating site&quot;,e);</span>
-<span class="nc" id="L169">        }</span>
+<span class="nc" id="L171">        } catch (IOException e) {</span>
+<span class="nc" id="L172">            throw new MojoFailureException(&quot;Error generating site&quot;,e);</span>
+<span class="nc" id="L173">        }</span>
 
 
-<span class="nc" id="L172">    }</span>
+<span class="nc" id="L176">    }</span>
 
 
     private void initializeLogger() {
-<span class="nc" id="L176">        Logger.initialize(new Logger(</span>
-<span class="nc" id="L177">            getLog()::debug,</span>
-<span class="nc" id="L178">            getLog()::debug,</span>
-<span class="nc" id="L179">            getLog()::info,</span>
-<span class="nc" id="L180">            getLog()::warn,</span>
-<span class="nc" id="L181">            getLog()::error</span>
+<span class="nc" id="L180">        Logger.initialize(new Logger(</span>
+<span class="nc" id="L181">            getLog()::debug,</span>
+<span class="nc" id="L182">            getLog()::debug,</span>
+<span class="nc" id="L183">            getLog()::info,</span>
+<span class="nc" id="L184">            getLog()::warn,</span>
+<span class="nc" id="L185">            getLog()::error</span>
         ));
-<span class="nc" id="L183">    }</span>
+<span class="nc" id="L187">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

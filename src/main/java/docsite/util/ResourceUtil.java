@@ -14,7 +14,7 @@ public final class ResourceUtil {
 
     private static final Map<String,List<String>> STATIC_RESOURCES = Map.of(
         "css", List.of(
-            "common.css",
+            "css/common.css",
             "font-awesome-all.css",
             "prism-light.css"
         ),

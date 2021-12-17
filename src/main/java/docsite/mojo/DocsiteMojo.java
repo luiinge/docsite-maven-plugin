@@ -122,6 +122,9 @@ public class DocsiteMojo extends AbstractMojo {
     File cssFile;
 
 
+    @Parameter(name = "useCDN", defaultValue = "true", property = "docsite.useCDN")
+    boolean useCDN;
+
 
     @Parameter( defaultValue = "${project}", readonly = true )
     MavenProject project;
@@ -161,6 +164,7 @@ public class DocsiteMojo extends AbstractMojo {
                 docsite,
                 themeColors,
                 cssFile != null ? cssFile.toPath() : null,
+                useCDN,
                 outputFolder.toPath()
             ).generateSite();
 

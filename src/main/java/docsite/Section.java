@@ -70,6 +70,7 @@ public class Section {
 
 
 
+
     public static SectionBuilder builder() {
         return new SectionBuilder();
     }
@@ -100,11 +101,6 @@ public class Section {
     }
 
 
-    public String siteIndex() {
-        return this.siteIndex;
-    }
-
-
     public String template() {
         return this.template;
     }
@@ -118,6 +114,11 @@ public class Section {
 
     public Boolean replaceEmojis() {
         return Objects.requireNonNullElse(replaceEmojis, Boolean.TRUE);
+    }
+
+
+    public String siteIndex() {
+        return Objects.requireNonNullElse(siteIndex, "index.html");
     }
 
 

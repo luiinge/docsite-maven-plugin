@@ -14,12 +14,14 @@ public class DocsiteEmitter {
     private final ThemeColors themeColors;
     private final Path outputFolder;
     private final Path cssFile;
+    private final boolean useCDN;
 
 
     public DocsiteEmitter(
         Docsite docsite,
         ThemeColors themeColors,
         Path cssFile,
+        boolean useCDN,
         Path outputFolder
     ) {
         this.site = docsite;
@@ -27,6 +29,7 @@ public class DocsiteEmitter {
         this.cssFile = cssFile;
         this.outputFolder = outputFolder;
         this.globalImages = new ImageResolver(outputFolder.resolve("images"));
+        this.useCDN = useCDN;
     }
 
 
@@ -36,7 +39,8 @@ public class DocsiteEmitter {
             site,
             globalImages,
             themeColors,
-            outputFolder
+            outputFolder,
+            useCDN
         );
         emitterFactory.createEmitter(site.home()).emitHTML(true);
    }
@@ -46,15 +50,18 @@ public class DocsiteEmitter {
     private void prepareCommonResources() throws IOException {
         logger.debug("Copying common resources...");
         Path cssFolder = outputFolder.resolve("css");
+        Path jsFolder = outputFolder.resolve("js");
         if (cssFile == null) {
-            ResourceUtil.copyResource("style.css", cssFolder);
+            ResourceUtil.copyResource("css/style.css", cssFolder);
         } else {
             ResourceUtil.copyExternalFileWithAnotherName(cssFile, cssFolder, "style.css");
         }
-        ResourceUtil.copyResourceFolder("css", outputFolder);
-        ResourceUtil.copyResourceFolder("js",  outputFolder);
-        ResourceUtil.copyResourceFolder("webfonts",  outputFolder);
-
+        ResourceUtil.copyResource("css/common.css", cssFolder);
+        ResourceUtil.copyResource("css/prism.min.css", cssFolder);
+        if (!useCDN) {
+            ResourceUtil.copyResource("js/prism.js", jsFolder);
+            ResourceUtil.copyResourceFolder("webfonts",  outputFolder);
+        }
         site.sections().forEach(this::copyEmbeddedSites);
     }
 
