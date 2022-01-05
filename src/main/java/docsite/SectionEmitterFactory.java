@@ -17,7 +17,9 @@ public class SectionEmitterFactory {
         ImageResolver globalImages,
         ThemeColors themeColors,
         Path outputFolder,
-        boolean useCDN
+        boolean useCDN,
+        Map<String,String> metadata,
+        List<Script> scripts
     ) {
         this.buildParams = new EmitterBuildParams()
             .site(site)
@@ -25,6 +27,8 @@ public class SectionEmitterFactory {
             .outputFolder(outputFolder)
             .globalImages(globalImages)
             .useCDN(useCDN)
+            .metadata(metadata)
+            .scripts(scripts)
         ;
     }
 

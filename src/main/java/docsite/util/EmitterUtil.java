@@ -1,11 +1,9 @@
 package docsite.util;
 
 import java.nio.file.*;
-import java.util.Map;
 import java.util.regex.*;
 import static j2html.TagCreator.*;
 import docsite.*;
-import j2html.tags.DomContent;
 import j2html.tags.specialized.*;
 
 public final class EmitterUtil {

@@ -27,7 +27,7 @@ public class DocSiteTest {
     @Test
     public void testMarkdownToHtml() throws IOException {
 
-        Docsite docsite = Docsite.builder()
+        Docsite docsite = new Docsite()
         .title("jExt - A Java library")
         .description("This is the description of the library")
         .logo("fab:accessible-icon")
@@ -59,8 +59,7 @@ public class DocSiteTest {
                 .source("https://github.com/luiinge/jext")
                 .icon("fab:github")
                 .build()
-        ))
-        .build();
+        ));
 
         testSiteGeneration(docsite,"default",true);
     }
@@ -69,12 +68,12 @@ public class DocSiteTest {
     @Test
     public void testNoCDNl() throws IOException {
 
-        Docsite docsite = Docsite.builder()
+        Docsite docsite = new Docsite()
             .title("jExt - A Java library")
             .description("This is the description of the library")
             .logo("fab:accessible-icon")
             .index("src/test/resources/README.md")
-            .build();
+            ;
 
         testSiteGeneration(docsite,"nocdn",false);
     }
@@ -84,11 +83,11 @@ public class DocSiteTest {
     @Test
     public void testExternalCss() throws IOException {
 
-        Docsite docsite = Docsite.builder()
+        Docsite docsite = new Docsite()
             .title("jExt - A Java library")
             .description("This is the description of the library")
             .index("src/test/resources/README.md")
-            .build();
+            ;
 
         testSiteGeneration(
             docsite,
@@ -103,11 +102,11 @@ public class DocSiteTest {
     @Test
     public void testCustomColors() throws IOException {
 
-        Docsite docsite = Docsite.builder()
+        Docsite docsite = new Docsite()
             .title("jExt - A Java library")
             .description("This is the description of the library")
             .index("src/test/resources/README.md")
-            .build();
+            ;
 
         ThemeColors themeColors = ThemeColors.builder()
             .menuRegularBackgroundColor("red")
@@ -125,9 +124,10 @@ public class DocSiteTest {
     @Test
     public void testExternalIcons() throws IOException {
 
-        Docsite docsite = Docsite.builder()
+        Docsite docsite = new Docsite()
             .title("jExt - A Java library")
             .logo("src/test/resources/external-icon.png")
+            .favicon("src/test/resources/external-icon.png")
             .index("src/test/resources/README.md")
             .sections(List.of(
                 link()
@@ -141,7 +141,7 @@ public class DocSiteTest {
                     .icon("src/test/resources/external-icon.png")
                     .build()
             ))
-            .build();
+            ;
 
         testSiteGeneration(docsite, "externalIcon", true);
     }
@@ -150,10 +150,10 @@ public class DocSiteTest {
     @Test
     public void testHtmlIndex() throws IOException {
 
-        Docsite docsite = Docsite.builder()
+        Docsite docsite = new Docsite()
             .title("jExt")
             .index("src/test/resources/README.html")
-            .build();
+            ;
 
         testSiteGeneration(docsite, "htmlIndex", true);
 
@@ -164,7 +164,7 @@ public class DocSiteTest {
     @Test
     public void testTemplate() throws IOException {
 
-        Docsite docsite = Docsite.builder()
+        Docsite docsite = new Docsite()
             .title("jExt")
             .index("src/test/resources/README.html")
             .sections(List.of(
@@ -172,7 +172,7 @@ public class DocSiteTest {
                     .source("src/test/resources/plugin.xml")
                     .template("maven-plugin-descriptor")
                     .build()
-            )).build();
+            ));
 
         testSiteGeneration(docsite, "template", true);
 
@@ -205,7 +205,15 @@ public class DocSiteTest {
             Files.createDirectories(outputFolder);
         }
 
-        new DocsiteEmitter(configuration,themeColors,cssFile,useCDN,outputFolder).generateSite();
+        new DocsiteEmitter(
+            configuration,
+            themeColors,
+            cssFile,
+            useCDN,
+            outputFolder,
+            new HashMap<>(),
+            new ArrayList<>()
+        ).generateSite();
 
         Logger.instance().info("file://"+outputFolder.resolve("index.html").toAbsolutePath().toString());
     }

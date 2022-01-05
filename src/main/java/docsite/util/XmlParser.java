@@ -6,7 +6,6 @@ import java.util.stream.*;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.*;
 import docsite.*;
-import docsite.util.ResourceUtil;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 

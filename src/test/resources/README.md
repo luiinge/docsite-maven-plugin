@@ -19,6 +19,9 @@ The key concepts are:
 - **Extensions** (classes annotated with `@Extension` and implementing the extension point class)
 - **Extension loaders** that are responsible of discovering extensions for an specific extension point
 
+> This is a quote block
+> that should be rendered in a different style
+
 What is the extra value then?
 
 - Annotation processing of `@Extension` and `@ExtensionPoint` so the classes are

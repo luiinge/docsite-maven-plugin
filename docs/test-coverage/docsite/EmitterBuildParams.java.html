@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EmitterBuildParams.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Docsite Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">docsite</a> &gt; <span class="el_source">EmitterBuildParams.java</span></div><h1>EmitterBuildParams.java</h1><pre class="source lang-java linenums">package docsite;
 
 import java.nio.file.Path;
-import java.util.List;
+import java.util.*;
 import docsite.util.ImageResolver;
 
 
-public class EmitterBuildParams {
+<span class="fc" id="L8">public class EmitterBuildParams {</span>
 
     private Docsite site;
     private SectionEmitter rootEmitter;
@@ -15,161 +15,173 @@ public class EmitterBuildParams {
     private ThemeColors themeColors;
     private Path outputFolder;
     private boolean useCDN;
+    private Map&lt;String,String&gt; metadata;
+    private List&lt;Script&gt; scripts;
 
-
-    public EmitterBuildParams(
-        Docsite site,
-        SectionEmitter rootEmitter,
-        Section section,
-        List&lt;SectionEmitter&gt; ancestorEmitters,
-        ImageResolver globalImages,
-        ThemeColors themeColors,
-        Path outputFolder,
-        boolean useCDN
-<span class="fc" id="L29">    ) {</span>
-<span class="fc" id="L30">        this.site = site;</span>
-<span class="fc" id="L31">        this.rootEmitter = rootEmitter;</span>
-<span class="fc" id="L32">        this.section = section;</span>
-<span class="fc" id="L33">        this.ancestorEmitters = ancestorEmitters;</span>
-<span class="fc" id="L34">        this.globalImages = globalImages;</span>
-<span class="fc" id="L35">        this.themeColors = themeColors;</span>
-<span class="fc" id="L36">        this.outputFolder = outputFolder;</span>
-<span class="fc" id="L37">        this.useCDN = useCDN;</span>
-<span class="fc" id="L38">    }</span>
-
-
-<span class="fc" id="L41">    public EmitterBuildParams() {</span>
-<span class="fc" id="L42">    }</span>
 
 
     public Docsite site() {
-<span class="fc" id="L46">        return this.site;</span>
+<span class="fc" id="L24">        return this.site;</span>
     }
 
 
     public SectionEmitter rootEmitter() {
-<span class="fc" id="L51">        return this.rootEmitter;</span>
+<span class="fc" id="L29">        return this.rootEmitter;</span>
     }
 
 
     public Section section() {
-<span class="fc" id="L56">        return this.section;</span>
+<span class="fc" id="L34">        return this.section;</span>
     }
 
 
     public List&lt;SectionEmitter&gt; ancestorEmitters() {
-<span class="fc" id="L61">        return this.ancestorEmitters;</span>
+<span class="fc" id="L39">        return this.ancestorEmitters;</span>
     }
 
 
     public ThemeColors themeColors() {
-<span class="fc" id="L66">        return themeColors;</span>
+<span class="fc" id="L44">        return themeColors;</span>
     }
 
 
     public Path outputFolder() {
-<span class="fc" id="L71">        return outputFolder;</span>
+<span class="fc" id="L49">        return outputFolder;</span>
     }
 
 
     public ImageResolver globalImages() {
-<span class="fc" id="L76">        return this.globalImages;</span>
+<span class="fc" id="L54">        return this.globalImages;</span>
     }
 
 
     public boolean useCDN() {
-<span class="fc" id="L81">        return this.useCDN;</span>
+<span class="fc" id="L59">        return this.useCDN;</span>
+    }
+
+
+    public Map&lt;String, String&gt; metadata() {
+<span class="fc" id="L64">        return Objects.requireNonNullElseGet(metadata, HashMap::new);</span>
+    }
+
+
+    public List&lt;Script&gt; scripts() {
+<span class="fc" id="L69">        return Objects.requireNonNullElseGet(scripts, ArrayList::new);</span>
     }
 
 
     public EmitterBuildParams withRootEmitter(SectionEmitter rootEmitter) {
-<span class="fc bfc" id="L86" title="All 2 branches covered.">        return this.rootEmitter == rootEmitter ?</span>
-<span class="fc" id="L87">            this :</span>
-<span class="fc" id="L88">            new EmitterBuildParams(</span>
-                this.site,
-                rootEmitter,
-                this.section,
-                this.ancestorEmitters,
-                this.globalImages,
-                this.themeColors,
-                this.outputFolder,
-                this.useCDN
-            );
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        return this.rootEmitter == rootEmitter ?</span>
+<span class="fc" id="L75">            this :</span>
+            new EmitterBuildParams()
+<span class="fc" id="L77">                .site(this.site)</span>
+<span class="fc" id="L78">                .rootEmitter(rootEmitter)</span>
+<span class="fc" id="L79">                .section(this.section)</span>
+<span class="fc" id="L80">                .ancestorEmitters(this.ancestorEmitters)</span>
+<span class="fc" id="L81">                .globalImages(this.globalImages)</span>
+<span class="fc" id="L82">                .themeColors(this.themeColors)</span>
+<span class="fc" id="L83">                .outputFolder(this.outputFolder)</span>
+<span class="fc" id="L84">                .useCDN(this.useCDN)</span>
+<span class="fc" id="L85">                .metadata(this.metadata)</span>
+<span class="fc" id="L86">                .scripts(this.scripts)</span>
+            ;
     }
 
 
     public EmitterBuildParams withSection(Section section) {
-<span class="pc bpc" id="L102" title="1 of 2 branches missed.">        return this.section == section ?</span>
-<span class="nc" id="L103">            this :</span>
-<span class="fc" id="L104">            new EmitterBuildParams(</span>
-                this.site,
-                this.rootEmitter,
-                section,
-                this.ancestorEmitters,
-                this.globalImages,
-                this.themeColors,
-                this.outputFolder,
-                this.useCDN
-            );
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">        return this.section == section ?</span>
+<span class="nc" id="L93">            this :</span>
+            new EmitterBuildParams()
+<span class="fc" id="L95">                .site(this.site)</span>
+<span class="fc" id="L96">                .rootEmitter(this.rootEmitter)</span>
+<span class="fc" id="L97">                .section(section)</span>
+<span class="fc" id="L98">                .ancestorEmitters(this.ancestorEmitters)</span>
+<span class="fc" id="L99">                .globalImages(this.globalImages)</span>
+<span class="fc" id="L100">                .themeColors(this.themeColors)</span>
+<span class="fc" id="L101">                .outputFolder(this.outputFolder)</span>
+<span class="fc" id="L102">                .useCDN(this.useCDN)</span>
+<span class="fc" id="L103">                .metadata(this.metadata)</span>
+<span class="fc" id="L104">                .scripts(this.scripts)</span>
+            ;
     }
 
 
     public EmitterBuildParams withAncestorEmitters(List&lt;SectionEmitter&gt; ancestorEmitters) {
-<span class="pc bpc" id="L118" title="1 of 2 branches missed.">        return this.ancestorEmitters == ancestorEmitters ?</span>
-<span class="nc" id="L119">            this :</span>
-<span class="fc" id="L120">            new EmitterBuildParams(</span>
-                this.site,
-                this.rootEmitter,
-                this.section,
-                ancestorEmitters,
-                this.globalImages,
-                this.themeColors,
-                this.outputFolder,
-                this.useCDN
-            );
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">        return this.ancestorEmitters == ancestorEmitters ?</span>
+<span class="nc" id="L111">            this :</span>
+            new EmitterBuildParams()
+<span class="fc" id="L113">                .site(this.site)</span>
+<span class="fc" id="L114">                .rootEmitter(this.rootEmitter)</span>
+<span class="fc" id="L115">                .section(this.section)</span>
+<span class="fc" id="L116">                .ancestorEmitters(ancestorEmitters)</span>
+<span class="fc" id="L117">                .globalImages(this.globalImages)</span>
+<span class="fc" id="L118">                .themeColors(this.themeColors)</span>
+<span class="fc" id="L119">                .outputFolder(this.outputFolder)</span>
+<span class="fc" id="L120">                .useCDN(this.useCDN)</span>
+<span class="fc" id="L121">                .metadata(this.metadata)</span>
+<span class="fc" id="L122">                .scripts(this.scripts)</span>
+            ;
     }
 
 
 
     public EmitterBuildParams site(Docsite site) {
-<span class="fc" id="L135">        this.site = site;</span>
-<span class="fc" id="L136">        return this;</span>
+<span class="fc" id="L129">        this.site = site;</span>
+<span class="fc" id="L130">        return this;</span>
     }
 
 
     public EmitterBuildParams rootEmitter(SectionEmitter rootEmitter) {
-<span class="nc" id="L141">        this.rootEmitter = rootEmitter;</span>
-<span class="nc" id="L142">        return this;</span>
+<span class="fc" id="L135">        this.rootEmitter = rootEmitter;</span>
+<span class="fc" id="L136">        return this;</span>
     }
 
 
     public EmitterBuildParams section(Section section) {
-<span class="nc" id="L147">        this.section = section;</span>
-<span class="nc" id="L148">        return this;</span>
+<span class="fc" id="L141">        this.section = section;</span>
+<span class="fc" id="L142">        return this;</span>
     }
 
 
     public EmitterBuildParams themeColors(ThemeColors themeColors) {
-<span class="fc" id="L153">        this.themeColors = themeColors;</span>
-<span class="fc" id="L154">        return this;</span>
+<span class="fc" id="L147">        this.themeColors = themeColors;</span>
+<span class="fc" id="L148">        return this;</span>
     }
 
 
     public EmitterBuildParams outputFolder(Path outputFolder) {
-<span class="fc" id="L159">        this.outputFolder = outputFolder;</span>
-<span class="fc" id="L160">        return this;</span>
+<span class="fc" id="L153">        this.outputFolder = outputFolder;</span>
+<span class="fc" id="L154">        return this;</span>
     }
 
 
     public EmitterBuildParams globalImages(ImageResolver globalImages) {
-<span class="fc" id="L165">        this.globalImages = globalImages;</span>
-<span class="fc" id="L166">        return this;</span>
+<span class="fc" id="L159">        this.globalImages = globalImages;</span>
+<span class="fc" id="L160">        return this;</span>
     }
 
 
     public EmitterBuildParams useCDN(boolean useCDN) {
-<span class="fc" id="L171">        this.useCDN = useCDN;</span>
+<span class="fc" id="L165">        this.useCDN = useCDN;</span>
+<span class="fc" id="L166">        return this;</span>
+    }
+
+
+    public EmitterBuildParams ancestorEmitters(List&lt;SectionEmitter&gt; ancestorEmitters) {
+<span class="fc" id="L171">        this.ancestorEmitters = ancestorEmitters;</span>
 <span class="fc" id="L172">        return this;</span>
+    }
+
+
+    public EmitterBuildParams scripts(List&lt;Script&gt; scripts) {
+<span class="fc" id="L177">        this.scripts = scripts;</span>
+<span class="fc" id="L178">        return this;</span>
+    }
+
+
+    public EmitterBuildParams metadata(Map&lt;String, String&gt; metadata) {
+<span class="fc" id="L183">        this.metadata = metadata;</span>
+<span class="fc" id="L184">        return this;</span>
     }
 
 }

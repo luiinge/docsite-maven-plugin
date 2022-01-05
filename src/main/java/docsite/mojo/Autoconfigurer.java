@@ -5,6 +5,7 @@ import java.util.*;
 import docsite.*;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.jetbrains.annotations.NotNull;
 
 public class Autoconfigurer {
 
@@ -18,28 +19,26 @@ public class Autoconfigurer {
     }
 
 
-    public Docsite configuration() throws MojoExecutionException {
-        Docsite.DocsiteBuilder builder = Docsite.builder();
 
-        builder.title(nonNull(project.getName(),project.getArtifactId()));
-        builder.description(nonNull(project.getDescription(),""));
-        builder.index(searchIndex());
-
-        List<Section> sections = new ArrayList<>();
-
-        changelogSection().ifPresent(sections::add);
-        reportsSection().ifPresent(sections::add);
-        vcsSection().ifPresent(sections::add);
-        licenseSection().ifPresent(sections::add);
-
-        builder.sections(sections);
-
-        return builder.build();
-
+    public Docsite configuration(Docsite docsite) throws MojoExecutionException {
+        docsite.title(nonNull(project.getName(),project.getArtifactId()));
+        docsite.description(nonNull(project.getDescription(),""));
+        docsite.index(searchIndex());
+        docsite.sections(createSections());
+        return docsite;
     }
 
 
 
+    @NotNull
+    private List<Section> createSections() {
+        List<Section> sections = new ArrayList<>();
+        changelogSection().ifPresent(sections::add);
+        reportsSection().ifPresent(sections::add);
+        vcsSection().ifPresent(sections::add);
+        licenseSection().ifPresent(sections::add);
+        return sections;
+    }
 
 
     private String searchIndex() throws MojoExecutionException {
@@ -213,8 +212,6 @@ public class Autoconfigurer {
     private static String nonNull(String valueA, String valueB) {
         return valueA == null ? valueB : valueA;
     }
-
-
 
 
 }

@@ -30,7 +30,7 @@ Usage
             <plugin>
                 <groupId>io.github.luiinge</groupId>
                 <artifactId>docsite-maven-plugin</artifactId>
-                <version>1.0.0</version>
+                <version>1.1.0</version>
             </plugin>
         </plugins>
     </build>
@@ -49,7 +49,7 @@ the plugin within the `pom`.
             <plugin>
                 <groupId>io.github.luiinge</groupId>
                 <artifactId>docsite-maven-plugin</artifactId>
-                <version>1.0.0</version>
+                <version>1.1.0</version>
                 <configuration>
                     <docsite>
                         ...
@@ -248,8 +248,8 @@ three different sources according the property value:
 
 ### Github emojis
 [Github](https://github.com) uses a mechanism that replaces specific text markups with icons when 
-displaying 
-certain documents. The pages generated with Docsite would apply the same transformations by 
+displaying certain documents (for example, the following would be rendered as an emoji: :smile:). 
+The pages generated with Docsite would apply the same transformations by 
 default in order to emulate such representation. However, it is possible that some documents 
 use those markups without any emoji intention and hence the generated page would contain 
 unexpected images. If you experience this problem, simply disable the emoji replacement by setting 
@@ -280,6 +280,35 @@ make use of the `DocsiteEmitter` class without a Maven executor. It is, though, 
 that you peek the implementation of `DocsiteMojo` in order to get the idea of the minimum setup
 required.
 
+### Adding analytic features
+If you want to analyze the traffic of your documentation site, you may need to insert custom 
+code into the `head` section, such as specific meta-data or binding scripts. In order to allow 
+that, any custom code can be added using the `metadata` and `scripts` properties. 
+Here you can add your extra code, like in the following example:
+```xml
+<configuration>
+      ...
+      <metadata>
+        <keywords>CSS,Javascript</keywords>
+      </metadata>
+     ...
+      <scripts>
+        <script>
+          <src>https://www.googletagmanager.com/gtag/js?id=XXXXXXX</src>
+          <async>true</async>
+        </script>
+        <script>
+          <code>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){ dataLayer.push(arguments); }
+            gtag('js', new Date());
+            gtag('config', 'XXXXXXXXX');
+          </code>
+        </script>
+      </scripts>
+      ...
+</configuration>
+```
 
 Metrics
 -----------------------------------------------------------------------------------------

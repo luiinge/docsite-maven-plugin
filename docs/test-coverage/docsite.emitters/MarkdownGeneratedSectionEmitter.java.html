@@ -4,8 +4,11 @@
 import java.io.*;
 import java.util.stream.*;
 
-import com.vladsch.flexmark.ast.Heading;
-import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.ast.*;
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.util.ast.*;
+import com.vladsch.flexmark.util.data.MutableDataSet;
 import docsite.*;
 import docsite.util.ResourceUtil;
 import j2html.tags.specialized.*;
@@ -13,28 +16,34 @@ import static j2html.TagCreator.*;
 
 public class MarkdownGeneratedSectionEmitter extends GeneratedSectionEmitter {
 
+
+<span class="fc" id="L20">    protected static final MutableDataSet options = new MutableDataSet();</span>
+<span class="fc" id="L21">    protected static final Parser parser = Parser.builder(options).build();</span>
+<span class="fc" id="L22">    protected static final HtmlRenderer renderer = HtmlRenderer.builder(options).build();</span>
+
+
     public MarkdownGeneratedSectionEmitter(EmitterBuildParams params) {
-<span class="fc" id="L17">        super(params);</span>
-<span class="fc" id="L18">    }</span>
+<span class="fc" id="L26">        super(params);</span>
+<span class="fc" id="L27">    }</span>
 
 
 
     @Override
     protected SectionTag createSectionContent() {
-<span class="fc" id="L24">        try (InputStream markdown = ResourceUtil.open(origin)) {</span>
-<span class="fc" id="L25">            String markdownContent = ResourceUtil.read(markdown);</span>
-<span class="fc" id="L26">            Node document = parser.parse(markdownContent);</span>
-<span class="fc" id="L27">            StreamSupport.stream(document.getChildren().spliterator(), false)</span>
-<span class="fc" id="L28">                .filter(Heading.class::isInstance)</span>
-<span class="fc" id="L29">                .map(Heading.class::cast)</span>
-<span class="fc" id="L30">                .forEach(heading -&gt; heading.setAnchorRefId(hrefId(heading.getAnchorRefText())));</span>
-<span class="fc" id="L31">            String html = renderer.render(document);</span>
-<span class="fc" id="L32">            html = generateHeadersId(html);</span>
-<span class="fc" id="L33">            html = normalizeLinks(html);</span>
-<span class="fc" id="L34">            html = replaceLocalImages(html);</span>
-<span class="fc" id="L35">            return section().with(rawHtml(html)).withClass(&quot;content&quot;);</span>
-<span class="nc" id="L36">        }  catch (IOException e) {</span>
-<span class="nc" id="L37">            throw new DocsiteException(e);</span>
+<span class="fc" id="L33">        try (InputStream markdown = ResourceUtil.open(origin)) {</span>
+<span class="fc" id="L34">            String markdownContent = ResourceUtil.read(markdown);</span>
+<span class="fc" id="L35">            Node document = parser.parse(markdownContent);</span>
+<span class="fc" id="L36">            StreamSupport.stream(document.getChildren().spliterator(), false)</span>
+<span class="fc" id="L37">                .filter(Heading.class::isInstance)</span>
+<span class="fc" id="L38">                .map(Heading.class::cast)</span>
+<span class="fc" id="L39">                .forEach(heading -&gt; heading.setAnchorRefId(hrefId(heading.getAnchorRefText())));</span>
+<span class="fc" id="L40">            String html = renderer.render(document);</span>
+<span class="fc" id="L41">            html = generateHeadersId(html);</span>
+<span class="fc" id="L42">            html = normalizeLinks(html);</span>
+<span class="fc" id="L43">            html = replaceLocalImages(html);</span>
+<span class="fc" id="L44">            return section().with(rawHtml(html)).withClass(&quot;content&quot;);</span>
+<span class="nc" id="L45">        }  catch (IOException e) {</span>
+<span class="nc" id="L46">            throw new DocsiteException(e);</span>
         }
     }
 

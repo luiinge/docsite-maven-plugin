@@ -2,6 +2,7 @@ package docsite;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.*;
 import docsite.util.*;
 
 public class DocsiteEmitter {
@@ -15,6 +16,8 @@ public class DocsiteEmitter {
     private final Path outputFolder;
     private final Path cssFile;
     private final boolean useCDN;
+    private final Map<String,String> metadata;
+    private final List<Script> scripts;
 
 
     public DocsiteEmitter(
@@ -22,7 +25,9 @@ public class DocsiteEmitter {
         ThemeColors themeColors,
         Path cssFile,
         boolean useCDN,
-        Path outputFolder
+        Path outputFolder,
+        Map<String,String> metadata,
+        List<Script> scripts
     ) {
         this.site = docsite;
         this.themeColors = themeColors;
@@ -30,6 +35,8 @@ public class DocsiteEmitter {
         this.outputFolder = outputFolder;
         this.globalImages = new ImageResolver(outputFolder.resolve("images"));
         this.useCDN = useCDN;
+        this.metadata = metadata;
+        this.scripts = scripts;
     }
 
 
@@ -40,7 +47,9 @@ public class DocsiteEmitter {
             globalImages,
             themeColors,
             outputFolder,
-            useCDN
+            useCDN,
+            metadata,
+            scripts
         );
         emitterFactory.createEmitter(site.home()).emitHTML(true);
    }

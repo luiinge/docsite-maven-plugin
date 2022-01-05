@@ -27,3 +27,11 @@ section img {
     max-width: 100%;
     height: auto;
 }
+
+section blockquote {
+    background: #e7f5f7;
+    border-left: 0.5em solid #cfd1d1;
+    margin-inline-start: 0;
+    padding: 1em;
+    font-size: 0.8em;
+}

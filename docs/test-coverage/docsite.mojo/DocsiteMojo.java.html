@@ -4,7 +4,7 @@ import static java.util.Objects.requireNonNullElse;
 
 import java.io.*;
 import java.nio.file.*;
-import java.util.Objects;
+import java.util.*;
 
 import docsite.util.ResourceUtil;
 import org.apache.maven.plugin.*;
@@ -46,6 +46,7 @@ import docsite.*;
      * &lt;pre&gt;&lt;code class=&quot;language-xml&quot;&gt;&amp;lt;title&amp;gt;&amp;lt;/title&amp;gt;
      * &amp;lt;description&amp;gt;&amp;lt;/description&amp;gt;
      * &amp;lt;logo&amp;gt;&amp;lt;/logo&amp;gt;
+     * &amp;lt;favicon&amp;gt;&amp;lt;/favicon&amp;gt;
      * &amp;lt;index&amp;gt;&amp;lt;/index&amp;gt;
      * &amp;lt;sections&amp;gt;
      *     &amp;lt;section&amp;gt;
@@ -72,6 +73,7 @@ import docsite.*;
      * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;title&lt;/tt&gt;&lt;/td&gt;&lt;td&gt; Title of the site. Used in page headers and metadata.&lt;/td&gt;&lt;td&gt;Required&lt;/&lt;td&gt;&lt;/tr&gt;
      * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;description&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;Brief description of the site. Used in page headers and metadata.&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
      * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;logo&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;File image or &lt;a href=&quot;http://https://fontawesome.com/v5.15/icons&quot;&gt;Font Awesome icon&lt;/a&gt;. Used in page headers.&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+     * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;favicon&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;File image. Used by browsers as the page icon.&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
      * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;index&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;Document file (Markdown, HTML or raw text) that would be the landing page.&lt;/td&gt;&lt;td&gt;Required&lt;/td&gt;&lt;/tr&gt;
      * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;sections&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;Main sections of the page. Used in the header navigation menu.&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
      * &lt;/table&gt;
@@ -113,6 +115,41 @@ import docsite.*;
     @Parameter(name = &quot;themeColors&quot;)
     ThemeColors themeColors;
 
+
+    /**
+     * Set extra metadata that would be included in the &lt;tt&gt;head&lt;/tt&gt; section.
+     * &lt;pre&gt;&lt;code class=&quot;language-xml&quot;&gt;&amp;lt;metadata&amp;gt;
+     *   &amp;lt;keyA&amp;gt;valueA&amp;lt;/keyA&amp;gt;
+     *   &amp;lt;keyB&amp;gt;valueB&amp;lt;/keyB&amp;gt;
+     *   ...
+     * &amp;lt;/metadata&amp;gt;
+     * &lt;/code&gt;&lt;/pre&gt;
+     * @since 1.1
+     */
+    @Parameter(name = &quot;metadata&quot;)
+    Map&lt;String,String&gt; metadata;
+
+
+    /**
+     * Set scripts that would be included in the &lt;tt&gt;head&lt;/tt&gt; section
+     * &lt;pre&gt;&lt;code class=&quot;language-xml&quot;&gt;&amp;lt;scripts&amp;gt;
+     *  &amp;lt;script&amp;gt;
+     *     &amp;lt;src&amp;gt;https://remote-script.js&amp;lt;/src&amp;gt;
+     *     &amp;lt;async&amp;gt;true&amp;lt;/async&amp;gt;
+     *  &amp;lt;/script&amp;gt;
+     *  &amp;lt;script&amp;gt;
+     *     &amp;lt;code&amp;gt;
+     *       // JS code
+     *       // ...
+     *     &amp;lt;/code&amp;gt;
+     *  &amp;lt;/script&amp;gt;
+     * &amp;lt;/scripts&amp;gt;
+     * &lt;/code&gt;&lt;/pre&gt;
+     * @since 1.1
+     */
+    @Parameter(name = &quot;scripts&quot;)
+    List&lt;Script&gt; scripts;
+
     /**
      * A local CSS file that would be used instead of the default style, in case you want
      * to use a totally different layout.
@@ -132,59 +169,63 @@ import docsite.*;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
 
-<span class="nc" id="L135">        initializeLogger();</span>
+<span class="nc" id="L172">        initializeLogger();</span>
 
-<span class="nc" id="L137">        File[] outputFolderContent = Objects.requireNonNullElse(</span>
-<span class="nc" id="L138">            outputFolder.listFiles(),</span>
+<span class="nc" id="L174">        File[] outputFolderContent = Objects.requireNonNullElse(</span>
+<span class="nc" id="L175">            outputFolder.listFiles(),</span>
             new File[0]
         );
 
         try {
-<span class="nc bnc" id="L143" title="All 4 branches missed.">            if (outputFolder.exists() &amp;&amp; outputFolderContent.length &gt; 0) {</span>
-<span class="nc bnc" id="L144" title="All 2 branches missed.">                if (forceDelete) {</span>
-<span class="nc" id="L145">                    Logger.instance().warn(&quot;The contents of output folder {} will be deleted&quot;, outputFolder);</span>
-<span class="nc" id="L146">                    ResourceUtil.deleteDirectory(outputFolder.toPath());</span>
+<span class="nc bnc" id="L180" title="All 4 branches missed.">            if (outputFolder.exists() &amp;&amp; outputFolderContent.length &gt; 0) {</span>
+<span class="nc bnc" id="L181" title="All 2 branches missed.">                if (forceDelete) {</span>
+<span class="nc" id="L182">                    Logger.instance().warn(&quot;The contents of output folder {} will be deleted&quot;, outputFolder);</span>
+<span class="nc" id="L183">                    ResourceUtil.deleteDirectory(outputFolder.toPath());</span>
                 } else {
-<span class="nc" id="L148">                    Logger.instance().error(</span>
+<span class="nc" id="L185">                    Logger.instance().error(</span>
                         &quot;As a safety mechanism, the output folder must be empty. &quot; +
                         &quot;You can disable this check using -Ddocsite.forceDelete&quot;
                     );
-<span class="nc" id="L152">                    throw new MojoFailureException(&quot;The output folder &quot;+outputFolder+&quot; is not empty&quot;);</span>
+<span class="nc" id="L189">                    throw new MojoFailureException(&quot;The output folder &quot;+outputFolder+&quot; is not empty&quot;);</span>
                 }
             }
-<span class="nc" id="L155">            Files.createDirectories(outputFolder.toPath());</span>
+<span class="nc" id="L192">            Files.createDirectories(outputFolder.toPath());</span>
 
-<span class="nc" id="L157">            themeColors = requireNonNullElse(themeColors, ThemeColors.DEFAULT);</span>
+<span class="nc" id="L194">            themeColors = requireNonNullElse(themeColors, ThemeColors.DEFAULT);</span>
 
-<span class="nc bnc" id="L159" title="All 2 branches missed.">            if (docsite == null) {</span>
-<span class="nc" id="L160">                docsite = new Autoconfigurer(project).configuration();</span>
-            }
+<span class="nc" id="L196">            Autoconfigurer autoconfigurer = new Autoconfigurer(project);</span>
+<span class="nc" id="L197">            docsite = autoconfigurer.configuration(</span>
+<span class="nc" id="L198">                Objects.requireNonNullElse(docsite, new Docsite())</span>
+            );
 
-<span class="nc" id="L163">            new DocsiteEmitter(</span>
+
+<span class="nc" id="L202">            new DocsiteEmitter(</span>
                 docsite,
                 themeColors,
-<span class="nc bnc" id="L166" title="All 2 branches missed.">                cssFile != null ? cssFile.toPath() : null,</span>
+<span class="nc bnc" id="L205" title="All 2 branches missed.">                cssFile != null ? cssFile.toPath() : null,</span>
                 useCDN,
-<span class="nc" id="L168">                outputFolder.toPath()</span>
-<span class="nc" id="L169">            ).generateSite();</span>
+<span class="nc" id="L207">                outputFolder.toPath(),</span>
+                metadata,
+                scripts
+<span class="nc" id="L210">            ).generateSite();</span>
 
-<span class="nc" id="L171">        } catch (IOException e) {</span>
-<span class="nc" id="L172">            throw new MojoFailureException(&quot;Error generating site&quot;,e);</span>
-<span class="nc" id="L173">        }</span>
+<span class="nc" id="L212">        } catch (IOException e) {</span>
+<span class="nc" id="L213">            throw new MojoFailureException(&quot;Error generating site&quot;,e);</span>
+<span class="nc" id="L214">        }</span>
 
 
-<span class="nc" id="L176">    }</span>
+<span class="nc" id="L217">    }</span>
 
 
     private void initializeLogger() {
-<span class="nc" id="L180">        Logger.initialize(new Logger(</span>
-<span class="nc" id="L181">            getLog()::debug,</span>
-<span class="nc" id="L182">            getLog()::debug,</span>
-<span class="nc" id="L183">            getLog()::info,</span>
-<span class="nc" id="L184">            getLog()::warn,</span>
-<span class="nc" id="L185">            getLog()::error</span>
+<span class="nc" id="L221">        Logger.initialize(new Logger(</span>
+<span class="nc" id="L222">            getLog()::debug,</span>
+<span class="nc" id="L223">            getLog()::debug,</span>
+<span class="nc" id="L224">            getLog()::info,</span>
+<span class="nc" id="L225">            getLog()::warn,</span>
+<span class="nc" id="L226">            getLog()::error</span>
         ));
-<span class="nc" id="L187">    }</span>
+<span class="nc" id="L228">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

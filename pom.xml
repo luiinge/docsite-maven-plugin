@@ -5,11 +5,12 @@
     
     <groupId>io.github.luiinge</groupId>
     <artifactId>docsite-maven-plugin</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <packaging>maven-plugin</packaging>
 
     <name>Docsite Maven Plugin</name>
     <description>A Maven plugin that generates static documentation sites</description>
+    <url>https://luiinge.github.io/docsite-maven-plugin</url>
 
     <scm>
         <url>https://github.com/luiinge/docsite-maven-plugin</url>
@@ -179,6 +180,32 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!--<plugin>
+                <groupId>io.github.luiinge</groupId>
+                <artifactId>docsite-maven-plugin</artifactId>
+                <version>1.1.0</version>
+                <configuration>
+                    <outputFolder>docs</outputFolder>
+                    <forceDelete>true</forceDelete>
+                    <scripts>
+                        <script>
+                            <src>https://www.googletagmanager.com/gtag/js?id=G-5KK3TJ7WBV</src>
+                            <async>true</async>
+                        </script>
+                        <script>
+                            <code>
+                                window.dataLayer = window.dataLayer || [];
+                                function gtag(){dataLayer.push(arguments);}
+                                gtag('js', new Date());
+                                gtag('config', 'G-5KK3TJ7WBV');
+                            </code>
+                        </script>
+                    </scripts>
+                </configuration>
+            </plugin>-->
+
+
         </plugins>
     </build>
 
@@ -192,5 +219,102 @@
         </plugins>
     </reporting>
 
+
+    <profiles><!--Prepare the project for deployment in Maven Central Repository -->
+        <profile>
+            <id>ossrh</id>
+            <build>
+                <plugins>
+                    <!-- Generate additional jar with sources -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.0.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Generate additional jar with javadoc -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <skip>false</skip>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Sign file using GPG -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Nexus staging -->
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.7</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                            <stagingProgressTimeoutMinutes>60</stagingProgressTimeoutMinutes>
+                        </configuration>
+                    </plugin>
+                    <!-- Check vulnerabilities -->
+                    <plugin>
+                        <groupId>org.owasp</groupId>
+                        <artifactId>dependency-check-maven</artifactId>
+                        <version>6.2.2</version>
+                        <executions>
+                            <execution>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                                <configuration>
+                                    <failBuildOnAnyVulnerability>true</failBuildOnAnyVulnerability>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+
+    </profiles>
 
 </project>

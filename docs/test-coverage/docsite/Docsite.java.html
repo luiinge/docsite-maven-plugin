@@ -8,156 +8,89 @@ public class Docsite {
     private String title;
     private String description;
     private String logo;
+    private String favicon;
     private String index;
     private List&lt;Section&gt; sections;
 
 
-<span class="nc" id="L15">    public Docsite() {</span>
+<span class="fc" id="L16">    public Docsite() {</span>
 
-<span class="nc" id="L17">    }</span>
+<span class="fc" id="L18">    }</span>
 
-    public Docsite(
-        String title,
-        String description,
-        String logo,
-        String index,
-        List&lt;Section&gt; sections
-<span class="fc" id="L25">    ) {</span>
-<span class="fc" id="L26">        this.title = title;</span>
-<span class="fc" id="L27">        this.description = description;</span>
-<span class="fc" id="L28">        this.logo = logo;</span>
-<span class="fc" id="L29">        this.index = index;</span>
-<span class="fc" id="L30">        this.sections = Objects.requireNonNullElse(sections, new ArrayList&lt;&gt;());</span>
-<span class="fc" id="L31">    }</span>
-
-
-    public static DocsiteBuilder builder() {
-<span class="fc" id="L35">        return new DocsiteBuilder();</span>
-    }
 
 
     public String title() {
-<span class="fc" id="L40">        return Objects.requireNonNull(title);</span>
+<span class="fc" id="L23">        return Objects.requireNonNull(title);</span>
     }
 
 
     public Section home() {
-<span class="fc" id="L45">        return Section.generated(&quot;index&quot;)</span>
-<span class="fc" id="L46">            .description(description)</span>
-<span class="fc" id="L47">            .source(index)</span>
-<span class="fc" id="L48">            .subsections(sections())</span>
-<span class="fc" id="L49">            .build();</span>
+<span class="fc" id="L28">        return Section.generated(&quot;index&quot;)</span>
+<span class="fc" id="L29">            .description(description)</span>
+<span class="fc" id="L30">            .source(index)</span>
+<span class="fc" id="L31">            .subsections(sections())</span>
+<span class="fc" id="L32">            .build();</span>
     }
 
 
     public String description() {
-<span class="fc" id="L54">        return Objects.requireNonNullElse(description,&quot;&quot;);</span>
+<span class="fc" id="L37">        return Objects.requireNonNullElse(description,&quot;&quot;);</span>
     }
 
 
     public String logo() {
-<span class="fc" id="L59">        return this.logo;</span>
+<span class="fc" id="L42">        return this.logo;</span>
+    }
+
+
+    public String favicon() {
+<span class="fc" id="L47">        return favicon;</span>
     }
 
 
     public String index() {
-<span class="nc" id="L64">        return this.index;</span>
+<span class="nc" id="L52">        return this.index;</span>
     }
 
 
     public List&lt;Section&gt; sections() {
-<span class="fc" id="L69">        return this.sections;</span>
+<span class="fc" id="L57">        return Objects.requireNonNullElseGet(this.sections, ArrayList::new);</span>
     }
 
 
     public Docsite title(String title) {
-<span class="nc" id="L74">        this.title = title;</span>
-<span class="nc" id="L75">        return this;</span>
+<span class="fc" id="L62">        this.title = title;</span>
+<span class="fc" id="L63">        return this;</span>
     }
 
 
     public Docsite description(String description) {
-<span class="nc" id="L80">        this.description = description;</span>
-<span class="nc" id="L81">        return this;</span>
+<span class="fc" id="L68">        this.description = description;</span>
+<span class="fc" id="L69">        return this;</span>
     }
 
 
     public Docsite logo(String logo) {
-<span class="nc" id="L86">        this.logo = logo;</span>
-<span class="nc" id="L87">        return this;</span>
+<span class="fc" id="L74">        this.logo = logo;</span>
+<span class="fc" id="L75">        return this;</span>
     }
 
 
     public Docsite index(String index) {
-<span class="nc" id="L92">        this.index = index;</span>
-<span class="nc" id="L93">        return this;</span>
+<span class="fc" id="L80">        this.index = index;</span>
+<span class="fc" id="L81">        return this;</span>
     }
 
 
     public Docsite sections(List&lt;Section&gt; sections) {
-<span class="nc" id="L98">        this.sections = sections;</span>
-<span class="nc" id="L99">        return this;</span>
+<span class="fc" id="L86">        this.sections = sections;</span>
+<span class="fc" id="L87">        return this;</span>
     }
 
 
-
-    public static class DocsiteBuilder {
-
-        private String title;
-        private String description;
-        private String logo;
-        private String index;
-        private List&lt;Section&gt; sections;
-
-
-<span class="fc" id="L113">        DocsiteBuilder() {</span>
-<span class="fc" id="L114">        }</span>
-
-
-
-        public DocsiteBuilder title(String title) {
-<span class="fc" id="L119">            this.title = title;</span>
-<span class="fc" id="L120">            return this;</span>
-        }
-
-
-        public DocsiteBuilder description(String description) {
-<span class="fc" id="L125">            this.description = description;</span>
-<span class="fc" id="L126">            return this;</span>
-        }
-
-
-        public DocsiteBuilder logo(String logo) {
-<span class="fc" id="L131">            this.logo = logo;</span>
-<span class="fc" id="L132">            return this;</span>
-        }
-
-
-
-        public DocsiteBuilder index(String index) {
-<span class="fc" id="L138">            this.index = index;</span>
-<span class="fc" id="L139">            return this;</span>
-        }
-
-
-        public DocsiteBuilder sections(List&lt;Section&gt; sections) {
-<span class="fc" id="L144">            this.sections = sections;</span>
-<span class="fc" id="L145">            return this;</span>
-        }
-
-
-
-        public Docsite build() {
-<span class="fc" id="L151">            return new Docsite(</span>
-                title,
-                description,
-                logo,
-                index,
-                sections
-            );
-        }
-
-
+    public Docsite favicon(String favicon) {
+<span class="fc" id="L92">        this.favicon = favicon;</span>
+<span class="fc" id="L93">        return this;</span>
     }
 
 }

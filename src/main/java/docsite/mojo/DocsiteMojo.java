@@ -4,7 +4,7 @@ import static java.util.Objects.requireNonNullElse;
 
 import java.io.*;
 import java.nio.file.*;
-import java.util.Objects;
+import java.util.*;
 
 import docsite.util.ResourceUtil;
 import org.apache.maven.plugin.*;
@@ -46,6 +46,7 @@ public class DocsiteMojo extends AbstractMojo {
      * <pre><code class="language-xml">&lt;title&gt;&lt;/title&gt;
      * &lt;description&gt;&lt;/description&gt;
      * &lt;logo&gt;&lt;/logo&gt;
+     * &lt;favicon&gt;&lt;/favicon&gt;
      * &lt;index&gt;&lt;/index&gt;
      * &lt;sections&gt;
      *     &lt;section&gt;
@@ -72,6 +73,7 @@ public class DocsiteMojo extends AbstractMojo {
      * <tr><td><tt>title</tt></td><td> Title of the site. Used in page headers and metadata.</td><td>Required</<td></tr>
      * <tr><td><tt>description</tt></td><td>Brief description of the site. Used in page headers and metadata.</td><td></td></tr>
      * <tr><td><tt>logo</tt></td><td>File image or <a href="http://https://fontawesome.com/v5.15/icons">Font Awesome icon</a>. Used in page headers.</td><td></td></tr>
+     * <tr><td><tt>favicon</tt></td><td>File image. Used by browsers as the page icon.</td><td></td></tr>
      * <tr><td><tt>index</tt></td><td>Document file (Markdown, HTML or raw text) that would be the landing page.</td><td>Required</td></tr>
      * <tr><td><tt>sections</tt></td><td>Main sections of the page. Used in the header navigation menu.</td><td></td></tr>
      * </table>
@@ -112,6 +114,41 @@ public class DocsiteMojo extends AbstractMojo {
      */
     @Parameter(name = "themeColors")
     ThemeColors themeColors;
+
+
+    /**
+     * Set extra metadata that would be included in the <tt>head</tt> section.
+     * <pre><code class="language-xml">&lt;metadata&gt;
+     *   &lt;keyA&gt;valueA&lt;/keyA&gt;
+     *   &lt;keyB&gt;valueB&lt;/keyB&gt;
+     *   ...
+     * &lt;/metadata&gt;
+     * </code></pre>
+     * @since 1.1
+     */
+    @Parameter(name = "metadata")
+    Map<String,String> metadata;
+
+
+    /**
+     * Set scripts that would be included in the <tt>head</tt> section
+     * <pre><code class="language-xml">&lt;scripts&gt;
+     *  &lt;script&gt;
+     *     &lt;src&gt;https://remote-script.js&lt;/src&gt;
+     *     &lt;async&gt;true&lt;/async&gt;
+     *  &lt;/script&gt;
+     *  &lt;script&gt;
+     *     &lt;code&gt;
+     *       // JS code
+     *       // ...
+     *     &lt;/code&gt;
+     *  &lt;/script&gt;
+     * &lt;/scripts&gt;
+     * </code></pre>
+     * @since 1.1
+     */
+    @Parameter(name = "scripts")
+    List<Script> scripts;
 
     /**
      * A local CSS file that would be used instead of the default style, in case you want
@@ -156,16 +193,20 @@ public class DocsiteMojo extends AbstractMojo {
 
             themeColors = requireNonNullElse(themeColors, ThemeColors.DEFAULT);
 
-            if (docsite == null) {
-                docsite = new Autoconfigurer(project).configuration();
-            }
+            Autoconfigurer autoconfigurer = new Autoconfigurer(project);
+            docsite = autoconfigurer.configuration(
+                Objects.requireNonNullElse(docsite, new Docsite())
+            );
+
 
             new DocsiteEmitter(
                 docsite,
                 themeColors,
                 cssFile != null ? cssFile.toPath() : null,
                 useCDN,
-                outputFolder.toPath()
+                outputFolder.toPath(),
+                metadata,
+                scripts
             ).generateSite();
 
         } catch (IOException e) {

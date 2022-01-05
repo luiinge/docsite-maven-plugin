@@ -7,9 +7,6 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.*;
 import com.vdurmont.emoji.EmojiParser;
-import com.vladsch.flexmark.html.HtmlRenderer;
-import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.util.data.MutableDataSet;
 import docsite.util.*;
 import j2html.tags.specialized.*;
 import static docsite.util.EmitterUtil.*;
@@ -21,10 +18,6 @@ public abstract class SectionEmitter {
     protected static final int TOC_MAX_LEVEL = 3;
     protected static final String INDEX_FILE = "index.html";
 
-
-    protected static final MutableDataSet options = new MutableDataSet();
-    protected static final Parser parser = Parser.builder(options).build();
-    protected static final HtmlRenderer renderer = HtmlRenderer.builder(options).build();
 
     protected static final Logger logger = Logger.instance();
 
@@ -41,7 +34,8 @@ public abstract class SectionEmitter {
 
     protected final ThemeColors themeColors;
     protected final Path outputFolder;
-
+    protected final Map<String,String> metadata;
+    protected final List<Script> scripts;
 
     protected SectionEmitter(EmitterBuildParams params) {
         this.site = params.site();
@@ -53,6 +47,8 @@ public abstract class SectionEmitter {
         this.globalImages = params.globalImages();
         this.themeColors = params.themeColors();
         this.outputFolder = params.outputFolder();
+        this.metadata = params.metadata();
+        this.scripts = params.scripts();
         this.sectionImages = origin == null ? null : new ImageResolver(
             outputFolder.resolve("images").resolve(section.name()),
             Path.of(origin)
@@ -93,7 +89,7 @@ public abstract class SectionEmitter {
 
         HeaderTag header = createHeader();
         NavTag breadcrumbs = createBreadcrumbs();
-        SectionTag sectionContent = createSectionContent();
+        SectionTag sectionContent = createSectionContent().withId("content");
         if (includeFooter) {
             sectionContent.with(rawHtml(
                 "<div class=\"footer\">"+
@@ -114,6 +110,7 @@ public abstract class SectionEmitter {
             body()
                 .withCondClass(tableOfContents.getNumChildren() == 0, "empty-aside")
                 .with(
+                    jumpToContentButton(),
                     header,
                     breadcrumbs,
                     tableOfContents,
@@ -125,6 +122,11 @@ public abstract class SectionEmitter {
         for (SectionEmitter child : childEmitters) {
             child.emitHTML();
         }
+    }
+
+
+    private ATag jumpToContentButton() {
+        return a().withId("jump-to-content").withText("jump to content").withHref("#content");
     }
 
 
@@ -174,13 +176,23 @@ public abstract class SectionEmitter {
         String description = section.description();
         if (description == null || description.isEmpty()) {
             description = site.description();
-        }        HeadTag head = head()
+        }
+
+        HeadTag head = head()
             .with(title(title))
             .with(meta().withName("description").withContent(description))
             .with(meta().withCharset("UTF-8"))
             .with(meta().withName("viewport").withContent("width=device-width, initial-scale=1.0"))
+            .with(link().withRel("profile").withHref("http://www.w3.org/2005/10/profile"))
             ;
-
+        if (site.favicon() != null) {
+            head.with(
+                link()
+                    .withRel("icon")
+                    .withType(globalImages.typeOf(site.favicon()))
+                    .withHref(globalImages.imageFile(site.favicon()))
+            );
+        }
         if (useCDN) {
             CDNResources.css("fontawesome.min").ifPresent(head::with);
             CDNResources.css("prism.min").ifPresent(head::with);
@@ -205,6 +217,19 @@ public abstract class SectionEmitter {
                 "--gui-element-color: "+themeColors.guiElementColor()+";\n"+
                 "}";
         head.with(style(themeStyle));
+
+        this.metadata.forEach(
+            (key,value) -> head.with(meta().withName(key).withContent(value))
+        );
+
+        for (Script script : this.scripts) {
+            if (script.code() != null && !script.code().isBlank()) {
+                head.with(script(script.code()));
+            } else {
+                head.with(script().withSrc(script.src()).withCondAsync(script.async()));
+            }
+        }
+
 
         return head;
     }

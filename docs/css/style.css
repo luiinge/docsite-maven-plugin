@@ -1,6 +1,8 @@
 *:focus-visible {
    border: 0.2rem solid var(--gui-element-color) !important;
    border-radius: 0.5rem;
+   outline-offset: 0;
+   outline-width: 0;
 }
 html, body { height: 100%; }
 
@@ -17,6 +19,18 @@ table {
 td, th {
     border: 0.05em solid var(--menu-regular-background-color);
     padding: 0.2rem;
+}
+
+#jump-to-content {
+    position: absolute;
+    background: var(--menu-bold-background-color);
+    color: var(--gui-element-color);
+    padding: 1rem;
+    transform: translateY(-150%);
+    transition: transform 0.1s;
+}
+#jump-to-content:focus {
+    transform: translateY(0%);
 }
 
 body {

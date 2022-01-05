@@ -8,32 +8,10 @@ public class Docsite {
     private String title;
     private String description;
     private String logo;
+    private String favicon;
     private String index;
     private List<Section> sections;
 
-
-    public Docsite() {
-
-    }
-
-    public Docsite(
-        String title,
-        String description,
-        String logo,
-        String index,
-        List<Section> sections
-    ) {
-        this.title = title;
-        this.description = description;
-        this.logo = logo;
-        this.index = index;
-        this.sections = Objects.requireNonNullElse(sections, new ArrayList<>());
-    }
-
-
-    public static DocsiteBuilder builder() {
-        return new DocsiteBuilder();
-    }
 
 
     public String title() {
@@ -60,13 +38,18 @@ public class Docsite {
     }
 
 
+    public String favicon() {
+        return favicon;
+    }
+
+
     public String index() {
         return this.index;
     }
 
 
     public List<Section> sections() {
-        return this.sections;
+        return Objects.requireNonNullElseGet(this.sections, ArrayList::new);
     }
 
 
@@ -100,64 +83,9 @@ public class Docsite {
     }
 
 
-
-    public static class DocsiteBuilder {
-
-        private String title;
-        private String description;
-        private String logo;
-        private String index;
-        private List<Section> sections;
-
-
-        DocsiteBuilder() {
-        }
-
-
-
-        public DocsiteBuilder title(String title) {
-            this.title = title;
-            return this;
-        }
-
-
-        public DocsiteBuilder description(String description) {
-            this.description = description;
-            return this;
-        }
-
-
-        public DocsiteBuilder logo(String logo) {
-            this.logo = logo;
-            return this;
-        }
-
-
-
-        public DocsiteBuilder index(String index) {
-            this.index = index;
-            return this;
-        }
-
-
-        public DocsiteBuilder sections(List<Section> sections) {
-            this.sections = sections;
-            return this;
-        }
-
-
-
-        public Docsite build() {
-            return new Docsite(
-                title,
-                description,
-                logo,
-                index,
-                sections
-            );
-        }
-
-
+    public Docsite favicon(String favicon) {
+        this.favicon = favicon;
+        return this;
     }
 
 }

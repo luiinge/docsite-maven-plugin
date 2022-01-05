@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 import docsite.Logger;
-import docsite.util.ResourceUtil;
 
 public class ImageResolver {
 
@@ -22,6 +21,12 @@ public class ImageResolver {
 
     public ImageResolver(Path imageFolder) {
         this(imageFolder, null);
+    }
+
+
+    public String typeOf(String image) {
+        // in order to simplify, just use the file extension
+        return "image/"+(image.substring(image.lastIndexOf('.')+1));
     }
 
 

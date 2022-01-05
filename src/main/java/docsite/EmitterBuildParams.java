@@ -1,7 +1,7 @@
 package docsite;
 
 import java.nio.file.Path;
-import java.util.List;
+import java.util.*;
 import docsite.util.ImageResolver;
 
 
@@ -15,31 +15,9 @@ public class EmitterBuildParams {
     private ThemeColors themeColors;
     private Path outputFolder;
     private boolean useCDN;
+    private Map<String,String> metadata;
+    private List<Script> scripts;
 
-
-    public EmitterBuildParams(
-        Docsite site,
-        SectionEmitter rootEmitter,
-        Section section,
-        List<SectionEmitter> ancestorEmitters,
-        ImageResolver globalImages,
-        ThemeColors themeColors,
-        Path outputFolder,
-        boolean useCDN
-    ) {
-        this.site = site;
-        this.rootEmitter = rootEmitter;
-        this.section = section;
-        this.ancestorEmitters = ancestorEmitters;
-        this.globalImages = globalImages;
-        this.themeColors = themeColors;
-        this.outputFolder = outputFolder;
-        this.useCDN = useCDN;
-    }
-
-
-    public EmitterBuildParams() {
-    }
 
 
     public Docsite site() {
@@ -82,51 +60,67 @@ public class EmitterBuildParams {
     }
 
 
+    public Map<String, String> metadata() {
+        return Objects.requireNonNullElseGet(metadata, HashMap::new);
+    }
+
+
+    public List<Script> scripts() {
+        return Objects.requireNonNullElseGet(scripts, ArrayList::new);
+    }
+
+
     public EmitterBuildParams withRootEmitter(SectionEmitter rootEmitter) {
         return this.rootEmitter == rootEmitter ?
             this :
-            new EmitterBuildParams(
-                this.site,
-                rootEmitter,
-                this.section,
-                this.ancestorEmitters,
-                this.globalImages,
-                this.themeColors,
-                this.outputFolder,
-                this.useCDN
-            );
+            new EmitterBuildParams()
+                .site(this.site)
+                .rootEmitter(rootEmitter)
+                .section(this.section)
+                .ancestorEmitters(this.ancestorEmitters)
+                .globalImages(this.globalImages)
+                .themeColors(this.themeColors)
+                .outputFolder(this.outputFolder)
+                .useCDN(this.useCDN)
+                .metadata(this.metadata)
+                .scripts(this.scripts)
+            ;
     }
 
 
     public EmitterBuildParams withSection(Section section) {
         return this.section == section ?
             this :
-            new EmitterBuildParams(
-                this.site,
-                this.rootEmitter,
-                section,
-                this.ancestorEmitters,
-                this.globalImages,
-                this.themeColors,
-                this.outputFolder,
-                this.useCDN
-            );
+            new EmitterBuildParams()
+                .site(this.site)
+                .rootEmitter(this.rootEmitter)
+                .section(section)
+                .ancestorEmitters(this.ancestorEmitters)
+                .globalImages(this.globalImages)
+                .themeColors(this.themeColors)
+                .outputFolder(this.outputFolder)
+                .useCDN(this.useCDN)
+                .metadata(this.metadata)
+                .scripts(this.scripts)
+            ;
     }
 
 
     public EmitterBuildParams withAncestorEmitters(List<SectionEmitter> ancestorEmitters) {
         return this.ancestorEmitters == ancestorEmitters ?
             this :
-            new EmitterBuildParams(
-                this.site,
-                this.rootEmitter,
-                this.section,
-                ancestorEmitters,
-                this.globalImages,
-                this.themeColors,
-                this.outputFolder,
-                this.useCDN
-            );
+            new EmitterBuildParams()
+                .site(this.site)
+                .rootEmitter(this.rootEmitter)
+                .section(this.section)
+                .ancestorEmitters(ancestorEmitters)
+                .globalImages(this.globalImages)
+                .themeColors(this.themeColors)
+                .outputFolder(this.outputFolder)
+                .useCDN(this.useCDN)
+                .metadata(this.metadata)
+                .scripts(this.scripts)
+            ;
     }
 
 
@@ -169,6 +163,24 @@ public class EmitterBuildParams {
 
     public EmitterBuildParams useCDN(boolean useCDN) {
         this.useCDN = useCDN;
+        return this;
+    }
+
+
+    public EmitterBuildParams ancestorEmitters(List<SectionEmitter> ancestorEmitters) {
+        this.ancestorEmitters = ancestorEmitters;
+        return this;
+    }
+
+
+    public EmitterBuildParams scripts(List<Script> scripts) {
+        this.scripts = scripts;
+        return this;
+    }
+
+
+    public EmitterBuildParams metadata(Map<String, String> metadata) {
+        this.metadata = metadata;
         return this;
     }
 
