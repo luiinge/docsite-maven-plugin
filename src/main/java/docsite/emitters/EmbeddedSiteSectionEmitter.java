@@ -25,7 +25,7 @@ public class EmbeddedSiteSectionEmitter extends SectionEmitter {
     @Override
     public ATag createLinkToSection(boolean withIcon) {
         return withIcon ?
-            internalLinkWithIcon(section.name(), url(), section.icon(), globalImages) :
+            internalLinkWithIcon(baseDir, section.name(), url(), section.icon(), globalImages) :
             internalLink(section.name(), url());
     }
 

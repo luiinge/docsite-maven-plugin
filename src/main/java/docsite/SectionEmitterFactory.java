@@ -16,6 +16,7 @@ public class SectionEmitterFactory {
         Docsite site,
         ImageResolver globalImages,
         ThemeColors themeColors,
+        Path baseDir,
         Path outputFolder,
         boolean useCDN,
         Map<String,String> metadata,
@@ -24,6 +25,7 @@ public class SectionEmitterFactory {
         this.buildParams = new EmitterBuildParams()
             .site(site)
             .themeColors(themeColors)
+            .baseDir(baseDir)
             .outputFolder(outputFolder)
             .globalImages(globalImages)
             .useCDN(useCDN)
@@ -62,6 +64,8 @@ public class SectionEmitterFactory {
 
     private SectionEmitter newEmitterInstance(EmitterBuildParams params) {
         switch (params.section().type()) {
+            case copy:
+                return new CopySectionEmitter(params);
             case link:
                 return new LinkSectionEmitter(params);
             case group:

@@ -14,6 +14,7 @@ public class EmitterBuildParams {
     private ImageResolver globalImages;
     private ThemeColors themeColors;
     private Path outputFolder;
+    private Path baseDir;
     private boolean useCDN;
     private Map<String,String> metadata;
     private List<Script> scripts;
@@ -69,6 +70,9 @@ public class EmitterBuildParams {
         return Objects.requireNonNullElseGet(scripts, ArrayList::new);
     }
 
+    public Path baseDir() {
+        return baseDir;
+    }
 
     public EmitterBuildParams withRootEmitter(SectionEmitter rootEmitter) {
         return this.rootEmitter == rootEmitter ?
@@ -81,6 +85,7 @@ public class EmitterBuildParams {
                 .globalImages(this.globalImages)
                 .themeColors(this.themeColors)
                 .outputFolder(this.outputFolder)
+                .baseDir(this.baseDir)
                 .useCDN(this.useCDN)
                 .metadata(this.metadata)
                 .scripts(this.scripts)
@@ -99,6 +104,7 @@ public class EmitterBuildParams {
                 .globalImages(this.globalImages)
                 .themeColors(this.themeColors)
                 .outputFolder(this.outputFolder)
+                .baseDir(this.baseDir)
                 .useCDN(this.useCDN)
                 .metadata(this.metadata)
                 .scripts(this.scripts)
@@ -117,6 +123,7 @@ public class EmitterBuildParams {
                 .globalImages(this.globalImages)
                 .themeColors(this.themeColors)
                 .outputFolder(this.outputFolder)
+                .baseDir(this.baseDir)
                 .useCDN(this.useCDN)
                 .metadata(this.metadata)
                 .scripts(this.scripts)
@@ -184,4 +191,9 @@ public class EmitterBuildParams {
         return this;
     }
 
+
+    public EmitterBuildParams baseDir(Path baseDir) {
+        this.baseDir = baseDir;
+        return this;
+    }
 }

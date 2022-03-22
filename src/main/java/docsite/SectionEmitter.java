@@ -34,6 +34,7 @@ public abstract class SectionEmitter {
 
     protected final ThemeColors themeColors;
     protected final Path outputFolder;
+    protected final Path baseDir;
     protected final Map<String,String> metadata;
     protected final List<Script> scripts;
 
@@ -47,11 +48,12 @@ public abstract class SectionEmitter {
         this.globalImages = params.globalImages();
         this.themeColors = params.themeColors();
         this.outputFolder = params.outputFolder();
+        this.baseDir = params.baseDir();
         this.metadata = params.metadata();
         this.scripts = params.scripts();
         this.sectionImages = origin == null ? null : new ImageResolver(
             outputFolder.resolve("images").resolve(section.name()),
-            Path.of(origin)
+            baseDir.resolve(origin)
         );
         this.useCDN = params.useCDN();
     }
@@ -82,8 +84,12 @@ public abstract class SectionEmitter {
 
     public void emitHTML(boolean includeFooter) throws IOException {
 
-        if (!section.isValid()) {
-            logger.warn("Section {} is not valid and would not be included", section.name());
+        if (!section.isValid(baseDir)) {
+            logger.warn(
+                "Section {} is not valid and would not be included: {}",
+                section.name(),
+                section.validation(baseDir)
+            );
             return;
         }
 
@@ -133,7 +139,8 @@ public abstract class SectionEmitter {
     private HeaderTag createHeader() {
         return header().with(
             createTitleAndSubtitle(),
-            createNavigation()
+            createNavigation(),
+            createCompanyLogo()
         );
     }
 
@@ -151,7 +158,7 @@ public abstract class SectionEmitter {
 
             while (iterator.hasNext()) {
                 path = iterator.next();
-                if (path.section.isValid()) {
+                if (path.section.isValid(baseDir)) {
                     container.with(li().with(path.createLinkToSection(false)));
                 } else {
                     container.with(li().with(a(path.section.name())));
@@ -164,6 +171,22 @@ public abstract class SectionEmitter {
         return nav().withClass("breadcrumbs").with(container);
     }
 
+
+
+
+    private DivTag createCompanyLogo() {
+        if (site.companyLogo() != null && site.companyLink() != null) {
+            return div().withClass("company").with(
+                EmitterUtil.externalLinkWithImage(baseDir,"",site.companyLink(),site.companyLogo(),globalImages)
+            );
+        } else if (site.companyLink() == null) {
+            return div().withClass("company").with(
+                EmitterUtil.image(baseDir,site.companyLogo(),globalImages)
+            );
+        } else {
+            return div();
+        }
+    }
 
 
 
@@ -249,7 +272,7 @@ public abstract class SectionEmitter {
             .with(
                 h1().withClasses("title label")
                     .with(
-                        EmitterUtil.icon(site.logo(), globalImages),
+                        EmitterUtil.icon(baseDir, site.logo(), globalImages),
                         span(site.title())
                     ),
                 span(site.description()).withClass("subtitle")
@@ -263,7 +286,7 @@ public abstract class SectionEmitter {
             .with(
                 ul().with(
                     rootEmitter.childEmitters.stream()
-                        .filter(it -> it.section.isValid())
+                        .filter(it -> it.section.isValid(baseDir))
                         .map(it -> it.createNavigationSection(it == this))
                         .toArray(LiTag[]::new)
                 )

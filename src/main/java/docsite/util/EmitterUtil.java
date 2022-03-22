@@ -20,31 +20,44 @@ public final class EmitterUtil {
     }
 
 
-    public static ATag internalLinkWithIcon(String title, String url, String icon, ImageResolver images) {
+    public static ATag internalLinkWithIcon(Path baseDir, String title, String url, String icon, ImageResolver images) {
         return a()
             .withClasses("label internal")
             .withHref(url)
             .with(
-                icon(icon,images),
+                icon(baseDir, icon,images),
                 span(title)
             );
     }
 
 
-    public static ATag externalLinkWithIcon(String title, String url, String icon, ImageResolver images) {
+    public static ATag externalLinkWithIcon(Path baseDir, String title, String url, String icon, ImageResolver images) {
         return a()
             .withClasses("label external")
             .withHref(url)
             .withTarget("_blank")
             .withRel("external noreferrer noopener nofollow")
             .with(
-                icon(icon, images),
+                icon(baseDir, icon, images),
                 span(title)
             );
     }
 
 
-    public static ITag icon(String icon, ImageResolver images) {
+    public static ATag externalLinkWithImage(Path baseDir, String title, String url, String icon, ImageResolver images) {
+        return a()
+            .withClasses("label external")
+            .withHref(url)
+            .withTarget("_blank")
+            .withRel("external noreferrer noopener nofollow")
+            .with(
+                image(baseDir, icon, images),
+                span(title)
+            );
+    }
+
+
+    public static ITag icon(Path baseDir, String icon, ImageResolver images) {
         if (icon == null || icon.isBlank()) {
             return i().withClass("hidden");
         }
@@ -52,12 +65,22 @@ public final class EmitterUtil {
         if (faMatcher.matches()) {
             return i().withClasses(faMatcher.group(1)+" fa-"+faMatcher.group(2));
         }
-        if (Files.exists(Path.of(icon))) {
+        if (Files.exists(baseDir.resolve(icon))) {
             return i().withClass("external-icon").withStyle("background-image: url('"+images.imageFile(icon)+"')");
         }
         return i().withClass("external-icon").withStyle("background-image: url('"+icon+"')");
     }
 
+
+    public static ImgTag image(Path baseDir, String source, ImageResolver images) {
+        if (source == null || source.isBlank()) {
+            return img().withClass("hidden");
+        }
+        if (Files.exists(baseDir.resolve(source))) {
+            return img().withSrc(images.imageFile(source));
+        }
+        return img().withSrc(source);
+    }
 
 
     public static ATag externalLink(String title, String url) {

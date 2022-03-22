@@ -13,6 +13,7 @@ public class DocsiteEmitter {
     private final Docsite site;
     private final ImageResolver globalImages;
     private final ThemeColors themeColors;
+    private final Path baseDir;
     private final Path outputFolder;
     private final Path cssFile;
     private final boolean useCDN;
@@ -25,6 +26,7 @@ public class DocsiteEmitter {
         ThemeColors themeColors,
         Path cssFile,
         boolean useCDN,
+        Path baseDir,
         Path outputFolder,
         Map<String,String> metadata,
         List<Script> scripts
@@ -37,6 +39,7 @@ public class DocsiteEmitter {
         this.useCDN = useCDN;
         this.metadata = metadata;
         this.scripts = scripts;
+        this.baseDir = baseDir;
     }
 
 
@@ -46,6 +49,7 @@ public class DocsiteEmitter {
             site,
             globalImages,
             themeColors,
+            baseDir,
             outputFolder,
             useCDN,
             metadata,
@@ -72,18 +76,36 @@ public class DocsiteEmitter {
             ResourceUtil.copyResourceFolder("webfonts",  outputFolder);
         }
         site.sections().forEach(this::copyEmbeddedSites);
+        site.sections().forEach(this::copyLocalSites);
     }
 
 
     private void copyEmbeddedSites(Section section) {
         logger.debug("Copying embedded site {}", section.source());
-        if (section.type() == Section.SectionType.embedded && section.isValid()) {
+        if (section.type() == Section.SectionType.embedded && section.isValid(baseDir)) {
             ResourceUtil.copyFolder(
-                Path.of(section.source()),
+                baseDir.resolve(section.source()),
                 outputFolder.resolve(EmitterUtil.href(section.name()))
             );
         }
         section.subsections().forEach(this::copyEmbeddedSites);
+    }
+
+
+    private void copyLocalSites(Section section) {
+        logger.debug("Copying local site {}", section.source());
+        if (section.type() == Section.SectionType.copy && section.isValid(baseDir)) {
+            System.out.println("copying local site");
+            System.out.println(section.name());
+            System.out.println(section.source());
+            System.out.println(outputFolder);
+            System.out.println("copy folder "+baseDir.resolve(section.source())+" to "+outputFolder.resolve(section.source()));
+            ResourceUtil.copyFolder(
+                baseDir.resolve(section.source()),
+                outputFolder.resolve(section.source())
+            );
+        }
+        section.subsections().forEach(this::copyLocalSites);
     }
 
 

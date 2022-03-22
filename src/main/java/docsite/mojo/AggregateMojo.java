@@ -1,21 +1,28 @@
 package docsite.mojo;
 
-import static java.util.Objects.requireNonNullElse;
-
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
-
+import docsite.*;
+import docsite.util.DocsiteReader;
 import docsite.util.ResourceUtil;
-import org.apache.maven.plugin.*;
-import org.apache.maven.plugins.annotations.*;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import docsite.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
-@Mojo(defaultPhase = LifecyclePhase.POST_SITE, name = "generate")
-public class DocsiteMojo extends AbstractMojo {
+import static java.util.Objects.requireNonNullElse;
+
+@Mojo(defaultPhase = LifecyclePhase.POST_SITE, name = "aggregate", aggregator = true)
+public class AggregateMojo extends AbstractMojo {
 
     /**
      * The folder where the documentation site would be generated.
@@ -39,6 +46,7 @@ public class DocsiteMojo extends AbstractMojo {
      */
     @Parameter(name = "forceDelete", defaultValue = "false", property = "docsite.forceDelete")
     boolean forceDelete;
+
 
 
     /**
@@ -96,6 +104,16 @@ public class DocsiteMojo extends AbstractMojo {
      */
     @Parameter(name = "docsite")
     Docsite docsite;
+
+
+    /**
+     * A JSON file containing the object structure of the docsite
+     * (instead of including it in the pom)
+     * @since 1.2
+     * */
+    @Parameter(name = "docsiteFile", property = "docsite.docsiteFile")
+    File docsiteFile;
+
 
     /**
 
@@ -171,12 +189,24 @@ public class DocsiteMojo extends AbstractMojo {
 
         initializeLogger();
 
+        System.out.println("BBBBBBBBBBBBBBBBB");
+        System.out.println(project.getName());
+        System.out.println(outputFolder);
+        System.out.println("docsite == null "+ docsite == null);
+        System.out.println("docsiteFile " + docsiteFile);
+
+
+
+        project.getCollectedProjects().forEach(p->System.out.println(p.getName()));
+
+
         File[] outputFolderContent = Objects.requireNonNullElse(
             outputFolder.listFiles(),
             new File[0]
         );
 
         try {
+
             if (outputFolder.exists() && outputFolderContent.length > 0) {
                 if (forceDelete) {
                     Logger.instance().warn("The contents of output folder {} will be deleted", outputFolder);
@@ -184,7 +214,7 @@ public class DocsiteMojo extends AbstractMojo {
                 } else {
                     Logger.instance().error(
                         "As a safety mechanism, the output folder must be empty. " +
-                        "You can disable this check using -Ddocsite.forceDelete"
+                            "You can disable this check using -Ddocsite.forceDelete"
                     );
                     throw new MojoFailureException("The output folder "+outputFolder+" is not empty");
                 }
@@ -194,16 +224,33 @@ public class DocsiteMojo extends AbstractMojo {
             themeColors = requireNonNullElse(themeColors, ThemeColors.DEFAULT);
 
             Autoconfigurer autoconfigurer = new Autoconfigurer(project);
-            docsite = autoconfigurer.configuration(
-                Objects.requireNonNullElse(docsite, new Docsite())
-            );
+            List<MavenProject> children = new ArrayList<>();
+            for (MavenProject collected : project.getCollectedProjects()) {
+                if (project.equals(collected.getParent())) {
+                    children.add(collected);
+                }
+            }
 
 
+            if (docsiteFile != null) {
+                docsite = new DocsiteReader().read(docsiteFile.toPath());
+            } else {
+                docsite = autoconfigurer.aggregatedConfiguration(
+                    Objects.requireNonNullElse(docsite, new Docsite()),
+                    children
+                );
+            }
+
+
+
+
+            System.out.println(outputFolder);
             new DocsiteEmitter(
                 docsite,
                 themeColors,
                 cssFile != null ? cssFile.toPath() : null,
                 useCDN,
+                project.getBasedir().toPath(),
                 outputFolder.toPath(),
                 metadata,
                 scripts
@@ -212,6 +259,8 @@ public class DocsiteMojo extends AbstractMojo {
         } catch (IOException e) {
             throw new MojoFailureException("Error generating site",e);
         }
+
+
 
 
     }

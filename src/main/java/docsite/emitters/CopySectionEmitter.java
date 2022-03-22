@@ -1,15 +1,22 @@
 package docsite.emitters;
 
 
+import docsite.EmitterBuildParams;
+import docsite.SectionEmitter;
+import j2html.tags.specialized.ATag;
+import j2html.tags.specialized.AsideTag;
+import j2html.tags.specialized.SectionTag;
+
 import java.io.IOException;
-import docsite.*;
-import j2html.tags.specialized.*;
-import static docsite.util.EmitterUtil.*;
-import static j2html.TagCreator.*;
 
-public class LinkSectionEmitter extends SectionEmitter {
+import static docsite.util.EmitterUtil.externalLink;
+import static docsite.util.EmitterUtil.externalLinkWithIcon;
+import static j2html.TagCreator.aside;
+import static j2html.TagCreator.section;
 
-    public LinkSectionEmitter(EmitterBuildParams params) {
+public class CopySectionEmitter extends SectionEmitter {
+
+    public CopySectionEmitter(EmitterBuildParams params) {
         super(params);
     }
 
@@ -17,7 +24,7 @@ public class LinkSectionEmitter extends SectionEmitter {
 
     @Override
     protected String url() {
-        return section.source();
+        return section.source()+"/"+section.siteIndex();
     }
 
 

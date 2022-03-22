@@ -1,5 +1,6 @@
 package docsite;
 
+import java.nio.file.Path;
 import java.util.*;
 import docsite.util.ResourceUtil;
 
@@ -9,6 +10,7 @@ public class Section {
     public enum SectionType {
         generated,
         embedded,
+        copy,
         group,
         link
     }
@@ -22,7 +24,6 @@ public class Section {
     private List<Section> subsections;
     private Boolean replaceEmojis;
     private String template;
-
 
 
     public Section() {
@@ -59,6 +60,12 @@ public class Section {
     public static Section.SectionBuilder site() {
         return builder().type(SectionType.embedded);
     }
+
+
+    public static Section.SectionBuilder copy() {
+        return builder().type(SectionType.copy);
+    }
+
 
     public static Section.SectionBuilder group(String name) {
         return builder().type(SectionType.group).name(name);
@@ -122,17 +129,23 @@ public class Section {
     }
 
 
-    public boolean isValid() {
+    public boolean isValid(Path baseDir) {
+        return validation(baseDir).isEmpty();
+    }
+
+
+    public String validation(Path baseDir) {
         switch (type) {
             case generated:
             case embedded:
-                return ResourceUtil.existsSource(source);
+            case copy:
+                return !ResourceUtil.existsSource(baseDir, source) ? "Cannot find source "+source : "";
             case link:
-                return source != null;
+                return source == null ? "Source not specified" : "";
             case group:
-                return !subsections().isEmpty();
+                return subsections().isEmpty() ? "Group must have subsections" : "";
             default:
-                return true;
+                return "";
         }
     }
 

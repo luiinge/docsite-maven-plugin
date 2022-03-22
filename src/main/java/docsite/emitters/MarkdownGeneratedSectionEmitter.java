@@ -30,7 +30,7 @@ public class MarkdownGeneratedSectionEmitter extends GeneratedSectionEmitter {
 
     @Override
     protected SectionTag createSectionContent() {
-        try (InputStream markdown = ResourceUtil.open(origin)) {
+        try (InputStream markdown = ResourceUtil.open(baseDir, origin)) {
             String markdownContent = ResourceUtil.read(markdown);
             Node document = parser.parse(markdownContent);
             StreamSupport.stream(document.getChildren().spliterator(), false)

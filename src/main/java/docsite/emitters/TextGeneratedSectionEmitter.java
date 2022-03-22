@@ -18,7 +18,7 @@ public class TextGeneratedSectionEmitter extends GeneratedSectionEmitter {
 
     @Override
     protected SectionTag createSectionContent() {
-        try (InputStream text = ResourceUtil.open(origin)) {
+        try (InputStream text = ResourceUtil.open(baseDir, origin)) {
             return section().with(pre(ResourceUtil.read(text)));
         }  catch (IOException e) {
             throw new DocsiteException(e);

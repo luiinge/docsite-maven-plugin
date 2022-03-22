@@ -60,7 +60,7 @@ public class TemplateSectionEmitter extends GeneratedSectionEmitter {
     @SuppressWarnings("unchecked")
     private Map<String,Object> documentMap() throws IOException {
         String extension = origin.substring(origin.indexOf(".")+1).toLowerCase();
-        try (InputStream inputStream = ResourceUtil.open(origin)) {
+        try (InputStream inputStream = ResourceUtil.open(baseDir, origin)) {
             switch (extension) {
                 case "xml":
                     return new XmlParser().parse(inputStream);

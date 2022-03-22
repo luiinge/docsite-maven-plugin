@@ -12,9 +12,6 @@ public class Logger {
     }
 
     public static void initialize(Logger logger) {
-        if (instance != null) {
-            throw new IllegalStateException("Logger already initialized");
-        }
         instance = Objects.requireNonNull(logger);
     }
 

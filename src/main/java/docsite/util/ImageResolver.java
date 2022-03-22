@@ -61,11 +61,13 @@ public class ImageResolver {
 
 
     private String imageFileFromRelativeSource(String image) throws IOException{
+        System.out.println("imageFileFromRelativeSource");
+        System.out.println(source);
         if (!images.containsKey(image)) {
             String extension = image.substring(image.lastIndexOf('.')+1);
             String id = "image-" + (images.size() + 1) + "." + extension;
             String actualFile = imageFolder.getParent().getParent().relativize(imageFolder.resolve(id)).toString();
-            Path relativeSource = source.getParent().resolve(image);
+            Path relativeSource = source.getParent() == null ? Path.of(image) : source.getParent().resolve(image);
             ResourceUtil.copyExternalFileWithAnotherName(relativeSource, imageFolder, id);
             images.put(image, actualFile);
             return actualFile;

@@ -19,8 +19,8 @@ body, div, a, p, header, nav, aside, main, section, ol, iframe {
 .external-icon {
     background-repeat: no-repeat;
     background-size: contain;
-    width: 1.2em;
-    height: 1.2em;
+    width: 1em;
+    height: 1em;
 }
 
 section img {

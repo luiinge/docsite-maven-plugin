@@ -8,6 +8,8 @@ public class Docsite {
     private String title;
     private String description;
     private String logo;
+    private String companyLogo;
+    private String companyLink;
     private String favicon;
     private String index;
     private List<Section> sections;
@@ -47,6 +49,15 @@ public class Docsite {
         return this.index;
     }
 
+
+    public String companyLogo() {
+        return companyLogo;
+    }
+
+
+    public String companyLink() {
+        return companyLink;
+    }
 
     public List<Section> sections() {
         return Objects.requireNonNullElseGet(this.sections, ArrayList::new);
@@ -88,4 +99,13 @@ public class Docsite {
         return this;
     }
 
+    public Docsite companyLogo(String companyLogo) {
+        this.companyLogo = companyLogo;
+        return this;
+    }
+
+    public Docsite companyLink(String companyLink) {
+        this.companyLink = companyLink;
+        return this;
+    }
 }

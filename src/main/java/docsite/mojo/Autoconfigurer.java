@@ -29,6 +29,27 @@ public class Autoconfigurer {
     }
 
 
+    public Docsite aggregatedConfiguration(Docsite docsite, List<MavenProject> children) throws MojoExecutionException {
+        docsite.title(nonNull(project.getName(),project.getArtifactId()));
+        docsite.description(nonNull(project.getDescription(),""));
+        docsite.index(searchIndex());
+        List<Section> sections = new ArrayList<>();
+        changelogSection().ifPresent(sections::add);
+        List<Section> childrenSections = new ArrayList<>();
+        for (MavenProject child : children) {
+            String source = project.getBasedir().toPath().relativize(Path.of(child.getBasedir()+"/target/docsite")).toString();
+            childrenSections.add(
+                Section.copy().source(source).name(child.getName()).siteIndex("index.html").build()
+            );
+        }
+        sections.add(Section.group("Components").icon("fas:stream").subsections(childrenSections).build());
+        vcsSection().ifPresent(sections::add);
+        licenseSection().ifPresent(sections::add);
+        docsite.sections(sections);
+
+        return docsite;
+    }
+
 
     @NotNull
     private List<Section> createSections() {

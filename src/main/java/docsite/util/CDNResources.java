@@ -53,6 +53,11 @@ public final class CDNResources {
             .attr(SRC,"https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js")
             .attr(INTEGRITY, "sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==")
             .attr(CROSSORIGIN, ANONYMOUS)
+            .attr(REFERRERPOLICY, NO_REFERRER),
+        "prism.gherkin", script()
+            .attr(SRC,"https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-gherkin.min.js")
+            .attr(INTEGRITY, "sha512-mIOZdB9UVqzUuNdWFcaqJssGJd6q7aaJpg+Q0z3kAWycvIrtcdiwELnKd2izg/ZlPqphj7rtqiUcmVS4bnd7RQ==")
+            .attr(CROSSORIGIN, ANONYMOUS)
             .attr(REFERRERPOLICY, NO_REFERRER)
     );
 

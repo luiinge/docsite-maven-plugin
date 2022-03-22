@@ -210,6 +210,7 @@ public class DocSiteTest {
             themeColors,
             cssFile,
             useCDN,
+            Path.of("."),
             outputFolder,
             new HashMap<>(),
             new ArrayList<>()

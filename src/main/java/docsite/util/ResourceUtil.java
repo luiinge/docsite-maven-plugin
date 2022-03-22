@@ -102,20 +102,20 @@ public final class ResourceUtil {
     }
 
 
-    public static InputStream open(String source) throws IOException {
+    public static InputStream open(Path baseDir, String source) throws IOException {
         try {
-            return new URL(source).openStream();
+            return baseDir.resolve(source).toUri().toURL().openStream();
         } catch (MalformedURLException e) {
             return Files.newInputStream(Path.of(source));
         }
     }
 
 
-    public static boolean existsSource(String source) {
+    public static boolean existsSource(Path baseDir, String source) {
         if (source == null || source.isBlank()) {
             return false;
         }
-        if (Files.exists(Path.of(source))) {
+        if (Files.exists(baseDir.resolve(source))) {
             return true;
         }
         try (InputStream stream = new URL(source).openStream()) {
@@ -128,7 +128,7 @@ public final class ResourceUtil {
 
     public static void copyFolder(Path siteFolder, Path outputFolder)  {
         try(Stream<Path> walker = Files.walk(siteFolder)) {
-            Files.createDirectory(outputFolder);
+            Files.createDirectories(outputFolder);
             walker.forEach(sourcePath -> {
                 try {
                     Path targetPath = outputFolder.resolve(siteFolder.relativize(sourcePath));
