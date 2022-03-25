@@ -16,7 +16,7 @@ public class HtmlGeneratedSectionEmitter extends GeneratedSectionEmitter {
 
     @Override
     protected SectionTag createSectionContent() {
-<span class="fc" id="L19">        try (InputStream htmlInputStream = ResourceUtil.open(origin)) {</span>
+<span class="fc" id="L19">        try (InputStream htmlInputStream = ResourceUtil.open(baseDir,origin)) {</span>
 <span class="fc" id="L20">            String html = ResourceUtil.read(htmlInputStream);</span>
 <span class="fc" id="L21">            html = generateHeadersId(html);</span>
 <span class="fc" id="L22">            html = normalizeLinks(html);</span>

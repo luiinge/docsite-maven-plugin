@@ -6,6 +6,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][1],
 and this project adheres to [Semantic Versioning][2].
 
+[1.2.0]
+--------------------------------------------------------------------------
+**Release date:** 2022-03-25
+### Added
+- New goal `aggregate` for multi-module projects
+- Optional *Company information* section within the header
+- New section type `copy`, similar to `embedded` but opening a new tab instead of a `<iframe>`
+embedded page
+- Icons now can be specified as data values using the expression `data:/image/...`
+
+### Fixed
+- Markdown tables are now correctly rendered
+- Fixed header navigation layout that caused overflow in small screens
+
+
 
 [1.1.0]
 --------------------------------------------------------------------------

@@ -7,13 +7,8 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.*;
 import com.vdurmont.emoji.EmojiParser;
-import com.vladsch.flexmark.html.*;
-import com.vladsch.flexmark.html.renderer.LinkResolverContext;
-import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.util.data.MutableDataSet;
 import docsite.util.*;
 import j2html.tags.specialized.*;
-import org.jetbrains.annotations.*;
 import static docsite.util.EmitterUtil.*;
 import static j2html.TagCreator.*;
 
@@ -24,7 +19,7 @@ public abstract class SectionEmitter {
     protected static final String INDEX_FILE = &quot;index.html&quot;;
 
 
-<span class="fc" id="L27">    protected static final Logger logger = Logger.instance();</span>
+<span class="fc" id="L22">    protected static final Logger logger = Logger.instance();</span>
 
     protected final Docsite site;
     protected final Section section;
@@ -39,27 +34,29 @@ public abstract class SectionEmitter {
 
     protected final ThemeColors themeColors;
     protected final Path outputFolder;
+    protected final Path baseDir;
     protected final Map&lt;String,String&gt; metadata;
     protected final List&lt;Script&gt; scripts;
 
-<span class="fc" id="L45">    protected SectionEmitter(EmitterBuildParams params) {</span>
-<span class="fc" id="L46">        this.site = params.site();</span>
-<span class="fc" id="L47">        this.section = params.section();</span>
-<span class="fc" id="L48">        this.rootEmitter = Objects.requireNonNullElse(params.rootEmitter(), this);</span>
-<span class="fc" id="L49">        this.ancestorEmitters= List.copyOf(params.ancestorEmitters());</span>
-<span class="fc" id="L50">        this.childEmitters = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L51">        this.origin = section.source();</span>
-<span class="fc" id="L52">        this.globalImages = params.globalImages();</span>
-<span class="fc" id="L53">        this.themeColors = params.themeColors();</span>
-<span class="fc" id="L54">        this.outputFolder = params.outputFolder();</span>
-<span class="fc" id="L55">        this.metadata = params.metadata();</span>
-<span class="fc" id="L56">        this.scripts = params.scripts();</span>
-<span class="fc bfc" id="L57" title="All 2 branches covered.">        this.sectionImages = origin == null ? null : new ImageResolver(</span>
-<span class="fc" id="L58">            outputFolder.resolve(&quot;images&quot;).resolve(section.name()),</span>
-<span class="fc" id="L59">            Path.of(origin)</span>
+<span class="fc" id="L41">    protected SectionEmitter(EmitterBuildParams params) {</span>
+<span class="fc" id="L42">        this.site = params.site();</span>
+<span class="fc" id="L43">        this.section = params.section();</span>
+<span class="fc" id="L44">        this.rootEmitter = Objects.requireNonNullElse(params.rootEmitter(), this);</span>
+<span class="fc" id="L45">        this.ancestorEmitters= List.copyOf(params.ancestorEmitters());</span>
+<span class="fc" id="L46">        this.childEmitters = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L47">        this.origin = section.source();</span>
+<span class="fc" id="L48">        this.globalImages = params.globalImages();</span>
+<span class="fc" id="L49">        this.themeColors = params.themeColors();</span>
+<span class="fc" id="L50">        this.outputFolder = params.outputFolder();</span>
+<span class="fc" id="L51">        this.baseDir = params.baseDir();</span>
+<span class="fc" id="L52">        this.metadata = params.metadata();</span>
+<span class="fc" id="L53">        this.scripts = params.scripts();</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        this.sectionImages = origin == null ? null : new ImageResolver(</span>
+<span class="fc" id="L55">            outputFolder.resolve(&quot;images&quot;).resolve(section.name()),</span>
+<span class="fc" id="L56">            baseDir.resolve(origin)</span>
         );
-<span class="fc" id="L61">        this.useCDN = params.useCDN();</span>
-<span class="fc" id="L62">    }</span>
+<span class="fc" id="L58">        this.useCDN = params.useCDN();</span>
+<span class="fc" id="L59">    }</span>
 
 
     protected abstract String url();
@@ -72,205 +69,226 @@ public abstract class SectionEmitter {
 
 
     public String href() {
-<span class="fc" id="L75">        return EmitterUtil.href(section.name());</span>
+<span class="fc" id="L72">        return EmitterUtil.href(section.name());</span>
     }
 
     protected Path outputPath() {
-<span class="fc" id="L79">        return outputFolder.resolve(url());</span>
+<span class="fc" id="L76">        return outputFolder.resolve(url());</span>
     }
 
 
     public void emitHTML() throws IOException {
-<span class="fc" id="L84">        emitHTML(false);</span>
-<span class="fc" id="L85">    }</span>
+<span class="fc" id="L81">        emitHTML(false);</span>
+<span class="fc" id="L82">    }</span>
 
 
     public void emitHTML(boolean includeFooter) throws IOException {
 
-<span class="fc bfc" id="L90" title="All 2 branches covered.">        if (!section.isValid()) {</span>
-<span class="fc" id="L91">            logger.warn(&quot;Section {} is not valid and would not be included&quot;, section.name());</span>
-<span class="fc" id="L92">            return;</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        if (!section.isValid(baseDir)) {</span>
+<span class="fc" id="L88">            logger.warn(</span>
+                &quot;Section {} is not valid and would not be included: {}&quot;,
+<span class="fc" id="L90">                section.name(),</span>
+<span class="fc" id="L91">                section.validation(baseDir)</span>
+            );
+<span class="fc" id="L93">            return;</span>
         }
 
-<span class="fc" id="L95">        HeaderTag header = createHeader();</span>
-<span class="fc" id="L96">        NavTag breadcrumbs = createBreadcrumbs();</span>
-<span class="fc" id="L97">        SectionTag sectionContent = createSectionContent().withId(&quot;content&quot;);</span>
-<span class="fc bfc" id="L98" title="All 2 branches covered.">        if (includeFooter) {</span>
-<span class="fc" id="L99">            sectionContent.with(rawHtml(</span>
+<span class="fc" id="L96">        HeaderTag header = createHeader();</span>
+<span class="fc" id="L97">        NavTag breadcrumbs = createBreadcrumbs();</span>
+<span class="fc" id="L98">        SectionTag sectionContent = createSectionContent().withId(&quot;content&quot;);</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        if (includeFooter) {</span>
+<span class="fc" id="L100">            sectionContent.with(rawHtml(</span>
                 &quot;&lt;div class=\&quot;footer\&quot;&gt;&quot;+
                 &quot;Generated with &lt;a href=\&quot;https://luiinge.github.io/docsite-maven-plugin/\&quot;&gt;Docsite&lt;/a&gt;. &quot;+
-<span class="fc" id="L102">                &quot;Last published on &quot;+ LocalDate.now()+</span>
+<span class="fc" id="L103">                &quot;Last published on &quot;+ LocalDate.now()+</span>
                 &quot;&lt;/div&gt;&quot;
             ));
         }
-<span class="fc" id="L106">        AsideTag tableOfContents = createTableOfContents(sectionContent);</span>
+<span class="fc" id="L107">        AsideTag tableOfContents = createTableOfContents(sectionContent);</span>
 
-<span class="fc" id="L108">        HeadTag head = htmlHead();</span>
-<span class="fc bfc" id="L109" title="All 2 branches covered.">        if (useCDN) {</span>
-<span class="fc" id="L110">            addPrismComponents(head, sectionContent);</span>
+<span class="fc" id="L109">        HeadTag head = htmlHead();</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        if (useCDN) {</span>
+<span class="fc" id="L111">            addPrismComponents(head, sectionContent);</span>
         }
 
-<span class="fc" id="L113">        HtmlTag htmlObject = html().with(</span>
+<span class="fc" id="L114">        HtmlTag htmlObject = html().with(</span>
             head,
-<span class="fc" id="L115">            body()</span>
-<span class="fc bfc" id="L116" title="All 2 branches covered.">                .withCondClass(tableOfContents.getNumChildren() == 0, &quot;empty-aside&quot;)</span>
-<span class="fc" id="L117">                .with(</span>
-<span class="fc" id="L118">                    jumpToContentButton(),</span>
+<span class="fc" id="L116">            body()</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">                .withCondClass(tableOfContents.getNumChildren() == 0, &quot;empty-aside&quot;)</span>
+<span class="fc" id="L118">                .with(</span>
+<span class="fc" id="L119">                    jumpToContentButton(),</span>
                     header,
                     breadcrumbs,
                     tableOfContents,
                     sectionContent
                 )
         );
-<span class="fc" id="L125">        writeToFile(htmlObject);</span>
+<span class="fc" id="L126">        writeToFile(htmlObject);</span>
 
-<span class="fc bfc" id="L127" title="All 2 branches covered.">        for (SectionEmitter child : childEmitters) {</span>
-<span class="fc" id="L128">            child.emitHTML();</span>
-<span class="fc" id="L129">        }</span>
-<span class="fc" id="L130">    }</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">        for (SectionEmitter child : childEmitters) {</span>
+<span class="fc" id="L129">            child.emitHTML();</span>
+<span class="fc" id="L130">        }</span>
+<span class="fc" id="L131">    }</span>
 
 
     private ATag jumpToContentButton() {
-<span class="fc" id="L134">        return a().withId(&quot;jump-to-content&quot;).withText(&quot;jump to content&quot;).withHref(&quot;#content&quot;);</span>
+<span class="fc" id="L135">        return a().withId(&quot;jump-to-content&quot;).withText(&quot;jump to content&quot;).withHref(&quot;#content&quot;);</span>
     }
 
 
     private HeaderTag createHeader() {
-<span class="fc" id="L139">        return header().with(</span>
-<span class="fc" id="L140">            createTitleAndSubtitle(),</span>
-<span class="fc" id="L141">            createNavigation()</span>
+<span class="fc" id="L140">        return header().with(</span>
+<span class="fc" id="L141">            createTitleAndSubtitle(),</span>
+<span class="fc" id="L142">            createNavigation(),</span>
+<span class="fc" id="L143">            createCompanyLogo()</span>
         );
     }
 
 
     public NavTag createBreadcrumbs() {
 
-<span class="fc" id="L148">        OlTag container = ol();</span>
-<span class="fc" id="L149">        container.with(li().with(internalLink(site.title(),INDEX_FILE)));</span>
+<span class="fc" id="L150">        OlTag container = ol();</span>
+<span class="fc" id="L151">        container.with(li().with(internalLink(site.title(),INDEX_FILE)));</span>
 
-<span class="fc bfc" id="L151" title="All 2 branches covered.">        if (!ancestorEmitters.isEmpty()) {</span>
-<span class="fc" id="L152">            Iterator&lt;SectionEmitter&gt; iterator = ancestorEmitters.iterator();</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">        if (!ancestorEmitters.isEmpty()) {</span>
+<span class="fc" id="L154">            Iterator&lt;SectionEmitter&gt; iterator = ancestorEmitters.iterator();</span>
             // first section in ancestors is always the index
             SectionEmitter path;
-<span class="fc" id="L155">            iterator.next();</span>
+<span class="fc" id="L157">            iterator.next();</span>
 
-<span class="fc bfc" id="L157" title="All 2 branches covered.">            while (iterator.hasNext()) {</span>
-<span class="fc" id="L158">                path = iterator.next();</span>
-<span class="pc bpc" id="L159" title="1 of 2 branches missed.">                if (path.section.isValid()) {</span>
-<span class="fc" id="L160">                    container.with(li().with(path.createLinkToSection(false)));</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">            while (iterator.hasNext()) {</span>
+<span class="fc" id="L160">                path = iterator.next();</span>
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">                if (path.section.isValid(baseDir)) {</span>
+<span class="fc" id="L162">                    container.with(li().with(path.createLinkToSection(false)));</span>
                 } else {
-<span class="nc" id="L162">                    container.with(li().with(a(path.section.name())));</span>
+<span class="nc" id="L164">                    container.with(li().with(a(path.section.name())));</span>
                 }
             }
 
-<span class="fc" id="L166">            container.with(li().with(a(section.name())));</span>
+<span class="fc" id="L168">            container.with(li().with(a(section.name())));</span>
         }
 
-<span class="fc" id="L169">        return nav().withClass(&quot;breadcrumbs&quot;).with(container);</span>
+<span class="fc" id="L171">        return nav().withClass(&quot;breadcrumbs&quot;).with(container);</span>
     }
 
+
+
+
+    private DivTag createCompanyLogo() {
+<span class="pc bpc" id="L178" title="3 of 4 branches missed.">        if (site.companyLogo() != null &amp;&amp; site.companyLink() != null) {</span>
+<span class="nc" id="L179">            return div().withClass(&quot;company&quot;).with(</span>
+<span class="nc" id="L180">                EmitterUtil.externalLinkWithImage(baseDir,&quot;&quot;,site.companyLink(),site.companyLogo(),globalImages)</span>
+            );
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">        } else if (site.companyLink() == null) {</span>
+<span class="fc" id="L183">            return div().withClass(&quot;company&quot;).with(</span>
+<span class="fc" id="L184">                EmitterUtil.image(baseDir,site.companyLogo(),globalImages)</span>
+            );
+        } else {
+<span class="nc" id="L187">            return div();</span>
+        }
+    }
 
 
 
 
     private HeadTag htmlHead() {
-<span class="fc" id="L177">        String title = site.title();</span>
-<span class="pc bpc" id="L178" title="1 of 2 branches missed.">        if (!section.name().equalsIgnoreCase(title)) {</span>
-<span class="fc" id="L179">            title += &quot; - &quot;+section.name();</span>
+<span class="fc" id="L195">        String title = site.title();</span>
+<span class="pc bpc" id="L196" title="1 of 2 branches missed.">        if (!section.name().equalsIgnoreCase(title)) {</span>
+<span class="fc" id="L197">            title += &quot; - &quot;+section.name();</span>
         }
-<span class="fc" id="L181">        String description = section.description();</span>
-<span class="pc bpc" id="L182" title="1 of 4 branches missed.">        if (description == null || description.isEmpty()) {</span>
-<span class="fc" id="L183">            description = site.description();</span>
+<span class="fc" id="L199">        String description = section.description();</span>
+<span class="pc bpc" id="L200" title="1 of 4 branches missed.">        if (description == null || description.isEmpty()) {</span>
+<span class="fc" id="L201">            description = site.description();</span>
         }
 
-<span class="fc" id="L186">        HeadTag head = head()</span>
-<span class="fc" id="L187">            .with(title(title))</span>
-<span class="fc" id="L188">            .with(meta().withName(&quot;description&quot;).withContent(description))</span>
-<span class="fc" id="L189">            .with(meta().withCharset(&quot;UTF-8&quot;))</span>
-<span class="fc" id="L190">            .with(meta().withName(&quot;viewport&quot;).withContent(&quot;width=device-width, initial-scale=1.0&quot;))</span>
-<span class="fc" id="L191">            .with(link().withRel(&quot;profile&quot;).withHref(&quot;http://www.w3.org/2005/10/profile&quot;))</span>
+<span class="fc" id="L204">        HeadTag head = head()</span>
+<span class="fc" id="L205">            .with(title(title))</span>
+<span class="fc" id="L206">            .with(meta().withName(&quot;description&quot;).withContent(description))</span>
+<span class="fc" id="L207">            .with(meta().withCharset(&quot;UTF-8&quot;))</span>
+<span class="fc" id="L208">            .with(meta().withName(&quot;viewport&quot;).withContent(&quot;width=device-width, initial-scale=1.0&quot;))</span>
+<span class="fc" id="L209">            .with(link().withRel(&quot;profile&quot;).withHref(&quot;http://www.w3.org/2005/10/profile&quot;))</span>
             ;
-<span class="fc bfc" id="L193" title="All 2 branches covered.">        if (site.favicon() != null) {</span>
-<span class="fc" id="L194">            head.with(</span>
-<span class="fc" id="L195">                link()</span>
-<span class="fc" id="L196">                    .withRel(&quot;icon&quot;)</span>
-<span class="fc" id="L197">                    .withType(globalImages.typeOf(site.favicon()))</span>
-<span class="fc" id="L198">                    .withHref(globalImages.imageFile(site.favicon()))</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">        if (site.favicon() != null) {</span>
+<span class="fc" id="L212">            head.with(</span>
+<span class="fc" id="L213">                link()</span>
+<span class="fc" id="L214">                    .withRel(&quot;icon&quot;)</span>
+<span class="fc" id="L215">                    .withType(globalImages.typeOf(site.favicon()))</span>
+<span class="fc" id="L216">                    .withHref(globalImages.imageFile(site.favicon()))</span>
             );
         }
-<span class="fc bfc" id="L201" title="All 2 branches covered.">        if (useCDN) {</span>
-<span class="fc" id="L202">            CDNResources.css(&quot;fontawesome.min&quot;).ifPresent(head::with);</span>
-<span class="fc" id="L203">            CDNResources.css(&quot;prism.min&quot;).ifPresent(head::with);</span>
-<span class="fc" id="L204">            CDNResources.js(&quot;prism.min&quot;).ifPresent(head::with);</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">        if (useCDN) {</span>
+<span class="fc" id="L220">            CDNResources.css(&quot;fontawesome.min&quot;).ifPresent(head::with);</span>
+<span class="fc" id="L221">            CDNResources.css(&quot;prism.min&quot;).ifPresent(head::with);</span>
+<span class="fc" id="L222">            CDNResources.js(&quot;prism.min&quot;).ifPresent(head::with);</span>
         } else {
-<span class="fc" id="L206">            head.with(stylesheet(&quot;css/font-awesome-all.css&quot;));</span>
-<span class="fc" id="L207">            head.with(script().attr(&quot;src&quot;,&quot;js/prism.js&quot;));</span>
-<span class="fc" id="L208">            head.with(stylesheet(&quot;css/prism.min.css&quot;));</span>
+<span class="fc" id="L224">            head.with(stylesheet(&quot;css/font-awesome-all.css&quot;));</span>
+<span class="fc" id="L225">            head.with(script().attr(&quot;src&quot;,&quot;js/prism.js&quot;));</span>
+<span class="fc" id="L226">            head.with(stylesheet(&quot;css/prism.min.css&quot;));</span>
         }
 
 
-<span class="fc" id="L212">        head.with(stylesheet(&quot;css/common.css&quot;));</span>
-<span class="fc" id="L213">        head.with(stylesheet(&quot;css/style.css&quot;));</span>
+<span class="fc" id="L230">        head.with(stylesheet(&quot;css/common.css&quot;));</span>
+<span class="fc" id="L231">        head.with(stylesheet(&quot;css/style.css&quot;));</span>
 
 
-<span class="fc" id="L216">        String themeStyle =</span>
+<span class="fc" id="L234">        String themeStyle =</span>
             &quot;:root {\n&quot;+
-<span class="fc" id="L218">                &quot;--menu-regular-background-color: &quot;+themeColors.menuRegularBackgroundColor()+&quot;;\n&quot;+</span>
-<span class="fc" id="L219">                &quot;--menu-bold-background-color: &quot;+themeColors.menuBoldBackgroundColor()+&quot;;\n&quot;+</span>
-<span class="fc" id="L220">                &quot;--menu-foreground-color: &quot;+themeColors.menuForegroundColor()+&quot;;\n&quot;+</span>
-<span class="fc" id="L221">                &quot;--menu-decoration-color: &quot;+themeColors.menuDecorationColor()+&quot;;\n&quot;+</span>
-<span class="fc" id="L222">                &quot;--gui-element-color: &quot;+themeColors.guiElementColor()+&quot;;\n&quot;+</span>
+<span class="fc" id="L236">                &quot;--menu-regular-background-color: &quot;+themeColors.menuRegularBackgroundColor()+&quot;;\n&quot;+</span>
+<span class="fc" id="L237">                &quot;--menu-bold-background-color: &quot;+themeColors.menuBoldBackgroundColor()+&quot;;\n&quot;+</span>
+<span class="fc" id="L238">                &quot;--menu-foreground-color: &quot;+themeColors.menuForegroundColor()+&quot;;\n&quot;+</span>
+<span class="fc" id="L239">                &quot;--menu-decoration-color: &quot;+themeColors.menuDecorationColor()+&quot;;\n&quot;+</span>
+<span class="fc" id="L240">                &quot;--gui-element-color: &quot;+themeColors.guiElementColor()+&quot;;\n&quot;+</span>
                 &quot;}&quot;;
-<span class="fc" id="L224">        head.with(style(themeStyle));</span>
+<span class="fc" id="L242">        head.with(style(themeStyle));</span>
 
-<span class="fc" id="L226">        this.metadata.forEach(</span>
-<span class="nc" id="L227">            (key,value) -&gt; head.with(meta().withName(key).withContent(value))</span>
+<span class="fc" id="L244">        this.metadata.forEach(</span>
+<span class="nc" id="L245">            (key,value) -&gt; head.with(meta().withName(key).withContent(value))</span>
         );
 
-<span class="pc bpc" id="L230" title="1 of 2 branches missed.">        for (Script script : this.scripts) {</span>
-<span class="nc bnc" id="L231" title="All 4 branches missed.">            if (script.code() != null &amp;&amp; !script.code().isBlank()) {</span>
-<span class="nc" id="L232">                head.with(script(script.code()));</span>
+<span class="pc bpc" id="L248" title="1 of 2 branches missed.">        for (Script script : this.scripts) {</span>
+<span class="nc bnc" id="L249" title="All 4 branches missed.">            if (script.code() != null &amp;&amp; !script.code().isBlank()) {</span>
+<span class="nc" id="L250">                head.with(script(script.code()));</span>
             } else {
-<span class="nc" id="L234">                head.with(script().withSrc(script.src()).withCondAsync(script.async()));</span>
+<span class="nc" id="L252">                head.with(script().withSrc(script.src()).withCondAsync(script.async()));</span>
             }
-<span class="nc" id="L236">        }</span>
+<span class="nc" id="L254">        }</span>
 
 
-<span class="fc" id="L239">        return head;</span>
+<span class="fc" id="L257">        return head;</span>
     }
 
 
 
     void addChildEmitter(SectionEmitter child) {
-<span class="fc" id="L245">        this.childEmitters.add(child);</span>
-<span class="fc" id="L246">    }</span>
+<span class="fc" id="L263">        this.childEmitters.add(child);</span>
+<span class="fc" id="L264">    }</span>
 
 
 
 
 
     private DivTag createTitleAndSubtitle() {
-<span class="fc" id="L253">        return div().withClass(&quot;title-and-subtitle&quot;)</span>
-<span class="fc" id="L254">            .with(</span>
-<span class="fc" id="L255">                h1().withClasses(&quot;title label&quot;)</span>
-<span class="fc" id="L256">                    .with(</span>
-<span class="fc" id="L257">                        EmitterUtil.icon(site.logo(), globalImages),</span>
-<span class="fc" id="L258">                        span(site.title())</span>
+<span class="fc" id="L271">        return div().withClass(&quot;title-and-subtitle&quot;)</span>
+<span class="fc" id="L272">            .with(</span>
+<span class="fc" id="L273">                h1().withClasses(&quot;title label&quot;)</span>
+<span class="fc" id="L274">                    .with(</span>
+<span class="fc" id="L275">                        EmitterUtil.icon(baseDir, site.logo(), globalImages),</span>
+<span class="fc" id="L276">                        span(site.title())</span>
                     ),
-<span class="fc" id="L260">                span(site.description()).withClass(&quot;subtitle&quot;)</span>
+<span class="fc" id="L278">                span(site.description()).withClass(&quot;subtitle&quot;)</span>
             );
     }
 
 
 
     private NavTag createNavigation() {
-<span class="fc" id="L267">        return nav().withClass(&quot;sections&quot;)</span>
-<span class="fc" id="L268">            .with(</span>
-<span class="fc" id="L269">                ul().with(</span>
-<span class="fc" id="L270">                    rootEmitter.childEmitters.stream()</span>
-<span class="fc" id="L271">                        .filter(it -&gt; it.section.isValid())</span>
-<span class="fc bfc" id="L272" title="All 2 branches covered.">                        .map(it -&gt; it.createNavigationSection(it == this))</span>
-<span class="fc" id="L273">                        .toArray(LiTag[]::new)</span>
+<span class="fc" id="L285">        return nav().withClass(&quot;sections&quot;)</span>
+<span class="fc" id="L286">            .with(</span>
+<span class="fc" id="L287">                ul().with(</span>
+<span class="fc" id="L288">                    rootEmitter.childEmitters.stream()</span>
+<span class="fc" id="L289">                        .filter(it -&gt; it.section.isValid(baseDir))</span>
+<span class="fc bfc" id="L290" title="All 2 branches covered.">                        .map(it -&gt; it.createNavigationSection(it == this))</span>
+<span class="fc" id="L291">                        .toArray(LiTag[]::new)</span>
                 )
             );
     }
@@ -278,19 +296,19 @@ public abstract class SectionEmitter {
 
     private LiTag createNavigationSection(boolean selected) {
 
-<span class="fc bfc" id="L281" title="All 2 branches covered.">        if (!childEmitters.isEmpty()) {</span>
-<span class="fc" id="L282">            UlTag dropdownMenu = ul().withClass(&quot;dropdown&quot;);</span>
-<span class="fc bfc" id="L283" title="All 2 branches covered.">            for (SectionEmitter child : childEmitters) {</span>
-<span class="fc" id="L284">                dropdownMenu.with(li().with(child.createLinkToSection(true)));</span>
-<span class="fc" id="L285">            }</span>
-<span class="fc" id="L286">            return li()</span>
-<span class="fc" id="L287">                .withCondClass(selected, &quot;selected&quot;)</span>
-<span class="fc" id="L288">                .with(createLinkToSection(true))</span>
-<span class="fc" id="L289">                .with(dropdownMenu);</span>
+<span class="fc bfc" id="L299" title="All 2 branches covered.">        if (!childEmitters.isEmpty()) {</span>
+<span class="fc" id="L300">            UlTag dropdownMenu = ul().withClass(&quot;dropdown&quot;);</span>
+<span class="fc bfc" id="L301" title="All 2 branches covered.">            for (SectionEmitter child : childEmitters) {</span>
+<span class="fc" id="L302">                dropdownMenu.with(li().with(child.createLinkToSection(true)));</span>
+<span class="fc" id="L303">            }</span>
+<span class="fc" id="L304">            return li()</span>
+<span class="fc" id="L305">                .withCondClass(selected, &quot;selected&quot;)</span>
+<span class="fc" id="L306">                .with(createLinkToSection(true))</span>
+<span class="fc" id="L307">                .with(dropdownMenu);</span>
         } else {
-<span class="fc" id="L291">            return li()</span>
-<span class="fc" id="L292">                .withCondClass(selected, &quot;selected&quot;)</span>
-<span class="fc" id="L293">                .with(createLinkToSection(true));</span>
+<span class="fc" id="L309">            return li()</span>
+<span class="fc" id="L310">                .withCondClass(selected, &quot;selected&quot;)</span>
+<span class="fc" id="L311">                .with(createLinkToSection(true));</span>
         }
 
     }
@@ -299,24 +317,24 @@ public abstract class SectionEmitter {
 
 
     private void writeToFile(HtmlTag htmlObject) throws IOException {
-<span class="fc" id="L302">        String html = htmlObject.render();</span>
-<span class="pc bpc" id="L303" title="1 of 2 branches missed.">        if (Boolean.TRUE.equals(section.replaceEmojis())) {</span>
-<span class="fc" id="L304">            html = EmojiParser.parseToUnicode(html);</span>
+<span class="fc" id="L320">        String html = htmlObject.render();</span>
+<span class="pc bpc" id="L321" title="1 of 2 branches missed.">        if (Boolean.TRUE.equals(section.replaceEmojis())) {</span>
+<span class="fc" id="L322">            html = EmojiParser.parseToUnicode(html);</span>
         }
-<span class="fc" id="L306">        Files.writeString(outputPath(), html, StandardCharsets.UTF_8);</span>
-<span class="fc" id="L307">        logger.info(&quot;Written file {}&quot;, outputPath());</span>
-<span class="fc" id="L308">    }</span>
+<span class="fc" id="L324">        Files.writeString(outputPath(), html, StandardCharsets.UTF_8);</span>
+<span class="fc" id="L325">        logger.info(&quot;Written file {}&quot;, outputPath());</span>
+<span class="fc" id="L326">    }</span>
 
 
     private void addPrismComponents(HeadTag head, SectionTag section) {
-<span class="fc" id="L312">        Pattern pattern = Pattern.compile(&quot;&lt;code\\s*class=\&quot;\\s*language-([^\\s\&quot;]+)&quot;);</span>
-<span class="fc" id="L313">        String html = section.render();</span>
-<span class="fc" id="L314">        Matcher matcher = pattern.matcher(html);</span>
-<span class="fc" id="L315">        Set&lt;String&gt; languages = new HashSet&lt;&gt;();</span>
-<span class="fc bfc" id="L316" title="All 2 branches covered.">        while (matcher.find()) {</span>
-<span class="fc" id="L317">            languages.add(&quot;prism.&quot;+matcher.group(1));</span>
+<span class="fc" id="L330">        Pattern pattern = Pattern.compile(&quot;&lt;code\\s*class=\&quot;\\s*language-([^\\s\&quot;]+)&quot;);</span>
+<span class="fc" id="L331">        String html = section.render();</span>
+<span class="fc" id="L332">        Matcher matcher = pattern.matcher(html);</span>
+<span class="fc" id="L333">        Set&lt;String&gt; languages = new HashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L334" title="All 2 branches covered.">        while (matcher.find()) {</span>
+<span class="fc" id="L335">            languages.add(&quot;prism.&quot;+matcher.group(1));</span>
         }
-<span class="fc" id="L319">        languages.forEach(lang -&gt; CDNResources.js(lang).ifPresent(head::with));</span>
-<span class="fc" id="L320">    }</span>
+<span class="fc" id="L337">        languages.forEach(lang -&gt; CDNResources.js(lang).ifPresent(head::with));</span>
+<span class="fc" id="L338">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

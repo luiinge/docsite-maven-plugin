@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DocsiteMojo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Docsite Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">docsite.mojo</a> &gt; <span class="el_source">DocsiteMojo.java</span></div><h1>DocsiteMojo.java</h1><pre class="source lang-java linenums">package docsite.mojo;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GenerateMojo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Docsite Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">docsite.mojo</a> &gt; <span class="el_source">GenerateMojo.java</span></div><h1>GenerateMojo.java</h1><pre class="source lang-java linenums">package docsite.mojo;
 
 import static java.util.Objects.requireNonNullElse;
 
@@ -6,6 +6,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
+import docsite.util.DocsiteReader;
 import docsite.util.ResourceUtil;
 import org.apache.maven.plugin.*;
 import org.apache.maven.plugins.annotations.*;
@@ -15,7 +16,7 @@ import org.apache.maven.project.MavenProject;
 import docsite.*;
 
 @Mojo(defaultPhase = LifecyclePhase.POST_SITE, name = &quot;generate&quot;)
-<span class="nc" id="L18">public class DocsiteMojo extends AbstractMojo {</span>
+<span class="nc" id="L19">public class GenerateMojo extends AbstractMojo {</span>
 
     /**
      * The folder where the documentation site would be generated.
@@ -42,10 +43,20 @@ import docsite.*;
 
 
     /**
-     * Defines the site estructure. If omitted, a default site estructure would be use instead.
+     * Skips the execution for this project
+     * @since 1.2
+     */
+    @Parameter(name = &quot;skip&quot;, defaultValue = &quot;false&quot;, property = &quot;docsite.skip&quot;)
+    boolean skip;
+
+
+    /**
+     * Defines the site structure. If omitted, a default site structure would be use instead.
      * &lt;pre&gt;&lt;code class=&quot;language-xml&quot;&gt;&amp;lt;title&amp;gt;&amp;lt;/title&amp;gt;
      * &amp;lt;description&amp;gt;&amp;lt;/description&amp;gt;
      * &amp;lt;logo&amp;gt;&amp;lt;/logo&amp;gt;
+     * &amp;lt;companyLogo&amp;gt;&amp;lt;/companyLogo&amp;gt;
+     * &amp;lt;companyLink&amp;gt;&amp;lt;/companyLink&amp;gt;
      * &amp;lt;favicon&amp;gt;&amp;lt;/favicon&amp;gt;
      * &amp;lt;index&amp;gt;&amp;lt;/index&amp;gt;
      * &amp;lt;sections&amp;gt;
@@ -73,6 +84,8 @@ import docsite.*;
      * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;title&lt;/tt&gt;&lt;/td&gt;&lt;td&gt; Title of the site. Used in page headers and metadata.&lt;/td&gt;&lt;td&gt;Required&lt;/&lt;td&gt;&lt;/tr&gt;
      * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;description&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;Brief description of the site. Used in page headers and metadata.&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
      * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;logo&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;File image or &lt;a href=&quot;http://https://fontawesome.com/v5.15/icons&quot;&gt;Font Awesome icon&lt;/a&gt;. Used in page headers.&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+     * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;companyLogo&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;File image. Used in page headers.&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+     * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;companyLink&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;URL link. Used in page headers.&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
      * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;favicon&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;File image. Used by browsers as the page icon.&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
      * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;index&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;Document file (Markdown, HTML or raw text) that would be the landing page.&lt;/td&gt;&lt;td&gt;Required&lt;/td&gt;&lt;/tr&gt;
      * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;sections&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;Main sections of the page. Used in the header navigation menu.&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
@@ -84,7 +97,7 @@ import docsite.*;
      * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;name&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;Name of the section. Used in menus, breadcrumbs and metadata.&lt;/td&gt;&lt;td&gt;Required&lt;/&lt;td&gt;&lt;/tr&gt;
      * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;description&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;Brief description of the section. Used in metadata.&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
      * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;icon&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;File image or &lt;a href=&quot;http://https://fontawesome.com/v5.15/icons&quot;&gt;Font Awesome icon&lt;/a&gt;. Used in menus.&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-     * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;type&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;Type of the section. &lt;/td&gt;&lt;td&gt;&lt;tt&gt;generated&lt;/tt&gt;&lt;br/&gt;&lt;tt&gt;embedded&lt;/tt&gt;&lt;br/&gt;&lt;tt&gt;group&lt;/tt&gt;&lt;br/&gt;&lt;tt&gt;link&lt;/tt&gt;&lt;/td&gt;&lt;/tr&gt;
+     * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;type&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;Type of the section. &lt;/td&gt;&lt;td&gt;&lt;tt&gt;generated&lt;/tt&gt;&lt;br/&gt;&lt;tt&gt;embedded&lt;/tt&gt;&lt;br/&gt;&lt;tt&gt;copy&lt;/tt&gt;&lt;br/&gt;&lt;tt&gt;group&lt;/tt&gt;&lt;br/&gt;&lt;tt&gt;link&lt;/tt&gt;&lt;/td&gt;&lt;/tr&gt;
      * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;source&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;Document file used as the site contents. Not used when &lt;tt&gt;type&lt;/tt&gt; is &lt;tt&gt;group&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
      * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;siteIndex&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;Main page of the embedded site. Required used when &lt;tt&gt;type&lt;/tt&gt; is &lt;tt&gt;embedded&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
      * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;template&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;A &lt;a href=&quot;https://freemarker.apache.org/&quot;&gt;Freemarker&lt;/a&gt; template file. Only used when &lt;tt&gt;type&lt;/tt&gt; is &lt;tt&gt;generated&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
@@ -96,6 +109,18 @@ import docsite.*;
      */
     @Parameter(name = &quot;docsite&quot;)
     Docsite docsite;
+
+
+    /**
+     * A JSON file containing the object structure of the docsite
+     * (instead of including it in the pom)
+     * @since 1.2
+     * */
+    @Parameter(name = &quot;docsiteFile&quot;, property = &quot;docsite.docsiteFile&quot;)
+    File docsiteFile;
+
+
+
 
     /**
 
@@ -148,7 +173,7 @@ import docsite.*;
      * @since 1.1
      */
     @Parameter(name = &quot;scripts&quot;)
-    List&lt;Script&gt; scripts;
+    Script[] scripts;
 
     /**
      * A local CSS file that would be used instead of the default style, in case you want
@@ -169,63 +194,72 @@ import docsite.*;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
 
-<span class="nc" id="L172">        initializeLogger();</span>
+<span class="nc bnc" id="L197" title="All 2 branches missed.">        if (skip) {</span>
+<span class="nc" id="L198">            return;</span>
+        }
 
-<span class="nc" id="L174">        File[] outputFolderContent = Objects.requireNonNullElse(</span>
-<span class="nc" id="L175">            outputFolder.listFiles(),</span>
+<span class="nc" id="L201">        initializeLogger();</span>
+
+<span class="nc" id="L203">        File[] outputFolderContent = Objects.requireNonNullElse(</span>
+<span class="nc" id="L204">            outputFolder.listFiles(),</span>
             new File[0]
         );
 
         try {
-<span class="nc bnc" id="L180" title="All 4 branches missed.">            if (outputFolder.exists() &amp;&amp; outputFolderContent.length &gt; 0) {</span>
-<span class="nc bnc" id="L181" title="All 2 branches missed.">                if (forceDelete) {</span>
-<span class="nc" id="L182">                    Logger.instance().warn(&quot;The contents of output folder {} will be deleted&quot;, outputFolder);</span>
-<span class="nc" id="L183">                    ResourceUtil.deleteDirectory(outputFolder.toPath());</span>
+<span class="nc bnc" id="L209" title="All 4 branches missed.">            if (outputFolder.exists() &amp;&amp; outputFolderContent.length &gt; 0) {</span>
+<span class="nc bnc" id="L210" title="All 2 branches missed.">                if (forceDelete) {</span>
+<span class="nc" id="L211">                    Logger.instance().warn(&quot;The contents of output folder {} will be deleted&quot;, outputFolder);</span>
+<span class="nc" id="L212">                    ResourceUtil.deleteDirectory(outputFolder.toPath());</span>
                 } else {
-<span class="nc" id="L185">                    Logger.instance().error(</span>
+<span class="nc" id="L214">                    Logger.instance().error(</span>
                         &quot;As a safety mechanism, the output folder must be empty. &quot; +
                         &quot;You can disable this check using -Ddocsite.forceDelete&quot;
                     );
-<span class="nc" id="L189">                    throw new MojoFailureException(&quot;The output folder &quot;+outputFolder+&quot; is not empty&quot;);</span>
+<span class="nc" id="L218">                    throw new MojoFailureException(&quot;The output folder &quot;+outputFolder+&quot; is not empty&quot;);</span>
                 }
             }
-<span class="nc" id="L192">            Files.createDirectories(outputFolder.toPath());</span>
+<span class="nc" id="L221">            Files.createDirectories(outputFolder.toPath());</span>
+<span class="nc bnc" id="L222" title="All 2 branches missed.">            if (docsiteFile != null) {</span>
+<span class="nc" id="L223">                docsite = new DocsiteReader().read(docsiteFile.toPath());</span>
+            } else {
+<span class="nc" id="L225">                Autoconfigurer autoconfigurer = new Autoconfigurer(project);</span>
+<span class="nc" id="L226">                docsite = autoconfigurer.configuration(</span>
+<span class="nc" id="L227">                    Objects.requireNonNullElse(docsite, new Docsite())</span>
+                );
+            }
 
-<span class="nc" id="L194">            themeColors = requireNonNullElse(themeColors, ThemeColors.DEFAULT);</span>
 
-<span class="nc" id="L196">            Autoconfigurer autoconfigurer = new Autoconfigurer(project);</span>
-<span class="nc" id="L197">            docsite = autoconfigurer.configuration(</span>
-<span class="nc" id="L198">                Objects.requireNonNullElse(docsite, new Docsite())</span>
-            );
+<span class="nc" id="L232">            themeColors = requireNonNullElse(themeColors, ThemeColors.DEFAULT);</span>
 
 
-<span class="nc" id="L202">            new DocsiteEmitter(</span>
+<span class="nc" id="L235">            new DocsiteEmitter(</span>
                 docsite,
                 themeColors,
-<span class="nc bnc" id="L205" title="All 2 branches missed.">                cssFile != null ? cssFile.toPath() : null,</span>
+<span class="nc bnc" id="L238" title="All 2 branches missed.">                cssFile != null ? cssFile.toPath() : null,</span>
                 useCDN,
-<span class="nc" id="L207">                outputFolder.toPath(),</span>
+<span class="nc" id="L240">                project.getBasedir().toPath(),</span>
+<span class="nc" id="L241">                outputFolder.toPath(),</span>
                 metadata,
-                scripts
-<span class="nc" id="L210">            ).generateSite();</span>
+<span class="nc bnc" id="L243" title="All 2 branches missed.">                scripts == null ? List.of() : Arrays.asList(scripts)</span>
+<span class="nc" id="L244">            ).generateSite();</span>
 
-<span class="nc" id="L212">        } catch (IOException e) {</span>
-<span class="nc" id="L213">            throw new MojoFailureException(&quot;Error generating site&quot;,e);</span>
-<span class="nc" id="L214">        }</span>
+<span class="nc" id="L246">        } catch (IOException e) {</span>
+<span class="nc" id="L247">            throw new MojoFailureException(&quot;Error generating site&quot;,e);</span>
+<span class="nc" id="L248">        }</span>
 
 
-<span class="nc" id="L217">    }</span>
+<span class="nc" id="L251">    }</span>
 
 
     private void initializeLogger() {
-<span class="nc" id="L221">        Logger.initialize(new Logger(</span>
-<span class="nc" id="L222">            getLog()::debug,</span>
-<span class="nc" id="L223">            getLog()::debug,</span>
-<span class="nc" id="L224">            getLog()::info,</span>
-<span class="nc" id="L225">            getLog()::warn,</span>
-<span class="nc" id="L226">            getLog()::error</span>
+<span class="nc" id="L255">        Logger.initialize(new Logger(</span>
+<span class="nc" id="L256">            getLog()::debug,</span>
+<span class="nc" id="L257">            getLog()::debug,</span>
+<span class="nc" id="L258">            getLog()::info,</span>
+<span class="nc" id="L259">            getLog()::warn,</span>
+<span class="nc" id="L260">            getLog()::error</span>
         ));
-<span class="nc" id="L228">    }</span>
+<span class="nc" id="L262">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

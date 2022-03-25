@@ -23,6 +23,10 @@ body, div, a, p, header, nav, aside, main, section, ol, iframe {
     height: 1em;
 }
 
+section {
+  scroll-behavior: smooth;
+}
+
 section img {
     max-width: 100%;
     height: auto;

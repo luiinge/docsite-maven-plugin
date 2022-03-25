@@ -6,25 +6,24 @@ import java.util.stream.*;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.*;
 import docsite.*;
-import docsite.util.ResourceUtil;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
-<span class="fc" id="L13">public final class XmlParser {</span>
+<span class="fc" id="L12">public final class XmlParser {</span>
 
-<span class="fc" id="L15">    private static final DocumentBuilder documentBuilder = documentBuilder();</span>
+<span class="fc" id="L14">    private static final DocumentBuilder documentBuilder = documentBuilder();</span>
 
     private static DocumentBuilder documentBuilder() {
         try {
-<span class="fc" id="L19">            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();</span>
-<span class="fc" id="L20">            factory.setFeature(&quot;http://apache.org/xml/features/disallow-doctype-decl&quot;, true);</span>
-<span class="fc" id="L21">            factory.setFeature(&quot;http://xml.org/sax/features/external-general-entities&quot;, false);</span>
-<span class="fc" id="L22">            factory.setFeature(&quot;http://xml.org/sax/features/external-parameter-entities&quot;, false);</span>
-<span class="fc" id="L23">            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, &quot;&quot;);</span>
-<span class="fc" id="L24">            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, &quot;&quot;);</span>
-<span class="fc" id="L25">            return factory.newDocumentBuilder();</span>
-<span class="nc" id="L26">        } catch (ParserConfigurationException e) {</span>
-<span class="nc" id="L27">            throw new DocsiteException(e);</span>
+<span class="fc" id="L18">            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();</span>
+<span class="fc" id="L19">            factory.setFeature(&quot;http://apache.org/xml/features/disallow-doctype-decl&quot;, true);</span>
+<span class="fc" id="L20">            factory.setFeature(&quot;http://xml.org/sax/features/external-general-entities&quot;, false);</span>
+<span class="fc" id="L21">            factory.setFeature(&quot;http://xml.org/sax/features/external-parameter-entities&quot;, false);</span>
+<span class="fc" id="L22">            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, &quot;&quot;);</span>
+<span class="fc" id="L23">            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, &quot;&quot;);</span>
+<span class="fc" id="L24">            return factory.newDocumentBuilder();</span>
+<span class="nc" id="L25">        } catch (ParserConfigurationException e) {</span>
+<span class="nc" id="L26">            throw new DocsiteException(e);</span>
         }
     }
 
@@ -33,63 +32,63 @@ import org.xml.sax.*;
 
     public Map&lt;String, Object&gt; parse(InputStream inputStream) throws IOException {
         try {
-<span class="fc" id="L36">            String xml = ResourceUtil.read(inputStream).replaceAll(&quot;&gt;[\\s]*&lt;&quot;,&quot;&gt;&lt;&quot;);</span>
-<span class="fc" id="L37">            Reader reader = new StringReader(xml);</span>
-<span class="fc" id="L38">            InputSource inputSource = new InputSource(reader);</span>
-<span class="fc" id="L39">            Document document = documentBuilder.parse(inputSource);</span>
-<span class="fc" id="L40">            return documentToMap(document);</span>
-<span class="nc" id="L41">        } catch (SAXException e) {</span>
-<span class="nc" id="L42">            throw new IOException(e);</span>
+<span class="fc" id="L35">            String xml = ResourceUtil.read(inputStream).replaceAll(&quot;&gt;[\\s]*&lt;&quot;,&quot;&gt;&lt;&quot;);</span>
+<span class="fc" id="L36">            Reader reader = new StringReader(xml);</span>
+<span class="fc" id="L37">            InputSource inputSource = new InputSource(reader);</span>
+<span class="fc" id="L38">            Document document = documentBuilder.parse(inputSource);</span>
+<span class="fc" id="L39">            return documentToMap(document);</span>
+<span class="nc" id="L40">        } catch (SAXException e) {</span>
+<span class="nc" id="L41">            throw new IOException(e);</span>
         }
     }
 
 
     private Map&lt;String, Object&gt; documentToMap(Document document) {
-<span class="fc" id="L48">        TreeMap&lt;String,Object&gt; map = new TreeMap&lt;&gt;();</span>
-<span class="fc" id="L49">        Element node = document.getDocumentElement();</span>
-<span class="fc" id="L50">        processNode(node, map, null, 1);</span>
-<span class="fc" id="L51">        return map;</span>
+<span class="fc" id="L47">        TreeMap&lt;String,Object&gt; map = new TreeMap&lt;&gt;();</span>
+<span class="fc" id="L48">        Element node = document.getDocumentElement();</span>
+<span class="fc" id="L49">        processNode(node, map, null, 1);</span>
+<span class="fc" id="L50">        return map;</span>
     }
 
 
     private void processNode(Node node, Map&lt;String, Object&gt; map, List&lt;Object&gt; list, int level) {
 
-<span class="fc bfc" id="L57" title="All 2 branches covered.">        if (!isElement(node)) {</span>
-<span class="fc" id="L58">            return;</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        if (!isElement(node)) {</span>
+<span class="fc" id="L57">            return;</span>
         }
 
-<span class="fc" id="L61">        Element element = (Element) node;</span>
+<span class="fc" id="L60">        Element element = (Element) node;</span>
 
         // &lt;property&gt;&lt;/property&gt;
-<span class="fc bfc" id="L64" title="All 4 branches covered.">        if (!element.hasChildNodes() &amp;&amp; !element.hasAttributes()) {</span>
-<span class="fc" id="L65">            addToContainer(map, list, element.getTagName(), &quot;&quot;);</span>
+<span class="fc bfc" id="L63" title="All 4 branches covered.">        if (!element.hasChildNodes() &amp;&amp; !element.hasAttributes()) {</span>
+<span class="fc" id="L64">            addToContainer(map, list, element.getTagName(), &quot;&quot;);</span>
         }
         // &lt;property&gt;value&lt;/property&gt;
-<span class="fc bfc" id="L68" title="All 6 branches covered.">        else if (childCount(node) == 1 &amp;&amp; isText(child(node, 0)) &amp;&amp; !element.hasAttributes()) {</span>
-<span class="fc" id="L69">            addToContainer(map, list, element.getTagName(), child(node, 0).getNodeValue());</span>
+<span class="fc bfc" id="L67" title="All 6 branches covered.">        else if (childCount(node) == 1 &amp;&amp; isText(child(node, 0)) &amp;&amp; !element.hasAttributes()) {</span>
+<span class="fc" id="L68">            addToContainer(map, list, element.getTagName(), child(node, 0).getNodeValue());</span>
         }
         // &lt;property attr=&quot;a&quot; ... &gt;value&lt;/property&gt;
-<span class="pc bpc" id="L72" title="1 of 6 branches missed.">        else if (childCount(node) == 1 &amp;&amp; isText(child(node, 0)) &amp;&amp; element.hasAttributes()) {</span>
-<span class="fc" id="L73">            TreeMap&lt;String, Object&gt; value = new TreeMap&lt;&gt;();</span>
-<span class="fc" id="L74">            addToContainer(map, list, element.getTagName(), value);</span>
-<span class="fc" id="L75">            attributes(node).forEach( attr -&gt; value.put(attr.getName(), attr.getValue()) );</span>
-<span class="fc" id="L76">            value.put(&quot;value&quot;, child(node, 0).getNodeValue());</span>
-<span class="fc" id="L77">        }</span>
+<span class="pc bpc" id="L71" title="1 of 6 branches missed.">        else if (childCount(node) == 1 &amp;&amp; isText(child(node, 0)) &amp;&amp; element.hasAttributes()) {</span>
+<span class="fc" id="L72">            TreeMap&lt;String, Object&gt; value = new TreeMap&lt;&gt;();</span>
+<span class="fc" id="L73">            addToContainer(map, list, element.getTagName(), value);</span>
+<span class="fc" id="L74">            attributes(node).forEach( attr -&gt; value.put(attr.getName(), attr.getValue()) );</span>
+<span class="fc" id="L75">            value.put(&quot;value&quot;, child(node, 0).getNodeValue());</span>
+<span class="fc" id="L76">        }</span>
         // &lt;property&gt;&lt;item&gt;A&lt;/item&gt;&lt;item&gt;B&lt;/item&gt;...&lt;/property?
-<span class="fc bfc" id="L79" title="All 2 branches covered.">        else if (isListPropertyNode(node)) {</span>
-<span class="fc" id="L80">            List&lt;Object&gt; value = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L81">            addToContainer(map, list, element.getTagName(), value);</span>
-<span class="fc" id="L82">            children(node).forEach( child -&gt; processNode(child, new TreeMap&lt;&gt;(), value, level+1) );</span>
-<span class="fc" id="L83">        }</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        else if (isListPropertyNode(node)) {</span>
+<span class="fc" id="L79">            List&lt;Object&gt; value = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L80">            addToContainer(map, list, element.getTagName(), value);</span>
+<span class="fc" id="L81">            children(node).forEach( child -&gt; processNode(child, new TreeMap&lt;&gt;(), value, level+1) );</span>
+<span class="fc" id="L82">        }</span>
         // &lt;entity attr=&quot;a&quot;...&gt;&lt;propertyA&gt;...&lt;/propertyA&gt;&lt;propertyB&gt;...&lt;/propertyB&gt; ..&lt;/entity&gt;
         else {
-<span class="fc" id="L86">            TreeMap&lt;String, Object&gt; value = new TreeMap&lt;&gt;();</span>
-<span class="fc" id="L87">            addToContainer(map, list, element.getTagName(), value);</span>
-<span class="fc" id="L88">            attributes(node).forEach( attr -&gt; value.put(attr.getName(), attr.getValue()) );</span>
-<span class="fc" id="L89">            children(node).forEach( child -&gt; processNode(child, value, null, level + 1) );</span>
+<span class="fc" id="L85">            TreeMap&lt;String, Object&gt; value = new TreeMap&lt;&gt;();</span>
+<span class="fc" id="L86">            addToContainer(map, list, element.getTagName(), value);</span>
+<span class="fc" id="L87">            attributes(node).forEach( attr -&gt; value.put(attr.getName(), attr.getValue()) );</span>
+<span class="fc" id="L88">            children(node).forEach( child -&gt; processNode(child, value, null, level + 1) );</span>
         }
 
-<span class="fc" id="L92">    }</span>
+<span class="fc" id="L91">    }</span>
 
 
     private void addToContainer(
@@ -98,69 +97,69 @@ import org.xml.sax.*;
         String key,
         Object value
     ) {
-<span class="fc bfc" id="L101" title="All 2 branches covered.">        if (list != null) {</span>
-<span class="fc" id="L102">            list.add(value);</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        if (list != null) {</span>
+<span class="fc" id="L101">            list.add(value);</span>
         } else {
-<span class="fc" id="L104">            map.put(key, value);</span>
+<span class="fc" id="L103">            map.put(key, value);</span>
         }
-<span class="fc" id="L106">    }</span>
+<span class="fc" id="L105">    }</span>
 
 
 
     private boolean isListPropertyNode(Node node) {
-<span class="pc bpc" id="L111" title="1 of 4 branches missed.">        if (isElement(node) &amp;&amp; node.hasChildNodes()) {</span>
-<span class="fc" id="L112">            String childTag = &quot;&quot;;</span>
-<span class="fc" id="L113">            int count = 0;</span>
-<span class="fc bfc" id="L114" title="All 2 branches covered.">            for (int i = 0; i &lt; node.getChildNodes().getLength(); i++) {</span>
-<span class="fc" id="L115">                Node child = child(node , i);</span>
-<span class="pc bpc" id="L116" title="1 of 2 branches missed.">                if (!isElement(child)) {</span>
-<span class="nc" id="L117">                    continue;</span>
+<span class="pc bpc" id="L110" title="1 of 4 branches missed.">        if (isElement(node) &amp;&amp; node.hasChildNodes()) {</span>
+<span class="fc" id="L111">            String childTag = &quot;&quot;;</span>
+<span class="fc" id="L112">            int count = 0;</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">            for (int i = 0; i &lt; node.getChildNodes().getLength(); i++) {</span>
+<span class="fc" id="L114">                Node child = child(node , i);</span>
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">                if (!isElement(child)) {</span>
+<span class="nc" id="L116">                    continue;</span>
                 }
-<span class="fc" id="L119">                count++;</span>
-<span class="fc bfc" id="L120" title="All 2 branches covered.">                if (childTag.isEmpty()) {</span>
-<span class="fc" id="L121">                    childTag = child.getNodeName();</span>
-<span class="fc bfc" id="L122" title="All 2 branches covered.">                } else if (!childTag.equals(child.getNodeName())) {</span>
-<span class="fc" id="L123">                    return false;</span>
+<span class="fc" id="L118">                count++;</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">                if (childTag.isEmpty()) {</span>
+<span class="fc" id="L120">                    childTag = child.getNodeName();</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">                } else if (!childTag.equals(child.getNodeName())) {</span>
+<span class="fc" id="L122">                    return false;</span>
                 }
             }
-<span class="pc bpc" id="L126" title="1 of 4 branches missed.">            return count &gt; 1 &amp;&amp; !childTag.isEmpty();</span>
+<span class="pc bpc" id="L125" title="1 of 4 branches missed.">            return count &gt; 1 &amp;&amp; !childTag.isEmpty();</span>
         }
-<span class="fc" id="L128">        return false;</span>
+<span class="fc" id="L127">        return false;</span>
     }
 
 
     private boolean isElement(Node node) {
-<span class="fc bfc" id="L133" title="All 2 branches covered.">        return node.getNodeType() == Node.ELEMENT_NODE;</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        return node.getNodeType() == Node.ELEMENT_NODE;</span>
     }
 
 
     private boolean isText(Node node) {
-<span class="fc bfc" id="L138" title="All 2 branches covered.">        return node.getNodeType() == Node.TEXT_NODE;</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">        return node.getNodeType() == Node.TEXT_NODE;</span>
     }
 
 
     private int childCount(Node node) {
-<span class="fc" id="L143">        return node.getChildNodes().getLength();</span>
+<span class="fc" id="L142">        return node.getChildNodes().getLength();</span>
     }
 
 
     private Node child(Node node, int index) {
-<span class="fc" id="L148">        return node.getChildNodes().item(index);</span>
+<span class="fc" id="L147">        return node.getChildNodes().item(index);</span>
     }
 
 
     private Stream&lt;Node&gt; children (Node node) {
-<span class="fc" id="L153">        return IntStream</span>
-<span class="fc" id="L154">            .rangeClosed(0, node.getChildNodes().getLength() - 1)</span>
-<span class="fc" id="L155">            .mapToObj(node.getChildNodes()::item);</span>
+<span class="fc" id="L152">        return IntStream</span>
+<span class="fc" id="L153">            .rangeClosed(0, node.getChildNodes().getLength() - 1)</span>
+<span class="fc" id="L154">            .mapToObj(node.getChildNodes()::item);</span>
     }
 
 
     private Stream&lt;Attr&gt; attributes (Node node) {
-<span class="fc" id="L160">        return IntStream</span>
-<span class="fc" id="L161">            .rangeClosed(0, node.getAttributes().getLength() - 1)</span>
-<span class="fc" id="L162">            .mapToObj(node.getAttributes()::item)</span>
-<span class="fc" id="L163">            .map(Attr.class::cast);</span>
+<span class="fc" id="L159">        return IntStream</span>
+<span class="fc" id="L160">            .rangeClosed(0, node.getAttributes().getLength() - 1)</span>
+<span class="fc" id="L161">            .mapToObj(node.getAttributes()::item)</span>
+<span class="fc" id="L162">            .map(Attr.class::cast);</span>
     }
 
 

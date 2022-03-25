@@ -16,25 +16,27 @@ public class SectionEmitterFactory {
         Docsite site,
         ImageResolver globalImages,
         ThemeColors themeColors,
+        Path baseDir,
         Path outputFolder,
         boolean useCDN,
         Map&lt;String,String&gt; metadata,
         List&lt;Script&gt; scripts
-<span class="fc" id="L23">    ) {</span>
-<span class="fc" id="L24">        this.buildParams = new EmitterBuildParams()</span>
-<span class="fc" id="L25">            .site(site)</span>
-<span class="fc" id="L26">            .themeColors(themeColors)</span>
-<span class="fc" id="L27">            .outputFolder(outputFolder)</span>
-<span class="fc" id="L28">            .globalImages(globalImages)</span>
-<span class="fc" id="L29">            .useCDN(useCDN)</span>
-<span class="fc" id="L30">            .metadata(metadata)</span>
-<span class="fc" id="L31">            .scripts(scripts)</span>
+<span class="fc" id="L24">    ) {</span>
+<span class="fc" id="L25">        this.buildParams = new EmitterBuildParams()</span>
+<span class="fc" id="L26">            .site(site)</span>
+<span class="fc" id="L27">            .themeColors(themeColors)</span>
+<span class="fc" id="L28">            .baseDir(baseDir)</span>
+<span class="fc" id="L29">            .outputFolder(outputFolder)</span>
+<span class="fc" id="L30">            .globalImages(globalImages)</span>
+<span class="fc" id="L31">            .useCDN(useCDN)</span>
+<span class="fc" id="L32">            .metadata(metadata)</span>
+<span class="fc" id="L33">            .scripts(scripts)</span>
         ;
-<span class="fc" id="L33">    }</span>
+<span class="fc" id="L35">    }</span>
 
 
     SectionEmitter createEmitter(Section section) {
-<span class="fc" id="L37">        return createEmitter(section,null,new ArrayList&lt;&gt;());</span>
+<span class="fc" id="L39">        return createEmitter(section,null,new ArrayList&lt;&gt;());</span>
     }
 
 
@@ -43,35 +45,37 @@ public class SectionEmitterFactory {
         SectionEmitter rootEmitter,
         List&lt;SectionEmitter&gt; ancestorEmitters
     ) {
-<span class="fc" id="L46">        SectionEmitter newEmitter = newEmitterInstance(buildParams</span>
-<span class="fc" id="L47">            .withRootEmitter(rootEmitter)</span>
-<span class="fc" id="L48">            .withSection(section)</span>
-<span class="fc" id="L49">            .withAncestorEmitters(ancestorEmitters)</span>
+<span class="fc" id="L48">        SectionEmitter newEmitter = newEmitterInstance(buildParams</span>
+<span class="fc" id="L49">            .withRootEmitter(rootEmitter)</span>
+<span class="fc" id="L50">            .withSection(section)</span>
+<span class="fc" id="L51">            .withAncestorEmitters(ancestorEmitters)</span>
         );
-<span class="fc" id="L51">        SectionEmitter newRoot = Objects.requireNonNullElse(rootEmitter, newEmitter);</span>
-<span class="fc" id="L52">        List&lt;SectionEmitter&gt; newAncestors = new ArrayList&lt;&gt;(ancestorEmitters);</span>
-<span class="fc" id="L53">        newAncestors.add(newEmitter);</span>
-<span class="fc bfc" id="L54" title="All 2 branches covered.">        for (Section subsection : section.subsections()) {</span>
-<span class="fc" id="L55">            newEmitter.addChildEmitter(createEmitter(subsection, newRoot, newAncestors));</span>
-<span class="fc" id="L56">        }</span>
-<span class="fc" id="L57">        return newEmitter;</span>
+<span class="fc" id="L53">        SectionEmitter newRoot = Objects.requireNonNullElse(rootEmitter, newEmitter);</span>
+<span class="fc" id="L54">        List&lt;SectionEmitter&gt; newAncestors = new ArrayList&lt;&gt;(ancestorEmitters);</span>
+<span class="fc" id="L55">        newAncestors.add(newEmitter);</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        for (Section subsection : section.subsections()) {</span>
+<span class="fc" id="L57">            newEmitter.addChildEmitter(createEmitter(subsection, newRoot, newAncestors));</span>
+<span class="fc" id="L58">        }</span>
+<span class="fc" id="L59">        return newEmitter;</span>
     }
 
 
 
 
     private SectionEmitter newEmitterInstance(EmitterBuildParams params) {
-<span class="pc bpc" id="L64" title="1 of 5 branches missed.">        switch (params.section().type()) {</span>
+<span class="pc bpc" id="L66" title="2 of 6 branches missed.">        switch (params.section().type()) {</span>
+            case copy:
+<span class="nc" id="L68">                return new CopySectionEmitter(params);</span>
             case link:
-<span class="fc" id="L66">                return new LinkSectionEmitter(params);</span>
+<span class="fc" id="L70">                return new LinkSectionEmitter(params);</span>
             case group:
-<span class="fc" id="L68">                return new GroupSectionEmitter(params);</span>
+<span class="fc" id="L72">                return new GroupSectionEmitter(params);</span>
             case embedded:
-<span class="fc" id="L70">                return new EmbeddedSiteSectionEmitter(params);</span>
+<span class="fc" id="L74">                return new EmbeddedSiteSectionEmitter(params);</span>
             case generated:
-<span class="fc" id="L72">                return newGeneratedSectionEmitter(params);</span>
+<span class="fc" id="L76">                return newGeneratedSectionEmitter(params);</span>
             default:
-<span class="nc" id="L74">                throw new UnsupportedOperationException();</span>
+<span class="nc" id="L78">                throw new UnsupportedOperationException();</span>
         }
     }
 
@@ -79,17 +83,17 @@ public class SectionEmitterFactory {
     @NotNull
     private GeneratedSectionEmitter newGeneratedSectionEmitter(EmitterBuildParams params) {
 
-<span class="fc bfc" id="L82" title="All 2 branches covered.">        if (params.section().template() != null) {</span>
-<span class="fc" id="L83">            return new TemplateSectionEmitter(params);</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        if (params.section().template() != null) {</span>
+<span class="fc" id="L87">            return new TemplateSectionEmitter(params);</span>
         }
 
-<span class="fc" id="L86">        String source = params.section().source().toLowerCase();</span>
-<span class="fc bfc" id="L87" title="All 2 branches covered.">        if (source.endsWith(&quot;.md&quot;)) {</span>
-<span class="fc" id="L88">            return new MarkdownGeneratedSectionEmitter(params);</span>
-<span class="pc bpc" id="L89" title="1 of 4 branches missed.">        } else if (source.endsWith(&quot;.html&quot;) || source.endsWith(&quot;.htm&quot;)) {</span>
-<span class="fc" id="L90">            return new HtmlGeneratedSectionEmitter(params);</span>
+<span class="fc" id="L90">        String source = params.section().source().toLowerCase();</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        if (source.endsWith(&quot;.md&quot;)) {</span>
+<span class="fc" id="L92">            return new MarkdownGeneratedSectionEmitter(params);</span>
+<span class="pc bpc" id="L93" title="1 of 4 branches missed.">        } else if (source.endsWith(&quot;.html&quot;) || source.endsWith(&quot;.htm&quot;)) {</span>
+<span class="fc" id="L94">            return new HtmlGeneratedSectionEmitter(params);</span>
         } else {
-<span class="fc" id="L92">            return new TextGeneratedSectionEmitter(params);</span>
+<span class="fc" id="L96">            return new TextGeneratedSectionEmitter(params);</span>
         }
     }
 

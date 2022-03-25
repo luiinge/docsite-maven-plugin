@@ -29,188 +29,209 @@ public class Autoconfigurer {
     }
 
 
+    public Docsite aggregatedConfiguration(Docsite docsite, List&lt;MavenProject&gt; children) throws MojoExecutionException {
+<span class="nc" id="L33">        docsite.title(nonNull(project.getName(),project.getArtifactId()));</span>
+<span class="nc" id="L34">        docsite.description(nonNull(project.getDescription(),&quot;&quot;));</span>
+<span class="nc" id="L35">        docsite.index(searchIndex());</span>
+<span class="nc" id="L36">        List&lt;Section&gt; sections = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L37">        changelogSection().ifPresent(sections::add);</span>
+<span class="nc" id="L38">        List&lt;Section&gt; childrenSections = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">        for (MavenProject child : children) {</span>
+<span class="nc" id="L40">            String source = project.getBasedir().toPath().relativize(Path.of(child.getBasedir()+&quot;/target/docsite&quot;)).toString();</span>
+<span class="nc" id="L41">            childrenSections.add(</span>
+<span class="nc" id="L42">                Section.copy().source(source).name(child.getName()).siteIndex(&quot;index.html&quot;).build()</span>
+            );
+<span class="nc" id="L44">        }</span>
+<span class="nc" id="L45">        sections.add(Section.group(&quot;Components&quot;).icon(&quot;fas:stream&quot;).subsections(childrenSections).build());</span>
+<span class="nc" id="L46">        vcsSection().ifPresent(sections::add);</span>
+<span class="nc" id="L47">        licenseSection().ifPresent(sections::add);</span>
+<span class="nc" id="L48">        docsite.sections(sections);</span>
+
+<span class="nc" id="L50">        return docsite;</span>
+    }
+
 
     @NotNull
     private List&lt;Section&gt; createSections() {
-<span class="nc" id="L35">        List&lt;Section&gt; sections = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L36">        changelogSection().ifPresent(sections::add);</span>
-<span class="nc" id="L37">        reportsSection().ifPresent(sections::add);</span>
-<span class="nc" id="L38">        vcsSection().ifPresent(sections::add);</span>
-<span class="nc" id="L39">        licenseSection().ifPresent(sections::add);</span>
-<span class="nc" id="L40">        return sections;</span>
+<span class="nc" id="L56">        List&lt;Section&gt; sections = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L57">        changelogSection().ifPresent(sections::add);</span>
+<span class="nc" id="L58">        reportsSection().ifPresent(sections::add);</span>
+<span class="nc" id="L59">        vcsSection().ifPresent(sections::add);</span>
+<span class="nc" id="L60">        licenseSection().ifPresent(sections::add);</span>
+<span class="nc" id="L61">        return sections;</span>
     }
 
 
     private String searchIndex() throws MojoExecutionException {
-<span class="nc bnc" id="L45" title="All 2 branches missed.">        for (String file : Objects.requireNonNull(project.getBasedir().list())) {</span>
-<span class="nc bnc" id="L46" title="All 2 branches missed.">           if (file.toLowerCase().startsWith(&quot;readme.&quot;) ||</span>
-<span class="nc bnc" id="L47" title="All 2 branches missed.">               file.toLowerCase().startsWith(&quot;index.&quot;)</span>
+<span class="nc bnc" id="L66" title="All 2 branches missed.">        for (String file : Objects.requireNonNull(project.getBasedir().list())) {</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">           if (file.toLowerCase().startsWith(&quot;readme.&quot;) ||</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">               file.toLowerCase().startsWith(&quot;index.&quot;)</span>
            ) {
-<span class="nc" id="L49">               return file;</span>
+<span class="nc" id="L70">               return file;</span>
            }
         }
-<span class="nc" id="L52">        throw new MojoExecutionException(&quot;Cannot determine home page for the docsite&quot;);</span>
+<span class="nc" id="L73">        throw new MojoExecutionException(&quot;Cannot determine home page for the docsite&quot;);</span>
     }
 
 
     private Optional&lt;Section&gt; licenseSection() {
-<span class="nc bnc" id="L57" title="All 2 branches missed.">        for (String file : Objects.requireNonNull(project.getBasedir().list())) {</span>
-<span class="nc bnc" id="L58" title="All 2 branches missed.">            if (file.equalsIgnoreCase(&quot;license&quot;) ||</span>
-<span class="nc bnc" id="L59" title="All 2 branches missed.">                file.toLowerCase().startsWith(&quot;license.&quot;)</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">        for (String file : Objects.requireNonNull(project.getBasedir().list())) {</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">            if (file.equalsIgnoreCase(&quot;license&quot;) ||</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">                file.toLowerCase().startsWith(&quot;license.&quot;)</span>
             ) {
-<span class="nc" id="L61">                return Optional.of(</span>
-<span class="nc" id="L62">                    Section.generated(&quot;License&quot;)</span>
-<span class="nc" id="L63">                        .source(file)</span>
-<span class="nc" id="L64">                        .icon(&quot;fas:balance-scale&quot;)</span>
-<span class="nc" id="L65">                        .build()</span>
+<span class="nc" id="L82">                return Optional.of(</span>
+<span class="nc" id="L83">                    Section.generated(&quot;License&quot;)</span>
+<span class="nc" id="L84">                        .source(file)</span>
+<span class="nc" id="L85">                        .icon(&quot;fas:balance-scale&quot;)</span>
+<span class="nc" id="L86">                        .build()</span>
                 );
             }
         }
-<span class="nc" id="L69">        return Optional.empty();</span>
+<span class="nc" id="L90">        return Optional.empty();</span>
     }
 
 
     private Optional&lt;Section&gt; changelogSection() {
-<span class="nc bnc" id="L74" title="All 2 branches missed.">        for (String file : Objects.requireNonNull(project.getBasedir().list())) {</span>
-<span class="nc bnc" id="L75" title="All 2 branches missed.">            if (file.equalsIgnoreCase(&quot;changelog&quot;) ||</span>
-<span class="nc bnc" id="L76" title="All 2 branches missed.">                file.toLowerCase().startsWith(&quot;changelog.&quot;)</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        for (String file : Objects.requireNonNull(project.getBasedir().list())) {</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">            if (file.equalsIgnoreCase(&quot;changelog&quot;) ||</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">                file.toLowerCase().startsWith(&quot;changelog.&quot;)</span>
             ) {
-<span class="nc" id="L78">                return Optional.of(</span>
-<span class="nc" id="L79">                    Section.generated(&quot;Changelog&quot;)</span>
-<span class="nc" id="L80">                        .description(&quot;Log of modifications on new versions&quot;)</span>
-<span class="nc" id="L81">                        .source(file)</span>
-<span class="nc" id="L82">                        .icon(&quot;fas:clipboard-list&quot;)</span>
-<span class="nc" id="L83">                        .build()</span>
+<span class="nc" id="L99">                return Optional.of(</span>
+<span class="nc" id="L100">                    Section.generated(&quot;Changelog&quot;)</span>
+<span class="nc" id="L101">                        .description(&quot;Log of modifications on new versions&quot;)</span>
+<span class="nc" id="L102">                        .source(file)</span>
+<span class="nc" id="L103">                        .icon(&quot;fas:clipboard-list&quot;)</span>
+<span class="nc" id="L104">                        .build()</span>
                 );
             }
-        }
-<span class="nc" id="L87">        return Optional.empty();</span>
-    }
-
-
-    private Optional&lt;Section&gt; vcsSection() {
-<span class="nc bnc" id="L92" title="All 4 branches missed.">        if (project.getScm() != null &amp;&amp; project.getScm().getUrl() != null) {</span>
-<span class="nc" id="L93">            String url = project.getScm().getUrl();</span>
-            String icon;
-<span class="nc bnc" id="L95" title="All 2 branches missed.">            if (url.contains(&quot;github&quot;)) {</span>
-<span class="nc" id="L96">                icon = &quot;fab:github&quot;;</span>
-<span class="nc bnc" id="L97" title="All 2 branches missed.">            } else if (url.contains(&quot;gitlab&quot;)) {</span>
-<span class="nc" id="L98">                icon = &quot;fab:gitlab&quot;;</span>
-<span class="nc bnc" id="L99" title="All 2 branches missed.">            } else if (url.contains(&quot;bitbucket&quot;)) {</span>
-<span class="nc" id="L100">                icon = &quot;fab:gitbucket&quot;;</span>
-<span class="nc bnc" id="L101" title="All 2 branches missed.">            } else if (url.contains(&quot;git&quot;)) {</span>
-<span class="nc" id="L102">                icon = &quot;fab:git-alt&quot;;</span>
-            } else {
-<span class="nc" id="L104">                icon = &quot;fas:code-branch&quot;;</span>
-            }
-<span class="nc" id="L106">            return Optional.of(Section.link().name(&quot;Source&quot;).source(url).icon(icon).build());</span>
         }
 <span class="nc" id="L108">        return Optional.empty();</span>
     }
 
 
+    private Optional&lt;Section&gt; vcsSection() {
+<span class="nc bnc" id="L113" title="All 4 branches missed.">        if (project.getScm() != null &amp;&amp; project.getScm().getUrl() != null) {</span>
+<span class="nc" id="L114">            String url = project.getScm().getUrl();</span>
+            String icon;
+<span class="nc bnc" id="L116" title="All 2 branches missed.">            if (url.contains(&quot;github&quot;)) {</span>
+<span class="nc" id="L117">                icon = &quot;fab:github&quot;;</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">            } else if (url.contains(&quot;gitlab&quot;)) {</span>
+<span class="nc" id="L119">                icon = &quot;fab:gitlab&quot;;</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">            } else if (url.contains(&quot;bitbucket&quot;)) {</span>
+<span class="nc" id="L121">                icon = &quot;fab:gitbucket&quot;;</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">            } else if (url.contains(&quot;git&quot;)) {</span>
+<span class="nc" id="L123">                icon = &quot;fab:git-alt&quot;;</span>
+            } else {
+<span class="nc" id="L125">                icon = &quot;fas:code-branch&quot;;</span>
+            }
+<span class="nc" id="L127">            return Optional.of(Section.link().name(&quot;Source&quot;).source(url).icon(icon).build());</span>
+        }
+<span class="nc" id="L129">        return Optional.empty();</span>
+    }
+
+
     private Optional&lt;Section&gt; reportsSection() {
-<span class="nc" id="L113">        List&lt;Section&gt; reports = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L114">        mavenPluginSection().ifPresent(reports::add);</span>
-<span class="nc" id="L115">        javadocSection().ifPresent(reports::add);</span>
-<span class="nc" id="L116">        dependenciesSection().ifPresent(reports::add);</span>
-<span class="nc" id="L117">        jacocoSection().ifPresent(reports::add);</span>
-<span class="nc" id="L118">        surefireSection().ifPresent(reports::add);</span>
-<span class="nc bnc" id="L119" title="All 2 branches missed.">        return reports.isEmpty() ?</span>
-<span class="nc" id="L120">            Optional.empty() :</span>
-<span class="nc" id="L121">            Optional.of(</span>
-<span class="nc" id="L122">                Section.group(&quot;Reports&quot;)</span>
-<span class="nc" id="L123">                    .description(&quot;Collection of technical reports about this project&quot;)</span>
-<span class="nc" id="L124">                    .icon(&quot;fas:file-medical-alt&quot;)</span>
-<span class="nc" id="L125">                    .subsections(reports)</span>
-<span class="nc" id="L126">                    .build()</span>
+<span class="nc" id="L134">        List&lt;Section&gt; reports = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L135">        mavenPluginSection().ifPresent(reports::add);</span>
+<span class="nc" id="L136">        javadocSection().ifPresent(reports::add);</span>
+<span class="nc" id="L137">        dependenciesSection().ifPresent(reports::add);</span>
+<span class="nc" id="L138">        jacocoSection().ifPresent(reports::add);</span>
+<span class="nc" id="L139">        surefireSection().ifPresent(reports::add);</span>
+<span class="nc bnc" id="L140" title="All 2 branches missed.">        return reports.isEmpty() ?</span>
+<span class="nc" id="L141">            Optional.empty() :</span>
+<span class="nc" id="L142">            Optional.of(</span>
+<span class="nc" id="L143">                Section.group(&quot;Reports&quot;)</span>
+<span class="nc" id="L144">                    .description(&quot;Collection of technical reports about this project&quot;)</span>
+<span class="nc" id="L145">                    .icon(&quot;fas:file-medical-alt&quot;)</span>
+<span class="nc" id="L146">                    .subsections(reports)</span>
+<span class="nc" id="L147">                    .build()</span>
             );
     }
 
 
     private Optional&lt;Section&gt; javadocSection() {
-<span class="nc" id="L132">        Path javadocFolder = reportingFolder.resolve(&quot;apidocs&quot;);</span>
-<span class="nc bnc" id="L133" title="All 2 branches missed.">        if (Files.exists(javadocFolder)) {</span>
-<span class="nc" id="L134">            return Optional.of(</span>
-<span class="nc" id="L135">                Section.site()</span>
-<span class="nc" id="L136">                    .name(&quot;Javadoc&quot;)</span>
-<span class="nc" id="L137">                    .description(&quot;Javadoc documentation for this project&quot;)</span>
-<span class="nc" id="L138">                    .source(javadocFolder.toString())</span>
-<span class="nc" id="L139">                    .siteIndex(&quot;index.html&quot;)</span>
-<span class="nc" id="L140">                    .icon(&quot;fab:java&quot;)</span>
-<span class="nc" id="L141">                    .build()</span>
+<span class="nc" id="L153">        Path javadocFolder = reportingFolder.resolve(&quot;apidocs&quot;);</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">        if (Files.exists(javadocFolder)) {</span>
+<span class="nc" id="L155">            return Optional.of(</span>
+<span class="nc" id="L156">                Section.site()</span>
+<span class="nc" id="L157">                    .name(&quot;Javadoc&quot;)</span>
+<span class="nc" id="L158">                    .description(&quot;Javadoc documentation for this project&quot;)</span>
+<span class="nc" id="L159">                    .source(javadocFolder.toString())</span>
+<span class="nc" id="L160">                    .siteIndex(&quot;index.html&quot;)</span>
+<span class="nc" id="L161">                    .icon(&quot;fab:java&quot;)</span>
+<span class="nc" id="L162">                    .build()</span>
             );
         }
-<span class="nc" id="L144">        return Optional.empty();</span>
+<span class="nc" id="L165">        return Optional.empty();</span>
     }
 
 
     private Optional&lt;Section&gt; dependenciesSection() {
-<span class="nc" id="L149">        Path dependenciesFile = reportingFolder.resolve(&quot;dependencies.html&quot;);</span>
-<span class="nc bnc" id="L150" title="All 2 branches missed.">        if (Files.exists(dependenciesFile)) {</span>
-<span class="nc" id="L151">            return Optional.of(</span>
-<span class="nc" id="L152">                Section.generated(&quot;Dependencies&quot;)</span>
-<span class="nc" id="L153">                    .description(&quot;Collection of artifacts that this project uses&quot;)</span>
-<span class="nc" id="L154">                    .source(dependenciesFile.toString())</span>
-<span class="nc" id="L155">                    .replaceEmojis(false)</span>
-<span class="nc" id="L156">                    .build()</span>
+<span class="nc" id="L170">        Path dependenciesFile = reportingFolder.resolve(&quot;dependencies.html&quot;);</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">        if (Files.exists(dependenciesFile)) {</span>
+<span class="nc" id="L172">            return Optional.of(</span>
+<span class="nc" id="L173">                Section.generated(&quot;Dependencies&quot;)</span>
+<span class="nc" id="L174">                    .description(&quot;Collection of artifacts that this project uses&quot;)</span>
+<span class="nc" id="L175">                    .source(dependenciesFile.toString())</span>
+<span class="nc" id="L176">                    .replaceEmojis(false)</span>
+<span class="nc" id="L177">                    .build()</span>
             );
         }
-<span class="nc" id="L159">        return Optional.empty();</span>
+<span class="nc" id="L180">        return Optional.empty();</span>
     }
 
 
     private Optional&lt;Section&gt; jacocoSection() {
-<span class="nc" id="L164">        Path jacocoFolder = reportingFolder.resolve(&quot;jacoco&quot;);</span>
-<span class="nc bnc" id="L165" title="All 2 branches missed.">        if (Files.exists(jacocoFolder)) {</span>
-<span class="nc" id="L166">            return Optional.of(</span>
-<span class="nc" id="L167">                Section.site()</span>
-<span class="nc" id="L168">                    .name(&quot;Test Coverage&quot;)</span>
-<span class="nc" id="L169">                    .description(&quot;Report of code coverage according the executed tests&quot;)</span>
-<span class="nc" id="L170">                    .source(jacocoFolder.toString())</span>
-<span class="nc" id="L171">                    .siteIndex(&quot;index.html&quot;)</span>
-<span class="nc" id="L172">                    .build()</span>
+<span class="nc" id="L185">        Path jacocoFolder = reportingFolder.resolve(&quot;jacoco&quot;);</span>
+<span class="nc bnc" id="L186" title="All 2 branches missed.">        if (Files.exists(jacocoFolder)) {</span>
+<span class="nc" id="L187">            return Optional.of(</span>
+<span class="nc" id="L188">                Section.site()</span>
+<span class="nc" id="L189">                    .name(&quot;Test Coverage&quot;)</span>
+<span class="nc" id="L190">                    .description(&quot;Report of code coverage according the executed tests&quot;)</span>
+<span class="nc" id="L191">                    .source(jacocoFolder.toString())</span>
+<span class="nc" id="L192">                    .siteIndex(&quot;index.html&quot;)</span>
+<span class="nc" id="L193">                    .build()</span>
             );
         }
-<span class="nc" id="L175">        return Optional.empty();</span>
+<span class="nc" id="L196">        return Optional.empty();</span>
     }
 
 
     private Optional&lt;Section&gt; surefireSection() {
-<span class="nc" id="L180">        Path report = reportingFolder.resolve(&quot;surefire-report.html&quot;);</span>
-<span class="nc bnc" id="L181" title="All 2 branches missed.">        if (Files.exists(report)) {</span>
-<span class="nc" id="L182">            return Optional.of(</span>
-<span class="nc" id="L183">                Section.generated(&quot;Test Results&quot;)</span>
-<span class="nc" id="L184">                    .description(&quot;Results of the automatic tests executed in this project&quot;)</span>
-<span class="nc" id="L185">                    .source(report.toString())</span>
-<span class="nc" id="L186">                    .build()</span>
+<span class="nc" id="L201">        Path report = reportingFolder.resolve(&quot;surefire-report.html&quot;);</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">        if (Files.exists(report)) {</span>
+<span class="nc" id="L203">            return Optional.of(</span>
+<span class="nc" id="L204">                Section.generated(&quot;Test Results&quot;)</span>
+<span class="nc" id="L205">                    .description(&quot;Results of the automatic tests executed in this project&quot;)</span>
+<span class="nc" id="L206">                    .source(report.toString())</span>
+<span class="nc" id="L207">                    .build()</span>
             );
         }
-<span class="nc" id="L189">        return Optional.empty();</span>
+<span class="nc" id="L210">        return Optional.empty();</span>
     }
 
 
 
     private Optional&lt;Section&gt; mavenPluginSection() {
-<span class="nc" id="L195">        Path pluginDescriptor = Path.of(project.getBuild().getDirectory())</span>
-<span class="nc" id="L196">            .resolve(&quot;classes/META-INF/maven/plugin.xml&quot;);</span>
+<span class="nc" id="L216">        Path pluginDescriptor = Path.of(project.getBuild().getDirectory())</span>
+<span class="nc" id="L217">            .resolve(&quot;classes/META-INF/maven/plugin.xml&quot;);</span>
 
-<span class="nc bnc" id="L198" title="All 2 branches missed.">        if (Files.exists(pluginDescriptor)) {</span>
-<span class="nc" id="L199">            return Optional.of(</span>
-<span class="nc" id="L200">                Section.generated(&quot;Plugin Goals&quot;)</span>
-<span class="nc" id="L201">                    .description(&quot;Description of goals and available parameters for this plugin&quot;)</span>
-<span class="nc" id="L202">                    .template(&quot;maven-plugin-descriptor&quot;)</span>
-<span class="nc" id="L203">                    .source(pluginDescriptor.toString())</span>
-<span class="nc" id="L204">                    .build()</span>
+<span class="nc bnc" id="L219" title="All 2 branches missed.">        if (Files.exists(pluginDescriptor)) {</span>
+<span class="nc" id="L220">            return Optional.of(</span>
+<span class="nc" id="L221">                Section.generated(&quot;Plugin Goals&quot;)</span>
+<span class="nc" id="L222">                    .description(&quot;Description of goals and available parameters for this plugin&quot;)</span>
+<span class="nc" id="L223">                    .template(&quot;maven-plugin-descriptor&quot;)</span>
+<span class="nc" id="L224">                    .source(pluginDescriptor.toString())</span>
+<span class="nc" id="L225">                    .build()</span>
             );
         }
-<span class="nc" id="L207">        return Optional.empty();</span>
+<span class="nc" id="L228">        return Optional.empty();</span>
     }
 
 
 
     private static String nonNull(String valueA, String valueB) {
-<span class="nc bnc" id="L213" title="All 2 branches missed.">        return valueA == null ? valueB : valueA;</span>
+<span class="nc bnc" id="L234" title="All 2 branches missed.">        return valueA == null ? valueB : valueA;</span>
     }
 
 

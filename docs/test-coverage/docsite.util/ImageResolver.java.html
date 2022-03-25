@@ -4,74 +4,73 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 import docsite.Logger;
-import docsite.util.ResourceUtil;
 
 public class ImageResolver {
 
-<span class="fc" id="L11">    public static final Logger logger = Logger.instance();</span>
+<span class="fc" id="L10">    public static final Logger logger = Logger.instance();</span>
 
-<span class="fc" id="L13">    private final Map&lt;String,String&gt; images = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L12">    private final Map&lt;String,String&gt; images = new HashMap&lt;&gt;();</span>
     private final Path imageFolder;
     private final Path source;
 
 
-<span class="fc" id="L18">    public ImageResolver(Path imageFolder, Path source) {</span>
-<span class="fc" id="L19">        this.imageFolder = imageFolder;</span>
-<span class="fc" id="L20">        this.source = source;</span>
-<span class="fc" id="L21">    }</span>
+<span class="fc" id="L17">    public ImageResolver(Path imageFolder, Path source) {</span>
+<span class="fc" id="L18">        this.imageFolder = imageFolder;</span>
+<span class="fc" id="L19">        this.source = source;</span>
+<span class="fc" id="L20">    }</span>
 
     public ImageResolver(Path imageFolder) {
-<span class="fc" id="L24">        this(imageFolder, null);</span>
-<span class="fc" id="L25">    }</span>
+<span class="fc" id="L23">        this(imageFolder, null);</span>
+<span class="fc" id="L24">    }</span>
 
 
     public String typeOf(String image) {
         // in order to simplify, just use the file extension
-<span class="fc" id="L30">        return &quot;image/&quot;+(image.substring(image.lastIndexOf('.')+1));</span>
+<span class="fc" id="L29">        return &quot;image/&quot;+(image.substring(image.lastIndexOf('.')+1));</span>
     }
 
 
     public String imageFile(String image) {
         try {
-<span class="fc bfc" id="L36" title="All 2 branches covered.">            if (source == null) {</span>
-<span class="fc" id="L37">                return imageFileFromWorkingDir(image);</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">            if (source == null) {</span>
+<span class="fc" id="L36">                return imageFileFromWorkingDir(image);</span>
             } else {
-<span class="fc" id="L39">                return imageFileFromRelativeSource(image);</span>
+<span class="fc" id="L38">                return imageFileFromRelativeSource(image);</span>
             }
-<span class="nc" id="L41">        } catch (IOException e) {</span>
-<span class="nc" id="L42">            logger.warn(&quot;Cannot retrieve image {} : {}&quot;, image, e.getMessage());</span>
-<span class="nc" id="L43">            logger.debug(e);</span>
-<span class="nc" id="L44">            return &quot;&quot;;</span>
+<span class="nc" id="L40">        } catch (IOException e) {</span>
+<span class="nc" id="L41">            logger.warn(&quot;Cannot retrieve image {} : {}&quot;, image, e.getMessage());</span>
+<span class="nc" id="L42">            logger.debug(e);</span>
+<span class="nc" id="L43">            return &quot;&quot;;</span>
         }
     }
 
 
     private String imageFileFromWorkingDir(String image) throws IOException{
-<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (!images.containsKey(image)) {</span>
-<span class="fc" id="L51">            String extension = image.substring(image.lastIndexOf('.')+1);</span>
-<span class="fc" id="L52">            String id = &quot;image-&quot; + (images.size() + 1) + &quot;.&quot; + extension;</span>
-<span class="fc" id="L53">            String actualFile = imageFolder.getParent().relativize(imageFolder.resolve(id)).toString();</span>
-<span class="fc" id="L54">            ResourceUtil.copyExternalFileWithAnotherName(Path.of(image), imageFolder, id);</span>
-<span class="fc" id="L55">            images.put(image, actualFile);</span>
-<span class="fc" id="L56">            return actualFile;</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        if (!images.containsKey(image)) {</span>
+<span class="fc" id="L50">            String extension = image.substring(image.lastIndexOf('.')+1);</span>
+<span class="fc" id="L51">            String id = &quot;image-&quot; + (images.size() + 1) + &quot;.&quot; + extension;</span>
+<span class="fc" id="L52">            String actualFile = imageFolder.getParent().relativize(imageFolder.resolve(id)).toString();</span>
+<span class="fc" id="L53">            ResourceUtil.copyExternalFileWithAnotherName(Path.of(image), imageFolder, id);</span>
+<span class="fc" id="L54">            images.put(image, actualFile);</span>
+<span class="fc" id="L55">            return actualFile;</span>
         } else {
-<span class="fc" id="L58">            return images.get(image);</span>
+<span class="fc" id="L57">            return images.get(image);</span>
         }
     }
 
 
 
     private String imageFileFromRelativeSource(String image) throws IOException{
-<span class="pc bpc" id="L65" title="1 of 2 branches missed.">        if (!images.containsKey(image)) {</span>
-<span class="fc" id="L66">            String extension = image.substring(image.lastIndexOf('.')+1);</span>
-<span class="fc" id="L67">            String id = &quot;image-&quot; + (images.size() + 1) + &quot;.&quot; + extension;</span>
-<span class="fc" id="L68">            String actualFile = imageFolder.getParent().getParent().relativize(imageFolder.resolve(id)).toString();</span>
-<span class="fc" id="L69">            Path relativeSource = source.getParent().resolve(image);</span>
-<span class="fc" id="L70">            ResourceUtil.copyExternalFileWithAnotherName(relativeSource, imageFolder, id);</span>
-<span class="fc" id="L71">            images.put(image, actualFile);</span>
-<span class="fc" id="L72">            return actualFile;</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        if (!images.containsKey(image)) {</span>
+<span class="fc" id="L65">            String extension = image.substring(image.lastIndexOf('.')+1);</span>
+<span class="fc" id="L66">            String id = &quot;image-&quot; + (images.size() + 1) + &quot;.&quot; + extension;</span>
+<span class="fc" id="L67">            String actualFile = imageFolder.getParent().getParent().relativize(imageFolder.resolve(id)).toString();</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">            Path relativeSource = source.getParent() == null ? Path.of(image) : source.getParent().resolve(image);</span>
+<span class="fc" id="L69">            ResourceUtil.copyExternalFileWithAnotherName(relativeSource, imageFolder, id);</span>
+<span class="fc" id="L70">            images.put(image, actualFile);</span>
+<span class="fc" id="L71">            return actualFile;</span>
         } else {
-<span class="nc" id="L74">            return images.get(image);</span>
+<span class="fc" id="L73">            return images.get(image);</span>
         }
     }
 

@@ -24,7 +24,7 @@ public class LinkSectionEmitter extends SectionEmitter {
     @Override
     public ATag createLinkToSection(boolean withIcon) {
 <span class="pc bpc" id="L26" title="1 of 2 branches missed.">        return withIcon ?</span>
-<span class="fc" id="L27">            externalLinkWithIcon(section.name(), url(), section.icon(), globalImages) :</span>
+<span class="fc" id="L27">            externalLinkWithIcon(baseDir, section.name(), url(), section.icon(), globalImages) :</span>
 <span class="nc" id="L28">            externalLink(section.name(), url());</span>
     }
 

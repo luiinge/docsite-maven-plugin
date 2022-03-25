@@ -18,7 +18,7 @@ public class TextGeneratedSectionEmitter extends GeneratedSectionEmitter {
 
     @Override
     protected SectionTag createSectionContent() {
-<span class="fc" id="L21">        try (InputStream text = ResourceUtil.open(origin)) {</span>
+<span class="fc" id="L21">        try (InputStream text = ResourceUtil.open(baseDir, origin)) {</span>
 <span class="fc" id="L22">            return section().with(pre(ResourceUtil.read(text)));</span>
 <span class="nc" id="L23">        }  catch (IOException e) {</span>
 <span class="nc" id="L24">            throw new DocsiteException(e);</span>

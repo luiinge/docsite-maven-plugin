@@ -3,95 +3,110 @@
 import java.util.*;
 
 
-public class Docsite {
+<span class="fc" id="L6">public class Docsite {</span>
 
     private String title;
     private String description;
     private String logo;
+    private String companyLogo;
+    private String companyLink;
     private String favicon;
     private String index;
     private List&lt;Section&gt; sections;
 
 
-<span class="fc" id="L16">    public Docsite() {</span>
-
-<span class="fc" id="L18">    }</span>
-
-
 
     public String title() {
-<span class="fc" id="L23">        return Objects.requireNonNull(title);</span>
+<span class="fc" id="L20">        return Objects.requireNonNull(title);</span>
     }
 
 
     public Section home() {
-<span class="fc" id="L28">        return Section.generated(&quot;index&quot;)</span>
-<span class="fc" id="L29">            .description(description)</span>
-<span class="fc" id="L30">            .source(index)</span>
-<span class="fc" id="L31">            .subsections(sections())</span>
-<span class="fc" id="L32">            .build();</span>
+<span class="fc" id="L25">        return Section.generated(&quot;index&quot;)</span>
+<span class="fc" id="L26">            .description(description)</span>
+<span class="fc" id="L27">            .source(index)</span>
+<span class="fc" id="L28">            .subsections(sections())</span>
+<span class="fc" id="L29">            .build();</span>
     }
 
 
     public String description() {
-<span class="fc" id="L37">        return Objects.requireNonNullElse(description,&quot;&quot;);</span>
+<span class="fc" id="L34">        return Objects.requireNonNullElse(description,&quot;&quot;);</span>
     }
 
 
     public String logo() {
-<span class="fc" id="L42">        return this.logo;</span>
+<span class="fc" id="L39">        return this.logo;</span>
     }
 
 
     public String favicon() {
-<span class="fc" id="L47">        return favicon;</span>
+<span class="fc" id="L44">        return favicon;</span>
     }
 
 
     public String index() {
-<span class="nc" id="L52">        return this.index;</span>
+<span class="nc" id="L49">        return this.index;</span>
     }
 
 
+    public String companyLogo() {
+<span class="fc" id="L54">        return companyLogo;</span>
+    }
+
+
+    public String companyLink() {
+<span class="fc" id="L59">        return companyLink;</span>
+    }
+
     public List&lt;Section&gt; sections() {
-<span class="fc" id="L57">        return Objects.requireNonNullElseGet(this.sections, ArrayList::new);</span>
+<span class="fc" id="L63">        return Objects.requireNonNullElseGet(this.sections, ArrayList::new);</span>
     }
 
 
     public Docsite title(String title) {
-<span class="fc" id="L62">        this.title = title;</span>
-<span class="fc" id="L63">        return this;</span>
-    }
-
-
-    public Docsite description(String description) {
-<span class="fc" id="L68">        this.description = description;</span>
+<span class="fc" id="L68">        this.title = title;</span>
 <span class="fc" id="L69">        return this;</span>
     }
 
 
-    public Docsite logo(String logo) {
-<span class="fc" id="L74">        this.logo = logo;</span>
+    public Docsite description(String description) {
+<span class="fc" id="L74">        this.description = description;</span>
 <span class="fc" id="L75">        return this;</span>
     }
 
 
-    public Docsite index(String index) {
-<span class="fc" id="L80">        this.index = index;</span>
+    public Docsite logo(String logo) {
+<span class="fc" id="L80">        this.logo = logo;</span>
 <span class="fc" id="L81">        return this;</span>
     }
 
 
-    public Docsite sections(List&lt;Section&gt; sections) {
-<span class="fc" id="L86">        this.sections = sections;</span>
+    public Docsite index(String index) {
+<span class="fc" id="L86">        this.index = index;</span>
 <span class="fc" id="L87">        return this;</span>
     }
 
 
-    public Docsite favicon(String favicon) {
-<span class="fc" id="L92">        this.favicon = favicon;</span>
+    public Docsite sections(List&lt;Section&gt; sections) {
+<span class="fc" id="L92">        this.sections = sections;</span>
 <span class="fc" id="L93">        return this;</span>
     }
 
+
+    public Docsite favicon(String favicon) {
+<span class="fc" id="L98">        this.favicon = favicon;</span>
+<span class="fc" id="L99">        return this;</span>
+    }
+
+    public Docsite companyLogo(String companyLogo) {
+<span class="nc" id="L103">        this.companyLogo = companyLogo;</span>
+<span class="nc" id="L104">        return this;</span>
+    }
+
+    public Docsite companyLink(String companyLink) {
+<span class="nc" id="L108">        this.companyLink = companyLink;</span>
+<span class="nc" id="L109">        return this;</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

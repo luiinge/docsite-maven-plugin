@@ -22,6 +22,7 @@ The key concepts are:
 > This is a quote block
 > that should be rendered in a different style
 
+
 What is the extra value then?
 
 - Annotation processing of `@Extension` and `@ExtensionPoint` so the classes are
@@ -33,6 +34,8 @@ avoiding using wrong jar versions
 - Custom control about creating new extension instances or reusing existing ones
 - When extending an extension via inheritance, you may either override the parent class or
 use both superclass and subclass independently
+
+<p align="center"><img src="screenshot.png"/></p>
 
 ![](screenshot.png)
 
@@ -185,6 +188,11 @@ in [Github project Issues](https://github.com/luiinge/jext/issues).
 There is no guarantee that it would be fixed in the following version but it would
 be addressed as soon as possible.
 
+| a     | b         | c      | d            | e    |
+|-------|-----------|--------|--------------|------|
+| dasda | dasd      | dasdas | ds           | dd   |
+| dasda |           | dasdas | das          | dddd |
+| ddd   | ccccccccc | d      | cccccccccccc | c    |
 
 License
 -----------------------------------------------------------------------------------------

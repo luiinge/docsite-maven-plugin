@@ -102,20 +102,20 @@ public final class ResourceUtil {
     }
 
 
-    public static InputStream open(String source) throws IOException {
+    public static InputStream open(Path baseDir, String source) throws IOException {
         try {
-<span class="nc" id="L107">            return new URL(source).openStream();</span>
-<span class="fc" id="L108">        } catch (MalformedURLException e) {</span>
-<span class="fc" id="L109">            return Files.newInputStream(Path.of(source));</span>
+<span class="fc" id="L107">            return baseDir.resolve(source).toUri().toURL().openStream();</span>
+<span class="nc" id="L108">        } catch (MalformedURLException e) {</span>
+<span class="nc" id="L109">            return Files.newInputStream(Path.of(source));</span>
         }
     }
 
 
-    public static boolean existsSource(String source) {
+    public static boolean existsSource(Path baseDir, String source) {
 <span class="pc bpc" id="L115" title="2 of 4 branches missed.">        if (source == null || source.isBlank()) {</span>
 <span class="nc" id="L116">            return false;</span>
         }
-<span class="fc bfc" id="L118" title="All 2 branches covered.">        if (Files.exists(Path.of(source))) {</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">        if (Files.exists(baseDir.resolve(source))) {</span>
 <span class="fc" id="L119">            return true;</span>
         }
 <span class="nc" id="L121">        try (InputStream stream = new URL(source).openStream()) {</span>
@@ -128,7 +128,7 @@ public final class ResourceUtil {
 
     public static void copyFolder(Path siteFolder, Path outputFolder)  {
 <span class="fc" id="L130">        try(Stream&lt;Path&gt; walker = Files.walk(siteFolder)) {</span>
-<span class="fc" id="L131">            Files.createDirectory(outputFolder);</span>
+<span class="fc" id="L131">            Files.createDirectories(outputFolder);</span>
 <span class="fc" id="L132">            walker.forEach(sourcePath -&gt; {</span>
                 try {
 <span class="fc" id="L134">                    Path targetPath = outputFolder.resolve(siteFolder.relativize(sourcePath));</span>

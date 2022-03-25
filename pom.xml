@@ -46,7 +46,12 @@
         <dependency>
             <groupId>com.vladsch.flexmark</groupId>
             <artifactId>flexmark</artifactId>
-            <version>0.62.2</version>
+            <version>0.64.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vladsch.flexmark</groupId>
+            <artifactId>flexmark-ext-tables</artifactId>
+            <version>0.64.0</version>
         </dependency>
         <dependency>
             <groupId>com.vdurmont</groupId>
@@ -107,12 +112,12 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.13.0</version>
+            <version>2.13.2</version>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.29</version>
+            <version>1.30</version>
         </dependency>
 
         <dependency>
@@ -181,7 +186,7 @@
                 </executions>
             </plugin>
 
-            <!--<plugin>
+            <plugin>
                 <groupId>io.github.luiinge</groupId>
                 <artifactId>docsite-maven-plugin</artifactId>
                 <version>1.1.0</version>
@@ -203,7 +208,7 @@
                         </script>
                     </scripts>
                 </configuration>
-            </plugin>-->
+            </plugin>
 
 
         </plugins>

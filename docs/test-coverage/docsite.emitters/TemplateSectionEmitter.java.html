@@ -60,7 +60,7 @@ public class TemplateSectionEmitter extends GeneratedSectionEmitter {
     @SuppressWarnings(&quot;unchecked&quot;)
     private Map&lt;String,Object&gt; documentMap() throws IOException {
 <span class="fc" id="L62">        String extension = origin.substring(origin.indexOf(&quot;.&quot;)+1).toLowerCase();</span>
-<span class="fc" id="L63">        try (InputStream inputStream = ResourceUtil.open(origin)) {</span>
+<span class="fc" id="L63">        try (InputStream inputStream = ResourceUtil.open(baseDir, origin)) {</span>
 <span class="pc bpc" id="L64" title="3 of 4 branches missed.">            switch (extension) {</span>
                 case &quot;xml&quot;:
 <span class="fc" id="L66">                    return new XmlParser().parse(inputStream);</span>

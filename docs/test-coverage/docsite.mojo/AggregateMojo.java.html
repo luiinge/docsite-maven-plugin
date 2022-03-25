@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AggregateMojo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Docsite Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">docsite.mojo</a> &gt; <span class="el_source">AggregateMojo.java</span></div><h1>AggregateMojo.java</h1><pre class="source lang-java linenums">package docsite.mojo;
+
+import docsite.*;
+import docsite.util.DocsiteReader;
+import docsite.util.ResourceUtil;
+import java.util.*;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+
+import static java.util.Objects.requireNonNullElse;
+
+@Mojo(defaultPhase = LifecyclePhase.POST_SITE, name = &quot;aggregate&quot;, aggregator = true)
+<span class="nc" id="L22">public class AggregateMojo extends AbstractMojo {</span>
+
+    /**
+     * The folder where the documentation site would be generated.
+     * @since 1.0
+     */
+    @Parameter(
+        name = &quot;outputFolder&quot;,
+        required = true,
+        defaultValue = &quot;${project.build.directory}/docsite&quot;,
+        property = &quot;docsite.outputFolder&quot;
+    )
+    File outputFolder;
+
+
+    /**
+     * Forces deletion of output folder.&lt;br/&gt;
+     * A safety mechanism is implemented in order to prevent accidental deletion of directories,
+     * but setting this property to &lt;tt&gt;true&lt;/tt&gt; will bypass such feature.
+     *
+     * @since 1.0
+     */
+    @Parameter(name = &quot;forceDelete&quot;, defaultValue = &quot;false&quot;, property = &quot;docsite.forceDelete&quot;)
+    boolean forceDelete;
+
+
+
+    /**
+     * Defines the site structure. If omitted, a default site structure would be use instead.
+     * &lt;pre&gt;&lt;code class=&quot;language-xml&quot;&gt;&amp;lt;title&amp;gt;&amp;lt;/title&amp;gt;
+     * &amp;lt;description&amp;gt;&amp;lt;/description&amp;gt;
+     * &amp;lt;logo&amp;gt;&amp;lt;/logo&amp;gt;
+     * &amp;lt;companyLogo&amp;gt;&amp;lt;/companyLogo&amp;gt;
+     * &amp;lt;companyLink&amp;gt;&amp;lt;/companyLink&amp;gt;
+     * &amp;lt;favicon&amp;gt;&amp;lt;/favicon&amp;gt;
+     * &amp;lt;index&amp;gt;&amp;lt;/index&amp;gt;
+     * &amp;lt;sections&amp;gt;
+     *     &amp;lt;section&amp;gt;
+     *         &amp;lt;name&amp;gt;&amp;lt;/name&amp;gt;
+     *         &amp;lt;description&amp;gt;&amp;lt;/description&amp;gt;
+     *         &amp;lt;icon&amp;gt;&amp;lt;/icon&amp;gt;
+     *         &amp;lt;source&amp;gt;&amp;lt;/source&amp;gt;
+     *         &amp;lt;type&amp;gt;&amp;lt;/type&amp;gt;
+     *         &amp;lt;siteIndex&amp;gt;&amp;lt;/siteIndex&amp;gt;
+     *         &amp;lt;template&amp;gt;&amp;lt;/template&amp;gt;
+     *         &amp;lt;replaceEmojis&amp;gt;&amp;lt;/replaceEmojis&amp;gt;
+     *         &amp;lt;subsections&amp;gt;
+     *             &amp;lt;section&amp;gt;
+     *                 ...
+     *             &amp;lt;/section&amp;gt;
+     *             ...
+     *         &amp;lt;/subsections&amp;gt;
+     *     &amp;lt;/section&amp;gt;
+     *     ...
+     * &amp;lt;/sections&amp;gt;
+     * &lt;/code&gt;&lt;/pre&gt;
+     *
+     * &lt;table style=&quot;font-size: 0.8rem&quot;&gt;
+     * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;title&lt;/tt&gt;&lt;/td&gt;&lt;td&gt; Title of the site. Used in page headers and metadata.&lt;/td&gt;&lt;td&gt;Required&lt;/&lt;td&gt;&lt;/tr&gt;
+     * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;description&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;Brief description of the site. Used in page headers and metadata.&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+     * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;logo&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;File image or &lt;a href=&quot;http://https://fontawesome.com/v5.15/icons&quot;&gt;Font Awesome icon&lt;/a&gt;. Used in page headers.&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+     * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;companyLogo&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;File image. Used in page headers.&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+     * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;companyLink&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;URL link. Used in page headers.&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+     * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;favicon&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;File image. Used by browsers as the page icon.&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+     * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;index&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;Document file (Markdown, HTML or raw text) that would be the landing page.&lt;/td&gt;&lt;td&gt;Required&lt;/td&gt;&lt;/tr&gt;
+     * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;sections&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;Main sections of the page. Used in the header navigation menu.&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+     * &lt;/table&gt;
+     *
+     * &lt;b&gt;Section properties:&lt;/b&gt;
+     *
+     * &lt;table style=&quot;font-size: 0.8rem&quot;&gt;
+     * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;name&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;Name of the section. Used in menus, breadcrumbs and metadata.&lt;/td&gt;&lt;td&gt;Required&lt;/&lt;td&gt;&lt;/tr&gt;
+     * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;description&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;Brief description of the section. Used in metadata.&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+     * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;icon&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;File image or &lt;a href=&quot;http://https://fontawesome.com/v5.15/icons&quot;&gt;Font Awesome icon&lt;/a&gt;. Used in menus.&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+     * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;type&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;Type of the section. &lt;/td&gt;&lt;td&gt;&lt;tt&gt;generated&lt;/tt&gt;&lt;br/&gt;&lt;tt&gt;embedded&lt;/tt&gt;&lt;br/&gt;&lt;tt&gt;copy&lt;/tt&gt;&lt;br/&gt;&lt;tt&gt;group&lt;/tt&gt;&lt;br/&gt;&lt;tt&gt;link&lt;/tt&gt;&lt;/td&gt;&lt;/tr&gt;
+     * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;source&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;Document file used as the site contents. Not used when &lt;tt&gt;type&lt;/tt&gt; is &lt;tt&gt;group&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+     * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;siteIndex&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;Main page of the embedded site. Required used when &lt;tt&gt;type&lt;/tt&gt; is &lt;tt&gt;embedded&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+     * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;template&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;A &lt;a href=&quot;https://freemarker.apache.org/&quot;&gt;Freemarker&lt;/a&gt; template file. Only used when &lt;tt&gt;type&lt;/tt&gt; is &lt;tt&gt;generated&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+     * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;replaceEmojis&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;Set whether Github emoji markups would be replaced by images&lt;/td&gt;&lt;td&gt;&lt;tt&gt;true&lt;/tt&gt; (default)&lt;br/&gt;&lt;tt&gt;false&lt;/tt&gt;&lt;/td&gt;&lt;/tr&gt;
+     * &lt;tr&gt;&lt;td&gt;&lt;tt&gt;subsections&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;Sub-sections of the section. Only used when &lt;tt&gt;type&lt;/tt&gt; is &lt;tt&gt;group&lt;/tt&gt; &lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+     * &lt;/table&gt;
+     *
+     * @since 1.0
+     */
+    @Parameter(name = &quot;docsite&quot;)
+    Docsite docsite;
+
+
+    /**
+     * A JSON file containing the object structure of the docsite
+     * (instead of including it in the pom)
+     * @since 1.2
+     * */
+    @Parameter(name = &quot;docsiteFile&quot;, property = &quot;docsite.docsiteFile&quot;)
+    File docsiteFile;
+
+
+    /**
+
+     * Set a custom color theme that would be applied to the site.
+     * Value formats accepted are defined by
+     * &lt;a href=&quot;https://developer.mozilla.org/es/docs/Web/CSS/color_value&quot;&gt;CSS colors&lt;/a&gt;.
+     * &lt;pre&gt;&lt;code class=&quot;language-xml&quot;&gt;&amp;lt;themeColors&amp;gt;
+     *   &amp;lt;menuRegularBackgroundColor&amp;gt;&amp;lt;/menuRegularBackgroundColor&amp;gt;
+     *   &amp;lt;menuBoldBackgroundColor&amp;gt;&amp;lt;/menuBoldBackgroundColor&amp;gt;
+     *   &amp;lt;menuForegroundColor&amp;gt;&amp;lt;/menuForegroundColor&amp;gt;
+     *   &amp;lt;menuDecorationColor&amp;gt;&amp;lt;/menuDecorationColor&amp;gt;
+     *   &amp;lt;guiElementColor&amp;gt;&amp;lt;/guiElementColor&amp;gt;
+     * &amp;lt;/themeColors&amp;gt;
+     * &lt;/code&gt;&lt;/pre&gt;
+     * @since 1.0
+     */
+    @Parameter(name = &quot;themeColors&quot;)
+    ThemeColors themeColors;
+
+
+    /**
+     * Set extra metadata that would be included in the &lt;tt&gt;head&lt;/tt&gt; section.
+     * &lt;pre&gt;&lt;code class=&quot;language-xml&quot;&gt;&amp;lt;metadata&amp;gt;
+     *   &amp;lt;keyA&amp;gt;valueA&amp;lt;/keyA&amp;gt;
+     *   &amp;lt;keyB&amp;gt;valueB&amp;lt;/keyB&amp;gt;
+     *   ...
+     * &amp;lt;/metadata&amp;gt;
+     * &lt;/code&gt;&lt;/pre&gt;
+     * @since 1.1
+     */
+    @Parameter(name = &quot;metadata&quot;)
+    Map&lt;String,String&gt; metadata;
+
+
+    /**
+     * Set scripts that would be included in the &lt;tt&gt;head&lt;/tt&gt; section
+     * &lt;pre&gt;&lt;code class=&quot;language-xml&quot;&gt;&amp;lt;scripts&amp;gt;
+     *  &amp;lt;script&amp;gt;
+     *     &amp;lt;src&amp;gt;https://remote-script.js&amp;lt;/src&amp;gt;
+     *     &amp;lt;async&amp;gt;true&amp;lt;/async&amp;gt;
+     *  &amp;lt;/script&amp;gt;
+     *  &amp;lt;script&amp;gt;
+     *     &amp;lt;code&amp;gt;
+     *       // JS code
+     *       // ...
+     *     &amp;lt;/code&amp;gt;
+     *  &amp;lt;/script&amp;gt;
+     * &amp;lt;/scripts&amp;gt;
+     * &lt;/code&gt;&lt;/pre&gt;
+     * @since 1.1
+     */
+    @Parameter(name = &quot;scripts&quot;)
+    Script[] scripts;
+
+    /**
+     * A local CSS file that would be used instead of the default style, in case you want
+     * to use a totally different layout.
+     * @since 1.0
+     */
+    @Parameter(name = &quot;cssFile&quot;, property = &quot;docsite.cssFile&quot;)
+    File cssFile;
+
+
+    @Parameter(name = &quot;useCDN&quot;, defaultValue = &quot;true&quot;, property = &quot;docsite.useCDN&quot;)
+    boolean useCDN;
+
+
+    @Parameter( defaultValue = &quot;${project}&quot;, readonly = true )
+    MavenProject project;
+
+
+    public void execute() throws MojoExecutionException, MojoFailureException {
+
+<span class="nc" id="L191">        initializeLogger();</span>
+
+<span class="nc" id="L193">        File[] outputFolderContent = Objects.requireNonNullElse(</span>
+<span class="nc" id="L194">            outputFolder.listFiles(),</span>
+            new File[0]
+        );
+
+        try {
+
+<span class="nc bnc" id="L200" title="All 4 branches missed.">            if (outputFolder.exists() &amp;&amp; outputFolderContent.length &gt; 0) {</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">                if (forceDelete) {</span>
+<span class="nc" id="L202">                    Logger.instance().warn(&quot;The contents of output folder {} will be deleted&quot;, outputFolder);</span>
+<span class="nc" id="L203">                    ResourceUtil.deleteDirectory(outputFolder.toPath());</span>
+                } else {
+<span class="nc" id="L205">                    Logger.instance().error(</span>
+                        &quot;As a safety mechanism, the output folder must be empty. &quot; +
+                            &quot;You can disable this check using -Ddocsite.forceDelete&quot;
+                    );
+<span class="nc" id="L209">                    throw new MojoFailureException(&quot;The output folder &quot;+outputFolder+&quot; is not empty&quot;);</span>
+                }
+            }
+<span class="nc" id="L212">            Files.createDirectories(outputFolder.toPath());</span>
+
+<span class="nc" id="L214">            themeColors = requireNonNullElse(themeColors, ThemeColors.DEFAULT);</span>
+
+<span class="nc" id="L216">            Autoconfigurer autoconfigurer = new Autoconfigurer(project);</span>
+<span class="nc" id="L217">            List&lt;MavenProject&gt; children = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L218" title="All 2 branches missed.">            for (MavenProject collected : project.getCollectedProjects()) {</span>
+<span class="nc bnc" id="L219" title="All 2 branches missed.">                if (project.equals(collected.getParent())) {</span>
+<span class="nc" id="L220">                    children.add(collected);</span>
+                }
+<span class="nc" id="L222">            }</span>
+
+
+<span class="nc bnc" id="L225" title="All 2 branches missed.">            if (docsiteFile != null) {</span>
+<span class="nc" id="L226">                docsite = new DocsiteReader().read(docsiteFile.toPath());</span>
+            } else {
+<span class="nc" id="L228">                docsite = autoconfigurer.aggregatedConfiguration(</span>
+<span class="nc" id="L229">                    Objects.requireNonNullElse(docsite, new Docsite()),</span>
+                    children
+                );
+            }
+
+<span class="nc" id="L234">            new DocsiteEmitter(</span>
+                docsite,
+                themeColors,
+<span class="nc bnc" id="L237" title="All 2 branches missed.">                cssFile != null ? cssFile.toPath() : null,</span>
+                useCDN,
+<span class="nc" id="L239">                project.getBasedir().toPath(),</span>
+<span class="nc" id="L240">                outputFolder.toPath(),</span>
+                metadata,
+<span class="nc bnc" id="L242" title="All 2 branches missed.">                scripts == null ? List.of() : Arrays.asList(scripts)</span>
+<span class="nc" id="L243">            ).generateSite();</span>
+
+<span class="nc" id="L245">        } catch (IOException e) {</span>
+<span class="nc" id="L246">            throw new MojoFailureException(&quot;Error generating site&quot;,e);</span>
+<span class="nc" id="L247">        }</span>
+
+
+
+
+<span class="nc" id="L252">    }</span>
+
+
+    private void initializeLogger() {
+<span class="nc" id="L256">        Logger.initialize(new Logger(</span>
+<span class="nc" id="L257">            getLog()::debug,</span>
+<span class="nc" id="L258">            getLog()::debug,</span>
+<span class="nc" id="L259">            getLog()::info,</span>
+<span class="nc" id="L260">            getLog()::warn,</span>
+<span class="nc" id="L261">            getLog()::error</span>
+        ));
+<span class="nc" id="L263">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

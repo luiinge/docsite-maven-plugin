@@ -49,6 +49,11 @@ public abstract class GeneratedSectionEmitter extends SectionEmitter {
     }
 
 
+    protected String centerImages(String html) {
+        return html;// html.replaceAll("<img [^>]+>","<center>$0</center>");
+    }
+
+
     protected String hrefId(String name) {
         return name.strip().toLowerCase().replace(" ", "-");
     }

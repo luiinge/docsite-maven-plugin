@@ -53,33 +53,38 @@ public final class CDNResources {
 <span class="fc" id="L53">            .attr(SRC,&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js&quot;)</span>
 <span class="fc" id="L54">            .attr(INTEGRITY, &quot;sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==&quot;)</span>
 <span class="fc" id="L55">            .attr(CROSSORIGIN, ANONYMOUS)</span>
-<span class="fc" id="L56">            .attr(REFERRERPOLICY, NO_REFERRER)</span>
+<span class="fc" id="L56">            .attr(REFERRERPOLICY, NO_REFERRER),</span>
+<span class="fc" id="L57">        &quot;prism.gherkin&quot;, script()</span>
+<span class="fc" id="L58">            .attr(SRC,&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-gherkin.min.js&quot;)</span>
+<span class="fc" id="L59">            .attr(INTEGRITY, &quot;sha512-mIOZdB9UVqzUuNdWFcaqJssGJd6q7aaJpg+Q0z3kAWycvIrtcdiwELnKd2izg/ZlPqphj7rtqiUcmVS4bnd7RQ==&quot;)</span>
+<span class="fc" id="L60">            .attr(CROSSORIGIN, ANONYMOUS)</span>
+<span class="fc" id="L61">            .attr(REFERRERPOLICY, NO_REFERRER)</span>
     );
 
 
 
-<span class="fc" id="L61">    private static final Map&lt;String, LinkTag&gt; links = Map.of(</span>
-<span class="fc" id="L62">        &quot;prism.min&quot;, link()</span>
-<span class="fc" id="L63">            .attr(HREF,&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css&quot;)</span>
-<span class="fc" id="L64">            .attr(INTEGRITY, &quot;sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==&quot;)</span>
-<span class="fc" id="L65">            .attr(REL, STYLESHEET)</span>
-<span class="fc" id="L66">            .attr(CROSSORIGIN, ANONYMOUS)</span>
-<span class="fc" id="L67">            .attr(REFERRERPOLICY, NO_REFERRER),</span>
-<span class="fc" id="L68">        &quot;fontawesome.min&quot;, link()</span>
-<span class="fc" id="L69">            .attr(HREF,&quot;https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css&quot;)</span>
-<span class="fc" id="L70">            .attr(INTEGRITY, &quot;sha512-BnbUDfEUfV0Slx6TunuB042k9tuKe3xrD6q4mg5Ed72LTgzDIcLPxg6yI2gcMFRyomt+yJJxE+zJwNmxki6/RA==&quot;)</span>
-<span class="fc" id="L71">            .attr(REL, STYLESHEET)</span>
-<span class="fc" id="L72">            .attr(CROSSORIGIN, ANONYMOUS)</span>
-<span class="fc" id="L73">            .attr(REFERRERPOLICY, NO_REFERRER)</span>
+<span class="fc" id="L66">    private static final Map&lt;String, LinkTag&gt; links = Map.of(</span>
+<span class="fc" id="L67">        &quot;prism.min&quot;, link()</span>
+<span class="fc" id="L68">            .attr(HREF,&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css&quot;)</span>
+<span class="fc" id="L69">            .attr(INTEGRITY, &quot;sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==&quot;)</span>
+<span class="fc" id="L70">            .attr(REL, STYLESHEET)</span>
+<span class="fc" id="L71">            .attr(CROSSORIGIN, ANONYMOUS)</span>
+<span class="fc" id="L72">            .attr(REFERRERPOLICY, NO_REFERRER),</span>
+<span class="fc" id="L73">        &quot;fontawesome.min&quot;, link()</span>
+<span class="fc" id="L74">            .attr(HREF,&quot;https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css&quot;)</span>
+<span class="fc" id="L75">            .attr(INTEGRITY, &quot;sha512-BnbUDfEUfV0Slx6TunuB042k9tuKe3xrD6q4mg5Ed72LTgzDIcLPxg6yI2gcMFRyomt+yJJxE+zJwNmxki6/RA==&quot;)</span>
+<span class="fc" id="L76">            .attr(REL, STYLESHEET)</span>
+<span class="fc" id="L77">            .attr(CROSSORIGIN, ANONYMOUS)</span>
+<span class="fc" id="L78">            .attr(REFERRERPOLICY, NO_REFERRER)</span>
     );
 
 
     public static Optional&lt;ScriptTag&gt; js(String language) {
-<span class="fc" id="L78">        return Optional.ofNullable(scripts.get(language));</span>
+<span class="fc" id="L83">        return Optional.ofNullable(scripts.get(language));</span>
     }
 
     public static Optional&lt;LinkTag&gt; css(String language) {
-<span class="fc" id="L82">        return Optional.ofNullable(links.get(language));</span>
+<span class="fc" id="L87">        return Optional.ofNullable(links.get(language));</span>
     }
 
 }

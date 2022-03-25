@@ -10,6 +10,8 @@ Further explanation of each section is provided below.
     <title></title>
     <description></description>
     <logo></logo>
+    <companyLogo></companyLogo>
+    <companyLink></companyLink>
     <cssFile></cssFile>
     <index></index>
     <themeColors>
@@ -48,6 +50,10 @@ Further explanation of each section is provided below.
 ### `description`
 **Required**: no
 ### `logo`
+**Required**: no
+### `companyLogo`
+**Required**: no
+### `companyLink`
 **Required**: no
 ### `cssFile`
 **Required**: no

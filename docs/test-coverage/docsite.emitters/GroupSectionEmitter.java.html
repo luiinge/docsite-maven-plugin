@@ -25,7 +25,7 @@ public class GroupSectionEmitter extends SectionEmitter {
     @Override
     public ATag createLinkToSection(boolean withIcon) {
 <span class="fc bfc" id="L27" title="All 2 branches covered.">        return withIcon ?</span>
-<span class="fc" id="L28">            internalLinkWithIcon(section.name(), url(), section.icon(), globalImages) :</span>
+<span class="fc" id="L28">            internalLinkWithIcon(baseDir, section.name(), url(), section.icon(), globalImages) :</span>
 <span class="fc" id="L29">            internalLink(section.name(), url());</span>
     }
 
