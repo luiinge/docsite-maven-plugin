@@ -30,7 +30,7 @@ Usage
             <plugin>
                 <groupId>io.github.luiinge</groupId>
                 <artifactId>docsite-maven-plugin</artifactId>
-                <version>1.2.0</version>
+                <version>1.2.1</version>
             </plugin>
         </plugins>
     </build>
@@ -56,7 +56,7 @@ the plugin within the `pom`.
             <plugin>
                 <groupId>io.github.luiinge</groupId>
                 <artifactId>docsite-maven-plugin</artifactId>
-                <version>1.2.0</version>
+                <version>1.2.1</version>
                 <configuration>
                     <docsite>
                         ...
@@ -269,7 +269,7 @@ For example, your root `pom.xml` might contain something like the following:
             <plugin>
                 <groupId>io.github.luiinge</groupId>
                 <artifactId>docsite-maven-plugin</artifactId>
-                <version>1.2.0</version>
+                <version>1.2.1</version>
                 <executions>
                   <execution>
                     <goals>

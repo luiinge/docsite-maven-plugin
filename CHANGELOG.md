@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][1],
 and this project adheres to [Semantic Versioning][2].
 
+[1.2.1]
+--------------------------------------------------------------------------
+**Release date:** 2022-03-26
+### Fixed
+- Fixed header navigation layout that caused overflow in small screens
+
 [1.2.0]
 --------------------------------------------------------------------------
 **Release date:** 2022-03-25

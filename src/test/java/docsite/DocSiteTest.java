@@ -31,10 +31,27 @@ public class DocSiteTest {
         .title("jExt - A Java library")
         .description("This is the description of the library")
         .logo("fab:accessible-icon")
+        .companyLogo("src/test/resources/external-icon.png")
+        .companyLink("http://company.com")
         .index("src/test/resources/README.md")
         .sections(List.of(
             generated("Changelog")
                 .source("src/test/resources/CHANGELOG.md")
+                .build(),
+
+            generated("License")
+                .source("src/test/resources/LICENSE")
+                .build(),
+            generated("License")
+                .source("src/test/resources/LICENSE")
+                .build(),
+            generated("License")
+                .source("src/test/resources/LICENSE")
+                .build(),
+            link()
+                .name("Github")
+                .source("https://github.com/luiinge/jext")
+                .icon("fab:github")
                 .build(),
             group("Report")
                 .subsections(List.of(
@@ -51,20 +68,6 @@ public class DocSiteTest {
                         .icon("fab:java")
                         .build()
                 )).build(),
-            generated("License")
-                .source("src/test/resources/LICENSE")
-                .build(),
-            generated("License")
-                .source("src/test/resources/LICENSE")
-                .build(),
-            generated("License")
-                .source("src/test/resources/LICENSE")
-                .build(),
-            link()
-                .name("Github")
-                .source("https://github.com/luiinge/jext")
-                .icon("fab:github")
-                .build(),
             link()
                 .name("Github")
                 .source("https://github.com/luiinge/jext")
