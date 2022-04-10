@@ -4,6 +4,8 @@ import docsite.*;
 import docsite.util.DocsiteReader;
 import docsite.util.ResourceUtil;
 import java.util.*;
+import java.util.stream.Collectors;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -18,7 +20,7 @@ import java.nio.file.Files;
 
 import static java.util.Objects.requireNonNullElse;
 
-@Mojo(defaultPhase = LifecyclePhase.POST_SITE, name = "aggregate", aggregator = true)
+@Mojo(defaultPhase = LifecyclePhase.POST_SITE, name = "aggregate")
 public class AggregateMojo extends AbstractMojo {
 
     /**
@@ -185,8 +187,15 @@ public class AggregateMojo extends AbstractMojo {
     @Parameter( defaultValue = "${project}", readonly = true )
     MavenProject project;
 
+    @Parameter( defaultValue = "${session}", readonly = true )
+    MavenSession session;
+
 
     public void execute() throws MojoExecutionException, MojoFailureException {
+
+         if (!session.getTopLevelProject().equals(project)) {
+             return;
+        }
 
         initializeLogger();
 
@@ -215,7 +224,7 @@ public class AggregateMojo extends AbstractMojo {
 
             Autoconfigurer autoconfigurer = new Autoconfigurer(project);
             List<MavenProject> children = new ArrayList<>();
-            for (MavenProject collected : project.getCollectedProjects()) {
+            for (MavenProject collected : session.getProjects()) {
                 if (project.equals(collected.getParent())) {
                     children.add(collected);
                 }

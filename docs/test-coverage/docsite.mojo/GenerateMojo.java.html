@@ -222,44 +222,59 @@ import docsite.*;
 <span class="nc bnc" id="L222" title="All 2 branches missed.">            if (docsiteFile != null) {</span>
 <span class="nc" id="L223">                docsite = new DocsiteReader().read(docsiteFile.toPath());</span>
             } else {
-<span class="nc" id="L225">                Autoconfigurer autoconfigurer = new Autoconfigurer(project);</span>
-<span class="nc" id="L226">                docsite = autoconfigurer.configuration(</span>
-<span class="nc" id="L227">                    Objects.requireNonNullElse(docsite, new Docsite())</span>
-                );
+<span class="nc" id="L225">                docsite = autoconfigure();</span>
+            }
+
+<span class="nc bnc" id="L228" title="All 2 branches missed.">            if (docsite == null) {</span>
+<span class="nc" id="L229">                getLog().warn(&quot;Site generation skipped for this project&quot;);</span>
+<span class="nc" id="L230">                return;</span>
             }
 
 
-<span class="nc" id="L232">            themeColors = requireNonNullElse(themeColors, ThemeColors.DEFAULT);</span>
+<span class="nc" id="L234">            themeColors = requireNonNullElse(themeColors, ThemeColors.DEFAULT);</span>
 
 
-<span class="nc" id="L235">            new DocsiteEmitter(</span>
+<span class="nc" id="L237">            new DocsiteEmitter(</span>
                 docsite,
                 themeColors,
-<span class="nc bnc" id="L238" title="All 2 branches missed.">                cssFile != null ? cssFile.toPath() : null,</span>
+<span class="nc bnc" id="L240" title="All 2 branches missed.">                cssFile != null ? cssFile.toPath() : null,</span>
                 useCDN,
-<span class="nc" id="L240">                project.getBasedir().toPath(),</span>
-<span class="nc" id="L241">                outputFolder.toPath(),</span>
+<span class="nc" id="L242">                project.getBasedir().toPath(),</span>
+<span class="nc" id="L243">                outputFolder.toPath(),</span>
                 metadata,
-<span class="nc bnc" id="L243" title="All 2 branches missed.">                scripts == null ? List.of() : Arrays.asList(scripts)</span>
-<span class="nc" id="L244">            ).generateSite();</span>
+<span class="nc bnc" id="L245" title="All 2 branches missed.">                scripts == null ? List.of() : Arrays.asList(scripts)</span>
+<span class="nc" id="L246">            ).generateSite();</span>
 
-<span class="nc" id="L246">        } catch (IOException e) {</span>
-<span class="nc" id="L247">            throw new MojoFailureException(&quot;Error generating site&quot;,e);</span>
-<span class="nc" id="L248">        }</span>
+<span class="nc" id="L248">        } catch (IOException e) {</span>
+<span class="nc" id="L249">            throw new MojoFailureException(&quot;Error generating site&quot;,e);</span>
+<span class="nc" id="L250">        }</span>
 
 
-<span class="nc" id="L251">    }</span>
+<span class="nc" id="L253">    }</span>
+
+
+    private Docsite autoconfigure() {
+        try {
+<span class="nc" id="L258">            Autoconfigurer autoconfigurer = new Autoconfigurer(project);</span>
+<span class="nc" id="L259">            return autoconfigurer.configuration(</span>
+<span class="nc" id="L260">                Objects.requireNonNullElse(docsite, new Docsite())</span>
+            );
+<span class="nc" id="L262">        } catch (MojoExecutionException | RuntimeException e) {</span>
+<span class="nc" id="L263">            getLog().warn(e.getMessage());</span>
+<span class="nc" id="L264">            return null;</span>
+        }
+    }
 
 
     private void initializeLogger() {
-<span class="nc" id="L255">        Logger.initialize(new Logger(</span>
-<span class="nc" id="L256">            getLog()::debug,</span>
-<span class="nc" id="L257">            getLog()::debug,</span>
-<span class="nc" id="L258">            getLog()::info,</span>
-<span class="nc" id="L259">            getLog()::warn,</span>
-<span class="nc" id="L260">            getLog()::error</span>
+<span class="nc" id="L270">        Logger.initialize(new Logger(</span>
+<span class="nc" id="L271">            getLog()::debug,</span>
+<span class="nc" id="L272">            getLog()::debug,</span>
+<span class="nc" id="L273">            getLog()::info,</span>
+<span class="nc" id="L274">            getLog()::warn,</span>
+<span class="nc" id="L275">            getLog()::error</span>
         ));
-<span class="nc" id="L262">    }</span>
+<span class="nc" id="L277">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

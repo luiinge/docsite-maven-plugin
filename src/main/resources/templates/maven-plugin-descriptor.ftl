@@ -20,14 +20,16 @@ Include the following snippet in your <tt>pom.xml</tt> file before using the plu
 Below there is a list of available goals provided by this plugin:
 <br/>
 <table style="font-size: 0.8em">
-    <#list iterable(plugin.mojos,'mojo') as mojo>
+    <#list iterable(plugin.mojos,'mojo')>
         <tr>
             <th>Goal</th><th>Description</th>
         </tr>
+        <#items as mojo>
         <tr>
           <td><a href="#${mojo.goal}"><@mojoGoal mojo/></a></td>
           <td>${(mojo.description)!}</td>
         </tr>
+        </#items>
     </#list>
 </table>
 

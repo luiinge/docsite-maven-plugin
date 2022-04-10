@@ -68,13 +68,16 @@ public abstract class GeneratedSectionEmitter extends SectionEmitter {
 
 
     protected String generateHeadersId(String html) {
-        Matcher matcher = Pattern.compile("<(h\\d)>([^<]*)").matcher(html);
-        while (matcher.find()) {
-            String tag = matcher.group(1);
-            String name = matcher.group(2);
-            String id = hrefId(name);
-            if (!id.isEmpty()) {
-                html = html.replace("<" + tag + ">" + name, "<" + tag + " id=\"" + id + "\">" + name);
+        String[] patterns = {"<(h\\d)>([^<]*)", "<(h\\d)><code>([^<]*)"};
+        for (String pattern : patterns) {
+            Matcher matcher = Pattern.compile(pattern).matcher(html);
+            while (matcher.find()) {
+                String tag = matcher.group(1);
+                String name = matcher.group(2);
+                String id = hrefId(name);
+                if (!id.isEmpty()) {
+                    html = html.replace("<" + tag + ">" + name, "<" + tag + " id=\"" + id + "\">" + name);
+                }
             }
         }
         return html;

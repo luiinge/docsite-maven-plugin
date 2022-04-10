@@ -33,9 +33,15 @@ section img {
 }
 
 section blockquote {
-    background: #e7f5f7;
+    background: #f4f4f4;
     border-left: 0.5em solid #cfd1d1;
     margin-inline-start: 0;
     padding: 1em;
     font-size: 0.8em;
+}
+
+section :not(pre) > code {
+    background-color: #f0ecec;
+    padding: 0.1rem;
+    border-radius: 0.2rem;
 }

@@ -3,8 +3,21 @@ Changelog
 
 All notable changes to this project will be documented in this file.
 
+
 The format is based on [Keep a Changelog][1],
 and this project adheres to [Semantic Versioning][2].
+
+[1.2.2]
+--------------------------------------------------------------------------
+**Release date:** 2022-04-10
+### Fixed
+- The Maven build no longer fails when the `generate` goal is invoked without configuration
+and a README file is not present
+- Links were not generated for Markdown headers that included code marks
+- Fixed several problems when using the `aggregate` goal
+- Fixed bug that prevented using the `themeColors` property in the pom configuration
+- Fixed goal table in the built-in Maven plugin descriptor template
+- Index pages included an unexpected '- index' in the title
 
 [1.2.1]
 --------------------------------------------------------------------------

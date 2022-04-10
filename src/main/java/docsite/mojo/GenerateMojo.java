@@ -222,10 +222,12 @@ public class GenerateMojo extends AbstractMojo {
             if (docsiteFile != null) {
                 docsite = new DocsiteReader().read(docsiteFile.toPath());
             } else {
-                Autoconfigurer autoconfigurer = new Autoconfigurer(project);
-                docsite = autoconfigurer.configuration(
-                    Objects.requireNonNullElse(docsite, new Docsite())
-                );
+                docsite = autoconfigure();
+            }
+
+            if (docsite == null) {
+                getLog().warn("Site generation skipped for this project");
+                return;
             }
 
 
@@ -248,6 +250,19 @@ public class GenerateMojo extends AbstractMojo {
         }
 
 
+    }
+
+
+    private Docsite autoconfigure() {
+        try {
+            Autoconfigurer autoconfigurer = new Autoconfigurer(project);
+            return autoconfigurer.configuration(
+                Objects.requireNonNullElse(docsite, new Docsite())
+            );
+        } catch (MojoExecutionException | RuntimeException e) {
+            getLog().warn(e.getMessage());
+            return null;
+        }
     }
 
 

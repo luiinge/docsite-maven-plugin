@@ -99,7 +99,7 @@ public abstract class SectionEmitter {
 <span class="fc bfc" id="L99" title="All 2 branches covered.">        if (includeFooter) {</span>
 <span class="fc" id="L100">            sectionContent.with(rawHtml(</span>
                 &quot;&lt;div class=\&quot;footer\&quot;&gt;&quot;+
-                &quot;Generated with &lt;a href=\&quot;https://luiinge.github.io/docsite-maven-plugin/\&quot;&gt;Docsite&lt;/a&gt;. &quot;+
+                &quot;Generated with &lt;a href=\&quot;https://luiinge.github.io/docsite-maven-plugin/\&quot; target=\&quot;_blank_\&quot;&gt;Docsite&lt;/a&gt;. &quot;+
 <span class="fc" id="L103">                &quot;Last published on &quot;+ LocalDate.now()+</span>
                 &quot;&lt;/div&gt;&quot;
             ));
@@ -175,9 +175,9 @@ public abstract class SectionEmitter {
 
 
     private DivTag createCompanyLogo() {
-<span class="pc bpc" id="L178" title="3 of 4 branches missed.">        if (site.companyLogo() != null &amp;&amp; site.companyLink() != null) {</span>
-<span class="nc" id="L179">            return div().withClass(&quot;company&quot;).with(</span>
-<span class="nc" id="L180">                EmitterUtil.externalLinkWithImage(baseDir,&quot;&quot;,site.companyLink(),site.companyLogo(),globalImages)</span>
+<span class="pc bpc" id="L178" title="1 of 4 branches missed.">        if (site.companyLogo() != null &amp;&amp; site.companyLink() != null) {</span>
+<span class="fc" id="L179">            return div().withClass(&quot;company&quot;).with(</span>
+<span class="fc" id="L180">                EmitterUtil.externalLinkWithImage(baseDir,&quot;&quot;,site.companyLink(),site.companyLogo(),globalImages)</span>
             );
 <span class="pc bpc" id="L182" title="1 of 2 branches missed.">        } else if (site.companyLink() == null) {</span>
 <span class="fc" id="L183">            return div().withClass(&quot;company&quot;).with(</span>
@@ -193,7 +193,7 @@ public abstract class SectionEmitter {
 
     private HeadTag htmlHead() {
 <span class="fc" id="L195">        String title = site.title();</span>
-<span class="pc bpc" id="L196" title="1 of 2 branches missed.">        if (!section.name().equalsIgnoreCase(title)) {</span>
+<span class="pc bpc" id="L196" title="1 of 4 branches missed.">        if (!section.name().equalsIgnoreCase(title) &amp;&amp; !section.name().equals(&quot;index&quot;)) {</span>
 <span class="fc" id="L197">            title += &quot; - &quot;+section.name();</span>
         }
 <span class="fc" id="L199">        String description = section.description();</span>

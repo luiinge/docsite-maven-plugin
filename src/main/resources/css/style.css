@@ -94,12 +94,10 @@ header > nav {
     overflow-y: hidden;
 }
 header > nav > ul {
-    display: flex;
-    align-items: stretch;
+    display: inline-flex;
     justify-content: flex-end;
     margin: 0.5em;
     padding-inline-start: 0;
-    flex-wrap: wrap;
 }
 
 header > nav li {
@@ -120,6 +118,10 @@ header > nav > ul > li:hover > ul, header > nav > ul > li:focus-within > ul {
     border: 0.1em solid var(--menu-bold-background-color);
     background: var(--menu-regular-background-color);
     max-width: 15em;
+}
+
+header > nav .label {
+    min-height: 1.5rem;
 }
 
 header .company img {
@@ -227,6 +229,19 @@ section.embedded > iframe {
 section ol {
     padding-inline-start: 1em;
 }
+
+section h1 {
+    border-bottom: 0.2em solid black;
+    margin-top: 2em;
+    margin-bottom: 2em;
+}
+
+section h2 {
+    border-bottom: 0.1em solid black;
+    margin-top: 2em;
+}
+
+
 
 .label {
     color: var(--menu-foreground-color);

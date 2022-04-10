@@ -99,7 +99,7 @@ public abstract class SectionEmitter {
         if (includeFooter) {
             sectionContent.with(rawHtml(
                 "<div class=\"footer\">"+
-                "Generated with <a href=\"https://luiinge.github.io/docsite-maven-plugin/\">Docsite</a>. "+
+                "Generated with <a href=\"https://luiinge.github.io/docsite-maven-plugin/\" target=\"_blank_\">Docsite</a>. "+
                 "Last published on "+ LocalDate.now()+
                 "</div>"
             ));
@@ -193,7 +193,7 @@ public abstract class SectionEmitter {
 
     private HeadTag htmlHead() {
         String title = site.title();
-        if (!section.name().equalsIgnoreCase(title)) {
+        if (!section.name().equalsIgnoreCase(title) && !section.name().equals("index")) {
             title += " - "+section.name();
         }
         String description = section.description();

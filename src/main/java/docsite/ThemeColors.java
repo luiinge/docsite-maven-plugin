@@ -20,6 +20,11 @@ public class ThemeColors {
     private String guiElementColor;
 
 
+    public ThemeColors() {
+        //
+    }
+
+
     public ThemeColors(
         String menuRegularBackgroundColor,
         String menuBoldBackgroundColor,

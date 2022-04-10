@@ -4,6 +4,8 @@ import docsite.*;
 import docsite.util.DocsiteReader;
 import docsite.util.ResourceUtil;
 import java.util.*;
+import java.util.stream.Collectors;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -18,8 +20,8 @@ import java.nio.file.Files;
 
 import static java.util.Objects.requireNonNullElse;
 
-@Mojo(defaultPhase = LifecyclePhase.POST_SITE, name = &quot;aggregate&quot;, aggregator = true)
-<span class="nc" id="L22">public class AggregateMojo extends AbstractMojo {</span>
+@Mojo(defaultPhase = LifecyclePhase.POST_SITE, name = &quot;aggregate&quot;)
+<span class="nc" id="L24">public class AggregateMojo extends AbstractMojo {</span>
 
     /**
      * The folder where the documentation site would be generated.
@@ -185,82 +187,93 @@ import static java.util.Objects.requireNonNullElse;
     @Parameter( defaultValue = &quot;${project}&quot;, readonly = true )
     MavenProject project;
 
+    @Parameter( defaultValue = &quot;${session}&quot;, readonly = true )
+    MavenSession session;
+
 
     public void execute() throws MojoExecutionException, MojoFailureException {
 
-<span class="nc" id="L191">        initializeLogger();</span>
+<span class="nc" id="L196">        System.out.println(&quot;\n\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++&quot;);</span>
+<span class="nc" id="L197">        System.out.println(&quot;    aggregate for project &quot; + project.getName());</span>
+<span class="nc bnc" id="L198" title="All 2 branches missed.">        if (!session.getTopLevelProject().equals(project)) {</span>
+<span class="nc" id="L199">            System.out.println(&quot;SKIPPED AGGREGATION&quot;);</span>
+<span class="nc" id="L200">            System.out.println(&quot;\n\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++&quot;);</span>
+<span class="nc" id="L201">            return;</span>
+        }
 
-<span class="nc" id="L193">        File[] outputFolderContent = Objects.requireNonNullElse(</span>
-<span class="nc" id="L194">            outputFolder.listFiles(),</span>
+<span class="nc" id="L204">        initializeLogger();</span>
+
+<span class="nc" id="L206">        File[] outputFolderContent = Objects.requireNonNullElse(</span>
+<span class="nc" id="L207">            outputFolder.listFiles(),</span>
             new File[0]
         );
 
         try {
 
-<span class="nc bnc" id="L200" title="All 4 branches missed.">            if (outputFolder.exists() &amp;&amp; outputFolderContent.length &gt; 0) {</span>
-<span class="nc bnc" id="L201" title="All 2 branches missed.">                if (forceDelete) {</span>
-<span class="nc" id="L202">                    Logger.instance().warn(&quot;The contents of output folder {} will be deleted&quot;, outputFolder);</span>
-<span class="nc" id="L203">                    ResourceUtil.deleteDirectory(outputFolder.toPath());</span>
+<span class="nc bnc" id="L213" title="All 4 branches missed.">            if (outputFolder.exists() &amp;&amp; outputFolderContent.length &gt; 0) {</span>
+<span class="nc bnc" id="L214" title="All 2 branches missed.">                if (forceDelete) {</span>
+<span class="nc" id="L215">                    Logger.instance().warn(&quot;The contents of output folder {} will be deleted&quot;, outputFolder);</span>
+<span class="nc" id="L216">                    ResourceUtil.deleteDirectory(outputFolder.toPath());</span>
                 } else {
-<span class="nc" id="L205">                    Logger.instance().error(</span>
+<span class="nc" id="L218">                    Logger.instance().error(</span>
                         &quot;As a safety mechanism, the output folder must be empty. &quot; +
                             &quot;You can disable this check using -Ddocsite.forceDelete&quot;
                     );
-<span class="nc" id="L209">                    throw new MojoFailureException(&quot;The output folder &quot;+outputFolder+&quot; is not empty&quot;);</span>
+<span class="nc" id="L222">                    throw new MojoFailureException(&quot;The output folder &quot;+outputFolder+&quot; is not empty&quot;);</span>
                 }
             }
-<span class="nc" id="L212">            Files.createDirectories(outputFolder.toPath());</span>
+<span class="nc" id="L225">            Files.createDirectories(outputFolder.toPath());</span>
 
-<span class="nc" id="L214">            themeColors = requireNonNullElse(themeColors, ThemeColors.DEFAULT);</span>
+<span class="nc" id="L227">            themeColors = requireNonNullElse(themeColors, ThemeColors.DEFAULT);</span>
 
-<span class="nc" id="L216">            Autoconfigurer autoconfigurer = new Autoconfigurer(project);</span>
-<span class="nc" id="L217">            List&lt;MavenProject&gt; children = new ArrayList&lt;&gt;();</span>
-<span class="nc bnc" id="L218" title="All 2 branches missed.">            for (MavenProject collected : project.getCollectedProjects()) {</span>
-<span class="nc bnc" id="L219" title="All 2 branches missed.">                if (project.equals(collected.getParent())) {</span>
-<span class="nc" id="L220">                    children.add(collected);</span>
+<span class="nc" id="L229">            Autoconfigurer autoconfigurer = new Autoconfigurer(project);</span>
+<span class="nc" id="L230">            List&lt;MavenProject&gt; children = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L231" title="All 2 branches missed.">            for (MavenProject collected : session.getProjects()) {</span>
+<span class="nc bnc" id="L232" title="All 2 branches missed.">                if (project.equals(collected.getParent())) {</span>
+<span class="nc" id="L233">                    children.add(collected);</span>
                 }
-<span class="nc" id="L222">            }</span>
+<span class="nc" id="L235">            }</span>
 
 
-<span class="nc bnc" id="L225" title="All 2 branches missed.">            if (docsiteFile != null) {</span>
-<span class="nc" id="L226">                docsite = new DocsiteReader().read(docsiteFile.toPath());</span>
+<span class="nc bnc" id="L238" title="All 2 branches missed.">            if (docsiteFile != null) {</span>
+<span class="nc" id="L239">                docsite = new DocsiteReader().read(docsiteFile.toPath());</span>
             } else {
-<span class="nc" id="L228">                docsite = autoconfigurer.aggregatedConfiguration(</span>
-<span class="nc" id="L229">                    Objects.requireNonNullElse(docsite, new Docsite()),</span>
+<span class="nc" id="L241">                docsite = autoconfigurer.aggregatedConfiguration(</span>
+<span class="nc" id="L242">                    Objects.requireNonNullElse(docsite, new Docsite()),</span>
                     children
                 );
             }
 
-<span class="nc" id="L234">            new DocsiteEmitter(</span>
+<span class="nc" id="L247">            new DocsiteEmitter(</span>
                 docsite,
                 themeColors,
-<span class="nc bnc" id="L237" title="All 2 branches missed.">                cssFile != null ? cssFile.toPath() : null,</span>
+<span class="nc bnc" id="L250" title="All 2 branches missed.">                cssFile != null ? cssFile.toPath() : null,</span>
                 useCDN,
-<span class="nc" id="L239">                project.getBasedir().toPath(),</span>
-<span class="nc" id="L240">                outputFolder.toPath(),</span>
+<span class="nc" id="L252">                project.getBasedir().toPath(),</span>
+<span class="nc" id="L253">                outputFolder.toPath(),</span>
                 metadata,
-<span class="nc bnc" id="L242" title="All 2 branches missed.">                scripts == null ? List.of() : Arrays.asList(scripts)</span>
-<span class="nc" id="L243">            ).generateSite();</span>
+<span class="nc bnc" id="L255" title="All 2 branches missed.">                scripts == null ? List.of() : Arrays.asList(scripts)</span>
+<span class="nc" id="L256">            ).generateSite();</span>
 
-<span class="nc" id="L245">        } catch (IOException e) {</span>
-<span class="nc" id="L246">            throw new MojoFailureException(&quot;Error generating site&quot;,e);</span>
-<span class="nc" id="L247">        }</span>
-
-
+<span class="nc" id="L258">        } catch (IOException e) {</span>
+<span class="nc" id="L259">            throw new MojoFailureException(&quot;Error generating site&quot;,e);</span>
+<span class="nc" id="L260">        }</span>
 
 
-<span class="nc" id="L252">    }</span>
+
+
+<span class="nc" id="L265">    }</span>
 
 
     private void initializeLogger() {
-<span class="nc" id="L256">        Logger.initialize(new Logger(</span>
-<span class="nc" id="L257">            getLog()::debug,</span>
-<span class="nc" id="L258">            getLog()::debug,</span>
-<span class="nc" id="L259">            getLog()::info,</span>
-<span class="nc" id="L260">            getLog()::warn,</span>
-<span class="nc" id="L261">            getLog()::error</span>
+<span class="nc" id="L269">        Logger.initialize(new Logger(</span>
+<span class="nc" id="L270">            getLog()::debug,</span>
+<span class="nc" id="L271">            getLog()::debug,</span>
+<span class="nc" id="L272">            getLog()::info,</span>
+<span class="nc" id="L273">            getLog()::warn,</span>
+<span class="nc" id="L274">            getLog()::error</span>
         ));
-<span class="nc" id="L263">    }</span>
+<span class="nc" id="L276">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -20,79 +20,84 @@ public class ThemeColors {
     private String guiElementColor;
 
 
+<span class="nc" id="L23">    public ThemeColors() {</span>
+        //
+<span class="nc" id="L25">    }</span>
+
+
     public ThemeColors(
         String menuRegularBackgroundColor,
         String menuBoldBackgroundColor,
         String menuForegroundColor,
         String menuDecorationColor,
         String guiElementColor
-<span class="fc" id="L29">    ) {</span>
-<span class="fc" id="L30">        this.menuRegularBackgroundColor = menuRegularBackgroundColor;</span>
-<span class="fc" id="L31">        this.menuBoldBackgroundColor = menuBoldBackgroundColor;</span>
-<span class="fc" id="L32">        this.menuForegroundColor = menuForegroundColor;</span>
-<span class="fc" id="L33">        this.menuDecorationColor = menuDecorationColor;</span>
-<span class="fc" id="L34">        this.guiElementColor = guiElementColor;</span>
-<span class="fc" id="L35">    }</span>
+<span class="fc" id="L34">    ) {</span>
+<span class="fc" id="L35">        this.menuRegularBackgroundColor = menuRegularBackgroundColor;</span>
+<span class="fc" id="L36">        this.menuBoldBackgroundColor = menuBoldBackgroundColor;</span>
+<span class="fc" id="L37">        this.menuForegroundColor = menuForegroundColor;</span>
+<span class="fc" id="L38">        this.menuDecorationColor = menuDecorationColor;</span>
+<span class="fc" id="L39">        this.guiElementColor = guiElementColor;</span>
+<span class="fc" id="L40">    }</span>
 
 
     public static ThemeColorsBuilder builder() {
-<span class="fc" id="L39">        return new ThemeColorsBuilder();</span>
+<span class="fc" id="L44">        return new ThemeColorsBuilder();</span>
     }
 
 
     public String menuRegularBackgroundColor() {
-<span class="fc" id="L44">        return Objects.requireNonNull(this.menuRegularBackgroundColor);</span>
+<span class="fc" id="L49">        return Objects.requireNonNull(this.menuRegularBackgroundColor);</span>
     }
 
 
     public String menuBoldBackgroundColor() {
-<span class="fc" id="L49">        return Objects.requireNonNull(this.menuBoldBackgroundColor);</span>
+<span class="fc" id="L54">        return Objects.requireNonNull(this.menuBoldBackgroundColor);</span>
     }
 
 
     public String menuForegroundColor() {
-<span class="fc" id="L54">        return Objects.requireNonNull(this.menuForegroundColor);</span>
+<span class="fc" id="L59">        return Objects.requireNonNull(this.menuForegroundColor);</span>
     }
 
 
     public String menuDecorationColor() {
-<span class="fc" id="L59">        return Objects.requireNonNull(this.menuDecorationColor);</span>
+<span class="fc" id="L64">        return Objects.requireNonNull(this.menuDecorationColor);</span>
     }
 
 
     public String guiElementColor() {
-<span class="fc" id="L64">        return Objects.requireNonNull(this.guiElementColor);</span>
+<span class="fc" id="L69">        return Objects.requireNonNull(this.guiElementColor);</span>
     }
 
 
 
     public ThemeColors menuRegularBackgroundColor(String menuRegularBackgroundColor) {
-<span class="nc" id="L70">        this.menuRegularBackgroundColor = menuRegularBackgroundColor;</span>
-<span class="nc" id="L71">        return this;</span>
+<span class="nc" id="L75">        this.menuRegularBackgroundColor = menuRegularBackgroundColor;</span>
+<span class="nc" id="L76">        return this;</span>
     }
 
 
     public ThemeColors menuBoldBackgroundColor(String menuBoldBackgroundColor) {
-<span class="nc" id="L76">        this.menuBoldBackgroundColor = menuBoldBackgroundColor;</span>
-<span class="nc" id="L77">        return this;</span>
+<span class="nc" id="L81">        this.menuBoldBackgroundColor = menuBoldBackgroundColor;</span>
+<span class="nc" id="L82">        return this;</span>
     }
 
 
     public ThemeColors menuForegroundColor(String menuForegroundColor) {
-<span class="nc" id="L82">        this.menuForegroundColor = menuForegroundColor;</span>
-<span class="nc" id="L83">        return this;</span>
+<span class="nc" id="L87">        this.menuForegroundColor = menuForegroundColor;</span>
+<span class="nc" id="L88">        return this;</span>
     }
 
 
     public ThemeColors menuDecorationColor(String menuDecorationColor) {
-<span class="nc" id="L88">        this.menuDecorationColor = menuDecorationColor;</span>
-<span class="nc" id="L89">        return this;</span>
+<span class="nc" id="L93">        this.menuDecorationColor = menuDecorationColor;</span>
+<span class="nc" id="L94">        return this;</span>
     }
 
 
     public ThemeColors guiElementColor(String guiElementColor) {
-<span class="nc" id="L94">        this.guiElementColor = guiElementColor;</span>
-<span class="nc" id="L95">        return this;</span>
+<span class="nc" id="L99">        this.guiElementColor = guiElementColor;</span>
+<span class="nc" id="L100">        return this;</span>
     }
 
 
@@ -105,42 +110,42 @@ public class ThemeColors {
         private String guiElementColor;
 
 
-<span class="fc" id="L108">        ThemeColorsBuilder() {</span>
-<span class="fc" id="L109">        }</span>
+<span class="fc" id="L113">        ThemeColorsBuilder() {</span>
+<span class="fc" id="L114">        }</span>
 
 
         public ThemeColorsBuilder menuRegularBackgroundColor(String menuRegularBackgroundColor) {
-<span class="fc" id="L113">            this.menuRegularBackgroundColor = menuRegularBackgroundColor;</span>
-<span class="fc" id="L114">            return this;</span>
+<span class="fc" id="L118">            this.menuRegularBackgroundColor = menuRegularBackgroundColor;</span>
+<span class="fc" id="L119">            return this;</span>
         }
 
 
         public ThemeColorsBuilder menuBoldBackgroundColor(String menuBoldBackgroundColor) {
-<span class="fc" id="L119">            this.menuBoldBackgroundColor = menuBoldBackgroundColor;</span>
-<span class="fc" id="L120">            return this;</span>
+<span class="fc" id="L124">            this.menuBoldBackgroundColor = menuBoldBackgroundColor;</span>
+<span class="fc" id="L125">            return this;</span>
         }
 
 
         public ThemeColorsBuilder menuForegroundColor(String menuForegroundColor) {
-<span class="fc" id="L125">            this.menuForegroundColor = menuForegroundColor;</span>
-<span class="fc" id="L126">            return this;</span>
+<span class="fc" id="L130">            this.menuForegroundColor = menuForegroundColor;</span>
+<span class="fc" id="L131">            return this;</span>
         }
 
 
         public ThemeColorsBuilder menuDecorationColor(String menuDecorationColor) {
-<span class="fc" id="L131">            this.menuDecorationColor = menuDecorationColor;</span>
-<span class="fc" id="L132">            return this;</span>
+<span class="fc" id="L136">            this.menuDecorationColor = menuDecorationColor;</span>
+<span class="fc" id="L137">            return this;</span>
         }
 
 
         public ThemeColorsBuilder guiElementColor(String guiElementColor) {
-<span class="fc" id="L137">            this.guiElementColor = guiElementColor;</span>
-<span class="fc" id="L138">            return this;</span>
+<span class="fc" id="L142">            this.guiElementColor = guiElementColor;</span>
+<span class="fc" id="L143">            return this;</span>
         }
 
 
         public ThemeColors build() {
-<span class="fc" id="L143">            return new ThemeColors(menuRegularBackgroundColor, menuBoldBackgroundColor, menuForegroundColor, menuDecorationColor, guiElementColor);</span>
+<span class="fc" id="L148">            return new ThemeColors(menuRegularBackgroundColor, menuBoldBackgroundColor, menuForegroundColor, menuDecorationColor, guiElementColor);</span>
         }
 
     }

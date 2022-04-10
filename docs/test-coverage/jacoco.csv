@@ -1,9 +1,9 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-Docsite Maven Plugin,docsite.mojo,GenerateMojo,177,0,14,0,36,0,10,0,3,0
+Docsite Maven Plugin,docsite.mojo,GenerateMojo,196,0,16,0,43,0,12,0,4,0
 Docsite Maven Plugin,docsite.mojo,Autoconfigurer,562,0,46,0,131,0,38,0,15,0
-Docsite Maven Plugin,docsite.mojo,AggregateMojo,201,0,16,0,39,0,11,0,3,0
+Docsite Maven Plugin,docsite.mojo,AggregateMojo,224,0,18,0,45,0,12,0,3,0
 Docsite Maven Plugin,docsite.util,XmlParser,13,377,4,38,5,69,4,35,0,18
-Docsite Maven Plugin,docsite.util,EmitterUtil,87,165,8,8,19,29,8,12,3,9
+Docsite Maven Plugin,docsite.util,EmitterUtil,35,217,5,11,9,39,6,14,2,10
 Docsite Maven Plugin,docsite.util,ImageResolver,25,156,1,7,4,29,1,10,0,7
 Docsite Maven Plugin,docsite.util,CDNResources,0,205,0,0,0,56,0,3,0,3
 Docsite Maven Plugin,docsite.util,DocsiteReader,19,0,0,0,4,0,2,0,2,0
@@ -14,14 +14,14 @@ Docsite Maven Plugin,docsite,Script,42,0,0,0,13,0,9,0,9,0
 Docsite Maven Plugin,docsite,Section,13,128,3,9,4,30,5,21,2,17
 Docsite Maven Plugin,docsite,DocsiteException,8,0,0,0,4,0,2,0,2,0
 Docsite Maven Plugin,docsite,Logger,12,55,0,0,4,17,2,7,2,7
-Docsite Maven Plugin,docsite,SectionEmitter,75,746,13,37,9,147,11,36,1,21
+Docsite Maven Plugin,docsite,SectionEmitter,52,775,11,41,7,149,10,38,1,21
 Docsite Maven Plugin,docsite,DocsiteEmitter,16,181,4,8,3,41,3,9,0,6
 Docsite Maven Plugin,docsite,ThemeColors.ThemeColorsBuilder,0,42,0,0,0,13,0,7,0,7
-Docsite Maven Plugin,docsite,ThemeColors,25,61,0,0,10,20,5,8,5,8
-Docsite Maven Plugin,docsite,Docsite,13,75,0,0,5,25,3,15,3,15
+Docsite Maven Plugin,docsite,ThemeColors,28,61,0,0,12,20,6,8,6,8
+Docsite Maven Plugin,docsite,Docsite,3,85,0,0,1,29,1,17,1,17
 Docsite Maven Plugin,docsite,Section.SectionBuilder,5,65,0,0,2,19,1,10,1,10
 Docsite Maven Plugin,docsite,EmitterBuildParams,4,219,2,4,2,71,2,27,0,26
-Docsite Maven Plugin,docsite.emitters,GeneratedSectionEmitter,5,217,3,19,3,52,4,17,1,9
+Docsite Maven Plugin,docsite.emitters,GeneratedSectionEmitter,3,244,3,21,2,54,3,18,0,9
 Docsite Maven Plugin,docsite.emitters,EmbeddedSiteSectionEmitter,0,56,0,2,0,10,0,7,0,6
 Docsite Maven Plugin,docsite.emitters,MarkdownGeneratedSectionEmitter,6,105,0,0,2,23,0,4,0,4
 Docsite Maven Plugin,docsite.emitters,TextGeneratedSectionEmitter,6,21,0,0,2,5,0,3,0,3
