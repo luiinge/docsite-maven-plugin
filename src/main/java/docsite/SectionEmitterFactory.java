@@ -19,8 +19,10 @@ public class SectionEmitterFactory {
         Path baseDir,
         Path outputFolder,
         boolean useCDN,
-        Map<String,String> metadata,
-        List<Script> scripts
+        Map<String, String> metadata,
+        List<Script> scripts,
+        List<SiteLanguage> availableLanguages,
+        Map<String, Map<String, String>> localization
     ) {
         this.buildParams = new EmitterBuildParams()
             .site(site)
@@ -31,30 +33,34 @@ public class SectionEmitterFactory {
             .useCDN(useCDN)
             .metadata(metadata)
             .scripts(scripts)
+            .availableLanguages(availableLanguages)
+            .localization(localization)
         ;
     }
 
 
-    SectionEmitter createEmitter(Section section) {
-        return createEmitter(section,null,new ArrayList<>());
+    SectionEmitter createEmitter(Section section, SiteLanguage siteLanguage) {
+        return createEmitter(section,null,new ArrayList<>(), siteLanguage);
     }
 
 
     SectionEmitter createEmitter(
         Section section,
         SectionEmitter rootEmitter,
-        List<SectionEmitter> ancestorEmitters
+        List<SectionEmitter> ancestorEmitters,
+        SiteLanguage siteLanguage
     ) {
         SectionEmitter newEmitter = newEmitterInstance(buildParams
             .withRootEmitter(rootEmitter)
             .withSection(section)
             .withAncestorEmitters(ancestorEmitters)
+            .withSiteLanguage(siteLanguage)
         );
         SectionEmitter newRoot = Objects.requireNonNullElse(rootEmitter, newEmitter);
         List<SectionEmitter> newAncestors = new ArrayList<>(ancestorEmitters);
         newAncestors.add(newEmitter);
         for (Section subsection : section.subsections()) {
-            newEmitter.addChildEmitter(createEmitter(subsection, newRoot, newAncestors));
+            newEmitter.addChildEmitter(createEmitter(subsection, newRoot, newAncestors, siteLanguage));
         }
         return newEmitter;
     }

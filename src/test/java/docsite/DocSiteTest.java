@@ -84,6 +84,52 @@ public class DocSiteTest {
     }
 
 
+
+
+
+    @Test
+    public void testLocalization() throws IOException {
+
+        Docsite docsite = new Docsite()
+            .title("jExt - A Java library")
+            .description("title.description")
+            .logo("fab:accessible-icon")
+            .companyLogo("src/test/resources/external-icon.png")
+            .companyLink("http://company.com")
+            .index("src/test/resources/README.md")
+            .sections(List.of(
+                generated("changelog")
+                    .source("src/test/resources/CHANGELOG.md")
+                    .build(),
+                generated("License")
+                    .source("src/test/resources/LICENSE")
+                    .build(),
+                group("Report")
+                    .subsections(List.of(
+                        generated("Metrics")
+                            .source("src/test/resources/metrics.md")
+                            .build(),
+                        generated("Dependencies")
+                            .source("src/test/resources/dependencies.html")
+                            .build(),
+                        site()
+                            .name("Javadoc")
+                            .source("src/test/resources/apidocs")
+                            .siteIndex("index.html")
+                            .icon("fab:java")
+                            .build()
+                    )).build()
+
+            ));
+        testSiteGeneration(docsite,"localization",true,List.of("en:gb","es:es"));
+    }
+
+
+
+
+
+
+
     @Test
     public void testNoCDNl() throws IOException {
 
@@ -113,7 +159,8 @@ public class DocSiteTest {
             ThemeColors.DEFAULT,
             Path.of("src/test/resources/external-layout.css"),
             "externalCss",
-            true
+            true,
+            List.of()
         );
     }
 
@@ -135,7 +182,7 @@ public class DocSiteTest {
             .guiElementColor("orange")
             .build();
 
-        testSiteGeneration(docsite, themeColors, null, "colors", true);
+        testSiteGeneration(docsite, themeColors, null, "colors", true, List.of());
 
     }
 
@@ -203,9 +250,16 @@ public class DocSiteTest {
     }
 
 
+
     private void testSiteGeneration(Docsite docsite, String outputFolderName, boolean useCDN)
     throws IOException {
-        testSiteGeneration(docsite, ThemeColors.DEFAULT, null, outputFolderName, useCDN);
+        testSiteGeneration(docsite, ThemeColors.DEFAULT, null, outputFolderName, useCDN, null);
+    }
+
+
+    private void testSiteGeneration(Docsite docsite, String outputFolderName, boolean useCDN, List<String> languages)
+    throws IOException {
+        testSiteGeneration(docsite, ThemeColors.DEFAULT, null, outputFolderName, useCDN, languages);
     }
 
 
@@ -214,7 +268,8 @@ public class DocSiteTest {
         ThemeColors themeColors,
         Path cssFile,
         String outputFolderName,
-        boolean useCDN
+        boolean useCDN,
+        List<String> languages
     ) throws IOException {
 
         Path outputFolder = Path.of("target/testsites").resolve(outputFolderName);
@@ -229,6 +284,19 @@ public class DocSiteTest {
             Files.createDirectories(outputFolder);
         }
 
+
+        Map<String, Map<String, String>> translations = Map.of(
+            "en", Map.of (
+                "title.description", "Description in English",
+                "changelog", "Changelog"
+            ),
+            "es", Map.of (
+                "title.description", "Descripción en Español",
+                "changelog", "Historial"
+            )
+        );
+
+
         new DocsiteEmitter(
             configuration,
             themeColors,
@@ -237,7 +305,9 @@ public class DocSiteTest {
             Path.of("."),
             outputFolder,
             new HashMap<>(),
-            new ArrayList<>()
+            new ArrayList<>(),
+            SiteLanguage.of(languages),
+            translations
         ).generateSite();
 
         Logger.instance().info("file://"+outputFolder.resolve("index.html").toAbsolutePath().toString());

@@ -7,6 +7,7 @@ import docsite.Docsite;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Map;
 
 public class DocsiteReader {
 
@@ -16,6 +17,11 @@ public class DocsiteReader {
 
     public Docsite read(Path file) throws IOException {
         return jsonMapper.readValue(file.toFile(), Docsite.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Map<String, Map<String,String>> readLocalization(Path file) throws IOException {
+        return jsonMapper.readValue(file.toFile(), Map.class);
     }
 
 }

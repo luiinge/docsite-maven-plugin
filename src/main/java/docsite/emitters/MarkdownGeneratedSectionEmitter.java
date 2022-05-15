@@ -3,6 +3,7 @@ package docsite.emitters;
 
 import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.util.data.*;
+import j2html.tags.Tag;
 import java.io.*;
 import java.util.*;
 import java.util.stream.*;
@@ -37,8 +38,8 @@ public class MarkdownGeneratedSectionEmitter extends GeneratedSectionEmitter {
 
 
     @Override
-    protected SectionTag createSectionContent() {
-        try (InputStream markdown = ResourceUtil.open(baseDir, origin)) {
+    protected SectionTag generateSectionContent(Tag<?> before) {
+        try (InputStream markdown = ResourceUtil.open(baseDir, origin())) {
             String markdownContent = ResourceUtil.read(markdown);
             Node document = parser.parse(markdownContent);
             StreamSupport.stream(document.getChildren().spliterator(), false)
@@ -49,7 +50,7 @@ public class MarkdownGeneratedSectionEmitter extends GeneratedSectionEmitter {
             html = generateHeadersId(html);
             html = normalizeLinks(html);
             html = replaceLocalImages(html);
-            return section().with(rawHtml(html)).withClass("content");
+            return section().with(before).with(rawHtml(html)).withClass("content");
         }  catch (IOException e) {
             throw new DocsiteException(e);
         }

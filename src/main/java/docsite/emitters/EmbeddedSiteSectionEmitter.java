@@ -23,10 +23,16 @@ public class EmbeddedSiteSectionEmitter extends SectionEmitter {
 
 
     @Override
+    protected String url(SiteLanguage language) {
+        return url();
+    }
+
+
+    @Override
     public ATag createLinkToSection(boolean withIcon) {
         return withIcon ?
-            internalLinkWithIcon(baseDir, section.name(), url(), section.icon(), globalImages) :
-            internalLink(section.name(), url());
+            internalLinkWithIcon(baseDir, translate(section.name()), url(), section.icon(), globalImages) :
+            internalLink(translate(section.name()), url());
     }
 
 

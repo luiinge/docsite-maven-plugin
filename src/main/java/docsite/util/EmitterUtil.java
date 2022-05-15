@@ -111,9 +111,26 @@ public final class EmitterUtil {
         return href(name)+ ".html";
     }
 
+    public static String page(String name, SiteLanguage language) {
+        return language.isPrimary() ? page(name) : href(name)+ "_"+language.language()+".html";
+    }
+
 
     public static LinkTag stylesheet(String href) {
         return link().attr("href",href).attr("rel","stylesheet");
+    }
+
+
+    public static String withLanguage(SiteLanguage language, String path) {
+        if (language.isPrimary()) {
+            return path;
+        }
+        int extensionPosition = path.lastIndexOf('.');
+        if (extensionPosition == -1) {
+            return path+"_"+language.language();
+        } else {
+            return path.substring(0,extensionPosition)+"_"+language.language()+path.substring(extensionPosition);
+        }
     }
 
 }

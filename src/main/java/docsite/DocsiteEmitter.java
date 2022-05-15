@@ -19,6 +19,8 @@ public class DocsiteEmitter {
     private final boolean useCDN;
     private final Map<String,String> metadata;
     private final List<Script> scripts;
+    private final List<SiteLanguage> availableLanguages;
+    private final Map<String, Map<String, String>> localization;
 
 
     public DocsiteEmitter(
@@ -29,7 +31,9 @@ public class DocsiteEmitter {
         Path baseDir,
         Path outputFolder,
         Map<String,String> metadata,
-        List<Script> scripts
+        List<Script> scripts,
+        List<SiteLanguage> availableLanguages,
+        Map<String,Map<String,String>> localization
     ) {
         this.site = docsite;
         this.themeColors = themeColors;
@@ -40,6 +44,8 @@ public class DocsiteEmitter {
         this.metadata = metadata;
         this.scripts = scripts;
         this.baseDir = baseDir;
+        this.availableLanguages = availableLanguages;
+        this.localization = localization;
     }
 
 
@@ -53,9 +59,17 @@ public class DocsiteEmitter {
             outputFolder,
             useCDN,
             metadata,
-            scripts
+            scripts,
+            availableLanguages,
+            localization
         );
-        emitterFactory.createEmitter(site.home()).emitHTML(true);
+        if (availableLanguages.isEmpty()) {
+            emitterFactory.createEmitter(site.home(),SiteLanguage.UNDEFINED).emitHTML(true);
+        } else {
+            for (SiteLanguage language : availableLanguages) {
+                emitterFactory.createEmitter(site.home(),language).emitHTML(true);
+            }
+        }
    }
 
 
@@ -77,6 +91,7 @@ public class DocsiteEmitter {
         }
         site.sections().forEach(this::copyEmbeddedSites);
         site.sections().forEach(this::copyLocalSites);
+
     }
 
 

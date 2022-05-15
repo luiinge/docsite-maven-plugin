@@ -1,6 +1,7 @@
 package docsite.emitters;
 
 
+import j2html.tags.Tag;
 import java.io.*;
 
 import docsite.*;
@@ -17,9 +18,9 @@ public class TextGeneratedSectionEmitter extends GeneratedSectionEmitter {
 
 
     @Override
-    protected SectionTag createSectionContent() {
-        try (InputStream text = ResourceUtil.open(baseDir, origin)) {
-            return section().with(pre(ResourceUtil.read(text)));
+    protected SectionTag generateSectionContent(Tag<?> before) {
+        try (InputStream text = ResourceUtil.open(baseDir, origin())) {
+            return section().with(before).with(pre(ResourceUtil.read(text)));
         }  catch (IOException e) {
             throw new DocsiteException(e);
         }

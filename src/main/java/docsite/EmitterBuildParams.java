@@ -18,8 +18,9 @@ public class EmitterBuildParams {
     private boolean useCDN;
     private Map<String,String> metadata;
     private List<Script> scripts;
-
-
+    private List<SiteLanguage> availableLanguages;
+    private SiteLanguage siteLanguage;
+    private Map<String,Map<String,String>> localization;
 
     public Docsite site() {
         return this.site;
@@ -70,6 +71,22 @@ public class EmitterBuildParams {
         return Objects.requireNonNullElseGet(scripts, ArrayList::new);
     }
 
+
+    public SiteLanguage siteLanguage() {
+        return siteLanguage;
+    }
+
+
+    public List<SiteLanguage> availableLanguages() {
+        return Objects.requireNonNullElseGet(availableLanguages, List::of);
+    }
+
+
+    public Map<String, Map<String, String>> localization() {
+        return localization;
+    }
+
+
     public Path baseDir() {
         return baseDir;
     }
@@ -89,7 +106,29 @@ public class EmitterBuildParams {
                 .useCDN(this.useCDN)
                 .metadata(this.metadata)
                 .scripts(this.scripts)
+                .availableLanguages(this.availableLanguages)
+                .siteLanguage(this.siteLanguage)
+                .localization(this.localization)
             ;
+    }
+
+
+    public EmitterBuildParams withSiteLanguage(SiteLanguage siteLanguage) {
+        return new EmitterBuildParams()
+            .site(this.site)
+            .rootEmitter(this.rootEmitter)
+            .section(this.section)
+            .ancestorEmitters(this.ancestorEmitters)
+            .globalImages(this.globalImages)
+            .themeColors(this.themeColors)
+            .outputFolder(this.outputFolder)
+            .baseDir(this.baseDir)
+            .useCDN(this.useCDN)
+            .metadata(this.metadata)
+            .scripts(this.scripts)
+            .availableLanguages(this.availableLanguages)
+            .siteLanguage(siteLanguage)
+            .localization(this.localization);
     }
 
 
@@ -108,6 +147,9 @@ public class EmitterBuildParams {
                 .useCDN(this.useCDN)
                 .metadata(this.metadata)
                 .scripts(this.scripts)
+                .availableLanguages(this.availableLanguages)
+                .siteLanguage(this.siteLanguage)
+                .localization(this.localization)
             ;
     }
 
@@ -127,6 +169,9 @@ public class EmitterBuildParams {
                 .useCDN(this.useCDN)
                 .metadata(this.metadata)
                 .scripts(this.scripts)
+                .availableLanguages(this.availableLanguages)
+                .siteLanguage(this.siteLanguage)
+                .localization(this.localization)
             ;
     }
 
@@ -182,6 +227,24 @@ public class EmitterBuildParams {
 
     public EmitterBuildParams scripts(List<Script> scripts) {
         this.scripts = scripts;
+        return this;
+    }
+
+
+    public EmitterBuildParams availableLanguages(List<SiteLanguage> availableLanguages) {
+        this.availableLanguages = availableLanguages;
+        return this;
+    }
+
+
+    public EmitterBuildParams siteLanguage(SiteLanguage siteLanguage) {
+        this.siteLanguage = siteLanguage;
+        return this;
+    }
+
+
+    public EmitterBuildParams localization(Map<String, Map<String, String>> localization) {
+        this.localization = localization;
         return this;
     }
 

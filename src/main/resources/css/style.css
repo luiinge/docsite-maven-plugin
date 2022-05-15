@@ -171,6 +171,8 @@ aside > nav ol > ol li {
    text-decoration: none;
    border-bottom: 0.1em solid var(--menu-decoration-color);
    grid-area: breadcrumbs;
+   display: inline-flex;
+   justify-content: space-between;
 }
 .breadcrumbs a {
    background: var(--menu-bold-background-color);
@@ -198,7 +200,10 @@ aside > nav ol > ol li {
 }
 
 
-
+.language-selection {
+    background: var(--menu-bold-background-color);
+    color: var(--menu-foreground-color);
+}
 
 
 section {
@@ -211,8 +216,9 @@ section {
 section table {
     font-size: 0.9em;
 }
-section p {
+section > p {
     text-align: justify;
+    margin: 1rem 0 1rem 0;
 }
 section pre {
     overflow-x: auto;
@@ -239,6 +245,10 @@ section h1 {
 section h2 {
     border-bottom: 0.1em solid black;
     margin-top: 2em;
+}
+
+section h3 {
+    text-decoration: underline;
 }
 
 

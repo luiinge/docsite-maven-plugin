@@ -23,30 +23,36 @@ public class EmbeddedSiteSectionEmitter extends SectionEmitter {
 
 
     @Override
+    protected String url(SiteLanguage language) {
+<span class="fc" id="L27">        return url();</span>
+    }
+
+
+    @Override
     public ATag createLinkToSection(boolean withIcon) {
-<span class="fc bfc" id="L27" title="All 2 branches covered.">        return withIcon ?</span>
-<span class="fc" id="L28">            internalLinkWithIcon(baseDir, section.name(), url(), section.icon(), globalImages) :</span>
-<span class="fc" id="L29">            internalLink(section.name(), url());</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">        return withIcon ?</span>
+<span class="fc" id="L34">            internalLinkWithIcon(baseDir, translate(section.name()), url(), section.icon(), globalImages) :</span>
+<span class="fc" id="L35">            internalLink(translate(section.name()), url());</span>
     }
 
 
     @Override
     protected SectionTag createSectionContent() {
-<span class="fc" id="L35">        return section().withClass(&quot;embedded&quot;).with(iframe().withSrc(</span>
-<span class="fc" id="L36">            href()+&quot;/&quot;+section.siteIndex()</span>
+<span class="fc" id="L41">        return section().withClass(&quot;embedded&quot;).with(iframe().withSrc(</span>
+<span class="fc" id="L42">            href()+&quot;/&quot;+section.siteIndex()</span>
         ));
     }
 
 
     @Override
     protected AsideTag createTableOfContents(SectionTag section) {
-<span class="fc" id="L43">        return aside();</span>
+<span class="fc" id="L49">        return aside();</span>
     }
 
 
     @Override
     protected Path outputPath() {
-<span class="fc" id="L49">        return outputFolder.resolve(href()+&quot;.html&quot;);</span>
+<span class="fc" id="L55">        return outputFolder.resolve(href()+&quot;.html&quot;);</span>
     }
 
 

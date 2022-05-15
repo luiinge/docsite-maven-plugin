@@ -7,9 +7,9 @@
 }</style><script src="https://www.googletagmanager.com/gtag/js?id=G-5KK3TJ7WBV" async></script><script>window.dataLayer = window.dataLayer || [];
                                 function gtag(){dataLayer.push(arguments);}
                                 gtag('js', new Date());
-                                gtag('config', 'G-5KK3TJ7WBV');</script></head><body><a id="jump-to-content" href="#content">jump to content</a><header><div class="title-and-subtitle"><h1 class="title label"><i class="hidden"></i><span>Docsite Maven Plugin</span></h1><span class="subtitle">A Maven plugin that generates static documentation sites</span></div><nav class="sections"><ul><li><a class="label internal" href="changelog.html"><i class="fas fa-clipboard-list"></i><span>Changelog</span></a></li><li><a class="label internal" href="reports.html"><i class="fas fa-file-medical-alt"></i><span>Reports</span></a><ul class="dropdown"><li><a class="label internal" href="plugin-goals.html"><i class="hidden"></i><span>Plugin Goals</span></a></li><li><a class="label internal" href="javadoc.html"><i class="fab fa-java"></i><span>Javadoc</span></a></li><li><a class="label internal" href="dependencies.html"><i class="hidden"></i><span>Dependencies</span></a></li><li><a class="label internal" href="test-coverage.html"><i class="hidden"></i><span>Test Coverage</span></a></li></ul></li><li><a class="label external" href="https://github.com/luiinge/docsite-maven-plugin" target="_blank" rel="external noreferrer noopener nofollow"><i class="fab fa-github"></i><span>Source</span></a></li><li><a class="label internal" href="license.html"><i class="fas fa-balance-scale"></i><span>License</span></a></li></ul></nav></header><nav class="breadcrumbs"><ol><li><a class="internal" href="index.html">Docsite Maven Plugin</a></li><li><a class="internal" href="reports.html">Reports</a></li><li><a>Plugin Goals</a></li></ol></nav><aside><nav class="toc"><ol><li><a class="internal" href="#usage">Usage</a></li><li><a class="internal" href="#goals">Goals</a></li><ol><li><a class="internal" href="#docsite:aggregate">        docsite:aggregate
+                                gtag('config', 'G-5KK3TJ7WBV');</script><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script></head><body><a id="jump-to-content" href="#content">jump to content</a><header><div class="title-and-subtitle"><h1 class="title label"><i class="hidden"></i><span>Docsite Maven Plugin</span></h1><span class="subtitle">A Maven plugin that generates static documentation sites</span></div><nav class="sections"><ul><li><a class="label internal" href="changelog.html"><i class="fas fa-clipboard-list"></i><span>Changelog</span></a></li><li><a class="label internal" href="reports.html"><i class="fas fa-file-medical-alt"></i><span>Reports</span></a><ul class="dropdown"><li><a class="label internal" href="plugin-goals.html"><i class="hidden"></i><span>Plugin Goals</span></a></li><li><a class="label internal" href="javadoc.html"><i class="fab fa-java"></i><span>Javadoc</span></a></li><li><a class="label internal" href="dependencies.html"><i class="hidden"></i><span>Dependencies</span></a></li><li><a class="label internal" href="test-coverage.html"><i class="hidden"></i><span>Test Coverage</span></a></li></ul></li><li><a class="label external" href="https://github.com/luiinge/docsite-maven-plugin" target="_blank" rel="external noreferrer noopener nofollow"><i class="fab fa-github"></i><span>Source</span></a></li><li><a class="label internal" href="license.html"><i class="fas fa-balance-scale"></i><span>License</span></a></li></ul></nav><div class="company"><img class="hidden"></div></header><nav class="breadcrumbs"><ol><li><a class="internal" href="index.html">Docsite Maven Plugin</a></li><li><a class="internal" href="reports.html">Reports</a></li><li><a>Plugin Goals</a></li></ol></nav><aside><nav class="toc"><ol><li><a class="internal" href="#usage">Usage</a></li><li><a class="internal" href="#goals">Goals</a></li><ol><li><a class="internal" href="#docsite:aggregate">        docsite:aggregate
 </a></li><li><a class="internal" href="#docsite:generate">        docsite:generate
-</a></li></ol></ol></ol></nav></aside><section id="content"><h1>Docsite Maven Plugin</h1>
+</a></li></ol></ol></ol></nav></aside><section id="content"><div></div><h1>Docsite Maven Plugin</h1>
 A Maven plugin that generates static documentation sites
 
 <h2 id="usage">Usage</h2>
@@ -19,7 +19,7 @@ Include the following snippet in your <tt>pom.xml</tt> file before using the plu
         &lt;plugin&gt;
             &lt;groupId&gt;io.github.luiinge&lt;/groupId&gt;
             &lt;artifactId&gt;docsite-maven-plugin&lt;/artifactId&gt;
-            &lt;version&gt;1.2.2-SNAPSHOT&lt;/version&gt;
+            &lt;version&gt;1.3.0&lt;/version&gt;
             &lt;configuration&gt;
                 ...
             &lt;/configuration&gt;
@@ -38,9 +38,6 @@ Below there is a list of available goals provided by this plugin:
           <td><a href="#aggregate">        docsite:aggregate
 </a></td>
           <td></td>
-        </tr>
-        <tr>
-            <th>Goal</th><th>Description</th>
         </tr>
         <tr>
           <td><a href="#generate">        docsite:generate
@@ -156,6 +153,65 @@ but setting this property to <tt>true</tt> will bypass such feature.
                 <li><b>User property:</b> <tt>docsite.forceDelete</tt></li>
                 <li><b>Since:</b> 1.0</li>
             </ul>
+            <h5 style="border-bottom: 1px solid;">languages</h5>
+            The provided language translations for the site. You can also define the country
+ flag representing the language using the expression <code>language:country</code>,
+ being <code>country</code> a
+ <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3166-1 alpha-2</a> code.
+ <p>
+ First language would be the default.
+            <ul style="font-size: 0.8em">
+                <li><b>Type:</b> <tt>java.lang.String[]</tt></li>
+                <li><b>Required:</b> false</li>
+                <li><b>User property:</b> <tt>docsite.languages</tt></li>
+                <li><b>Since:</b> 1.3</li>
+            </ul>
+            <h5 style="border-bottom: 1px solid;">localizationFile</h5>
+            A JSON file containing the translations for section names and descriptions (given that
+they are provided with keys instead of literals).
+<p>
+The content of the file must abide by the following structure:
+<pre><code class="language-json">
+    {
+        "language-a": {
+            "key-a":"translation-a",
+            "key-b":"translation-b",
+            ...
+        },
+        "language-b": {
+          ...
+        },
+        ...
+    }
+</code></pre>
+            <ul style="font-size: 0.8em">
+                <li><b>Type:</b> <tt>java.io.File</tt></li>
+                <li><b>Required:</b> false</li>
+                <li><b>User property:</b> <tt>docsite.localizationFile</tt></li>
+                <li><b>Since:</b> 1.3</li>
+            </ul>
+            <h5 style="border-bottom: 1px solid;">localizations</h5>
+            The translations for section names and descriptions (given that
+they are provided with keys instead of literals).
+<p>
+The content must abide by the following structure:
+<localizations>
+    <localization>
+        <language>language-a</language>
+        <values>
+            <key-a>value-a</key-a>
+            <key-b>value-b</key-b>
+        </values>
+    </localization>
+    <localization>
+        ...
+    </localization>
+</localizations>
+            <ul style="font-size: 0.8em">
+                <li><b>Type:</b> <tt>docsite.Localization[]</tt></li>
+                <li><b>Required:</b> false</li>
+                <li><b>Since:</b> 1.3</li>
+            </ul>
             <h5 style="border-bottom: 1px solid;">metadata</h5>
             Set extra metadata that would be included in the <tt>head</tt> section.
 <pre><code class="language-xml">&lt;metadata&gt;
@@ -216,7 +272,7 @@ Value formats accepted are defined by
                 <li><b>Since:</b> 1.0</li>
             </ul>
             <h5 style="border-bottom: 1px solid;">useCDN</h5>
-            
+            Set whether the site uses CDN (Content Delivery Network) for some resources
             <ul style="font-size: 0.8em">
                 <li><b>Type:</b> <tt>boolean</tt></li>
                 <li><b>Required:</b> false</li>
@@ -348,6 +404,65 @@ but setting this property to <tt>true</tt> will bypass such feature.
                 <li><b>User property:</b> <tt>docsite.forceDelete</tt></li>
                 <li><b>Since:</b> 1.0</li>
             </ul>
+            <h5 style="border-bottom: 1px solid;">languages</h5>
+            The provided language translations for the site. You can also define the country
+ flag representing the language using the expression <code>language:country</code>,
+ being <code>country</code> a
+ <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3166-1 alpha-2</a> code.
+ <p>
+ First language would be the default.
+            <ul style="font-size: 0.8em">
+                <li><b>Type:</b> <tt>java.lang.String[]</tt></li>
+                <li><b>Required:</b> false</li>
+                <li><b>User property:</b> <tt>docsite.languages</tt></li>
+                <li><b>Since:</b> 1.3</li>
+            </ul>
+            <h5 style="border-bottom: 1px solid;">localizationFile</h5>
+            A JSON file containing the translations for section names and descriptions (given that
+they are provided with keys instead of literals).
+<p>
+The content of the file must abide by the following structure:
+<pre><code class="language-json">
+    {
+        "language-a": {
+            "key-a":"translation-a",
+            "key-b":"translation-b",
+            ...
+        },
+        "language-b": {
+          ...
+        },
+        ...
+    }
+</code></pre>
+            <ul style="font-size: 0.8em">
+                <li><b>Type:</b> <tt>java.io.File</tt></li>
+                <li><b>Required:</b> false</li>
+                <li><b>User property:</b> <tt>docsite.localizationFile</tt></li>
+                <li><b>Since:</b> 1.3</li>
+            </ul>
+            <h5 style="border-bottom: 1px solid;">localizations</h5>
+            The translations for section names and descriptions (given that
+they are provided with keys instead of literals).
+<p>
+The content must abide by the following structure:
+<localizations>
+    <localization>
+        <language>language-a</language>
+        <values>
+            <key-a>value-a</key-a>
+            <key-b>value-b</key-b>
+        </values>
+    </localization>
+    <localization>
+        ...
+    </localization>
+</localizations>
+            <ul style="font-size: 0.8em">
+                <li><b>Type:</b> <tt>docsite.Localization[]</tt></li>
+                <li><b>Required:</b> false</li>
+                <li><b>Since:</b> 1.3</li>
+            </ul>
             <h5 style="border-bottom: 1px solid;">metadata</h5>
             Set extra metadata that would be included in the <tt>head</tt> section.
 <pre><code class="language-xml">&lt;metadata&gt;
@@ -417,7 +532,7 @@ Value formats accepted are defined by
                 <li><b>Since:</b> 1.0</li>
             </ul>
             <h5 style="border-bottom: 1px solid;">useCDN</h5>
-            
+            Set whether the site uses CDN (Content Delivery Network) for some resources
             <ul style="font-size: 0.8em">
                 <li><b>Type:</b> <tt>boolean</tt></li>
                 <li><b>Required:</b> false</li>

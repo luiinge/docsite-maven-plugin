@@ -20,7 +20,7 @@ providing the following benefits:
 > This very site has been generated using Docsite (check [the site](https://luiinge.github.io/docsite-maven-plugin/) 
 in case you are reading this document from Github).
 
-Usage
+Get started
 -----------------------------------------------------------------------------------------
 
 1. Add the plugin to your `build` configuration in the `pom.xml` file:
@@ -30,7 +30,7 @@ Usage
             <plugin>
                 <groupId>io.github.luiinge</groupId>
                 <artifactId>docsite-maven-plugin</artifactId>
-                <version>1.2.2</version>
+                <version>1.3.0</version>
             </plugin>
         </plugins>
     </build>
@@ -56,7 +56,7 @@ the plugin within the `pom`.
             <plugin>
                 <groupId>io.github.luiinge</groupId>
                 <artifactId>docsite-maven-plugin</artifactId>
-                <version>1.2.2</version>
+                <version>1.3.0</version>
                 <configuration>
                     <docsite>
                         ...
@@ -298,15 +298,17 @@ For example, your root `pom.xml` might contain something like the following:
 ```
 
 
-Other considerations
+Advanced usage
 -----------------------------------------------------------------------------------------
 
 ### Icons
 For the main property `logo`, as well as the section property `icon`, you can choose among
-three different sources according the property value:
+different sources according the property value:
 - Starting with `http:` or `https:`, the image source would be an external link to the given URL
 - Starting with `fa:`, `fas:`, `far:` or `fab:`, the image would be a
   [Font Awesome 5](http://https://fontawesome.com/v5.15/icons) icon
+- Starting with `data:image`, you can embed an image using the corresponding Base64 code
+(as defined in [RFC-2397](https://datatracker.ietf.org/doc/html/rfc2397))
 - Otherwise, a local image file would be expected
 
 
@@ -319,6 +321,7 @@ use those markups without any emoji intention and hence the generated page would
 unexpected images. If you experience this problem, simply disable the emoji replacement by setting 
 to `false` the property `replaceEmojis` in the problematic section.
 
+
 ### About CDN resources
 The websites generated with Docsite make use of CDN (Content Distribution Network) for 
 some required resources ([Font Awesome 5](http://https://fontawesome.com/v5.15/icon)
@@ -327,6 +330,7 @@ to improve loading time and reducing traffic. However, there might be specific s
 where a local copy would be preferred. 
 You can instruct Docsite to use a local copy of such resources setting to `false` the property 
 `useCDN`.
+
 
 ### Maven lifecycle
 In contrast with the default Maven site generation, that is based in the concept of pluggable
@@ -337,12 +341,14 @@ The only consideration is that in most cases you may require the result of some 
 is intended to be used with `site`. Some report plugins have goals that can be executed 
 standalone, but most require the `site` context.
 
+
 ### Using Docsite without Maven
 This piece of software is designed as a Maven plugin, but actually that is a loose requirement. 
 As any regular Jar file, you can include it (along with its dependencies) in your classpath and 
 make use of the `DocsiteEmitter` class without a Maven executor. It is, though, still advisable
 that you peek the implementation of `DocsiteMojo` in order to get the idea of the minimum setup
 required.
+
 
 ### Adding analytic features
 If you want to analyze the traffic of your documentation site, you may need to insert custom 
@@ -373,6 +379,164 @@ Here you can add your extra code, like in the following example:
       ...
 </configuration>
 ```
+
+Localization
+-------------------------------------------------------------------------------------
+You can enrich your documentation site providing localized versions of some documents.
+When enabled, a language selection option would be accessible in every page in the 
+top right corner.
+
+In order to enable the localization features, you must provide the list of provided 
+languages within the plugin configuration. For example:
+
+```xml
+<configuration>
+      ...
+      <languages>
+        <language>en:gb</language>
+        <language>es:es</language>
+      </languages>
+      ...
+</configuration>
+```
+
+Each language is defined by two codes separated by `:`. The first code is the *language code* 
+used by your localized documents. The second code corresponds to any *country code* as 
+defined by the standard [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2),
+and it would be used to represent the language by a country flag Unicode emoji (as shown
+[here](https://flagpedia.net/emoji)). Notice that the first language in the list is 
+considered as the *primary language*.
+
+
+During the generation process, for each section marked with the `generated` type, 
+a similar source file will be searched at the same location of the original source, 
+but with a prefix indicating the *language code* just before the extension (or just at the 
+end of the name if there is no extension). For example, for a given `README.md` file and the 
+additional language code `es`, a file named `README_es.md` would be expected.
+The *primary language*, however, would use the file with the regular name, 
+just like if no localization was defined.
+
+
+In addition to the document content, you can provide translations for the names and descriptions
+used by the site and its sections. In order to do that, use the `localizations` configuration
+property. For example:
+
+```xml
+<configuration>
+      ...
+      <docsite>
+        <title>My Project Title</title>
+        <description>My Project Description</description>
+        <index>README.md</index>
+        <sections>
+            <section>
+                <type>generated</type>
+                <name>Changelog</name>
+                <description>Log of modifications</description>
+                <source>CHANGELOG.md</source>
+            </section>
+        </sections>
+      </docsite>
+
+      <languages>
+        <language>en:gb</language>
+        <language>es:es</language>
+      </languages>
+
+      <localizations>
+        <localization>
+          <language>es</language>
+          <values>
+            <Changelog>Historial de cambios</Changelog>
+          </values>
+        </localization>
+      </localizations>
+
+</configuration>
+```
+
+Alternatively, you can create a JSON file like the following:
+```json
+{
+  "es": {
+    "My Project Title": "Título del proyecto",
+    "My Project Description": "Descripción de mi proyecto",
+    "Changelog": "Historial de cambios"
+  }
+}
+```
+
+and pass it with the property `localizationFile`.
+
+
+Notice that the *primary language* has no translations in the JSON file, since 
+they are directly provided in the configuration and are used as keys for the other 
+languages.
+
+
+
+Common Issues
+----------------------------------------------------------------------------------------
+
+### `No plugin found for prefix 'docsite' in the current project and in the plugin`. 
+
+You can get this message when running `mvn docsite:generate` or `mvn docsite:aggregate`. 
+That is because Maven only resolve plugin prefixes for plugins belonging to the groups 
+`org.apache.maven.plugins` and `org.codehaus.mojo`. There are several ways to solve this issue:
+
+- **Option A.** Edit your Maven settings file (per-user: `${user.home}/.m2/settings.xml`; 
+global: `${maven.home}/conf/settings.xml`), adding the following:
+
+  ```xml
+  <settings>
+     ...
+     <pluginGroups>
+       <pluginGroup>io.github.luiinge</pluginGroup>
+     </pluginGroups>
+  </settings>
+  ```
+
+  > In case you are using this tool during a CI/CD operation, you will require to edit the 
+  > `settings.xml` file during the operation. Check the documentation of your CI/CD platform
+  > to find out how to accomplish this.
+
+- **Option B.** Use the full name of the plugin: 
+
+  ```shell
+  mvn io.github.luiinge:docsite-maven-plugin:1.3.0:generate
+  ```
+  
+  Be aware that by using this method you *cannot* define the configuration in the `pom`, 
+  you must pass any configuration data via parameters
+
+- **Option C.** Bound the execution to one of the build phases and run the predefined
+  goal. For example, using the following:
+
+  ```xml
+  <plugin>
+    <groupId>io.github.luiinge</groupId>
+    <artifactId>docsite-maven-plugin</artifactId>
+    <version>1.3.0</version>
+    <configuration> ... </configuration>
+    <executions>
+      <execution>
+        <id>generate-site</id>
+        <goals>
+          <goal>generate</goal>
+        </goals>
+        <phase>prepare-package</phase>
+      </execution>
+    </executions>
+  </plugin>
+  ```
+  
+  and running 
+
+  ```shell
+  mvn package
+  ```
+
+
 
 Metrics
 -----------------------------------------------------------------------------------------

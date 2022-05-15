@@ -7,15 +7,21 @@ import docsite.Docsite;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Map;
 
-<span class="nc" id="L11">public class DocsiteReader {</span>
+<span class="nc" id="L12">public class DocsiteReader {</span>
 
-<span class="nc" id="L13">    private final ObjectMapper jsonMapper = new ObjectMapper()</span>
-<span class="nc" id="L14">        .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);</span>
+<span class="nc" id="L14">    private final ObjectMapper jsonMapper = new ObjectMapper()</span>
+<span class="nc" id="L15">        .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);</span>
 
 
     public Docsite read(Path file) throws IOException {
-<span class="nc" id="L18">        return jsonMapper.readValue(file.toFile(), Docsite.class);</span>
+<span class="nc" id="L19">        return jsonMapper.readValue(file.toFile(), Docsite.class);</span>
+    }
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public Map&lt;String, Map&lt;String,String&gt;&gt; readLocalization(Path file) throws IOException {
+<span class="nc" id="L24">        return jsonMapper.readValue(file.toFile(), Map.class);</span>
     }
 
 }

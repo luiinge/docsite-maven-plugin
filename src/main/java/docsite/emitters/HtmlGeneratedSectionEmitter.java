@@ -1,6 +1,7 @@
 package docsite.emitters;
 
 
+import j2html.tags.Tag;
 import java.io.*;
 import docsite.*;
 import docsite.util.ResourceUtil;
@@ -15,13 +16,13 @@ public class HtmlGeneratedSectionEmitter extends GeneratedSectionEmitter {
 
 
     @Override
-    protected SectionTag createSectionContent() {
-        try (InputStream htmlInputStream = ResourceUtil.open(baseDir,origin)) {
+    protected SectionTag generateSectionContent(Tag<?> before) {
+        try (InputStream htmlInputStream = ResourceUtil.open(baseDir,origin())) {
             String html = ResourceUtil.read(htmlInputStream);
             html = generateHeadersId(html);
             html = normalizeLinks(html);
             html = replaceLocalImages(html);
-            return section().with(rawHtml(html)).withClass("content");
+            return section().with(before).with(rawHtml(html)).withClass("content");
         } catch (IOException e) {
             throw new DocsiteException(e);
         }

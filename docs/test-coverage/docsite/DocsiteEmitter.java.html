@@ -19,6 +19,8 @@ public class DocsiteEmitter {
     private final boolean useCDN;
     private final Map&lt;String,String&gt; metadata;
     private final List&lt;Script&gt; scripts;
+    private final List&lt;SiteLanguage&gt; availableLanguages;
+    private final Map&lt;String, Map&lt;String, String&gt;&gt; localization;
 
 
     public DocsiteEmitter(
@@ -29,23 +31,27 @@ public class DocsiteEmitter {
         Path baseDir,
         Path outputFolder,
         Map&lt;String,String&gt; metadata,
-        List&lt;Script&gt; scripts
-<span class="fc" id="L33">    ) {</span>
-<span class="fc" id="L34">        this.site = docsite;</span>
-<span class="fc" id="L35">        this.themeColors = themeColors;</span>
-<span class="fc" id="L36">        this.cssFile = cssFile;</span>
-<span class="fc" id="L37">        this.outputFolder = outputFolder;</span>
-<span class="fc" id="L38">        this.globalImages = new ImageResolver(outputFolder.resolve(&quot;images&quot;));</span>
-<span class="fc" id="L39">        this.useCDN = useCDN;</span>
-<span class="fc" id="L40">        this.metadata = metadata;</span>
-<span class="fc" id="L41">        this.scripts = scripts;</span>
-<span class="fc" id="L42">        this.baseDir = baseDir;</span>
-<span class="fc" id="L43">    }</span>
+        List&lt;Script&gt; scripts,
+        List&lt;SiteLanguage&gt; availableLanguages,
+        Map&lt;String,Map&lt;String,String&gt;&gt; localization
+<span class="fc" id="L37">    ) {</span>
+<span class="fc" id="L38">        this.site = docsite;</span>
+<span class="fc" id="L39">        this.themeColors = themeColors;</span>
+<span class="fc" id="L40">        this.cssFile = cssFile;</span>
+<span class="fc" id="L41">        this.outputFolder = outputFolder;</span>
+<span class="fc" id="L42">        this.globalImages = new ImageResolver(outputFolder.resolve(&quot;images&quot;));</span>
+<span class="fc" id="L43">        this.useCDN = useCDN;</span>
+<span class="fc" id="L44">        this.metadata = metadata;</span>
+<span class="fc" id="L45">        this.scripts = scripts;</span>
+<span class="fc" id="L46">        this.baseDir = baseDir;</span>
+<span class="fc" id="L47">        this.availableLanguages = availableLanguages;</span>
+<span class="fc" id="L48">        this.localization = localization;</span>
+<span class="fc" id="L49">    }</span>
 
 
     public void generateSite() throws IOException {
-<span class="fc" id="L47">        prepareCommonResources();</span>
-<span class="fc" id="L48">        SectionEmitterFactory emitterFactory = new SectionEmitterFactory(</span>
+<span class="fc" id="L53">        prepareCommonResources();</span>
+<span class="fc" id="L54">        SectionEmitterFactory emitterFactory = new SectionEmitterFactory(</span>
             site,
             globalImages,
             themeColors,
@@ -53,55 +59,64 @@ public class DocsiteEmitter {
             outputFolder,
             useCDN,
             metadata,
-            scripts
+            scripts,
+            availableLanguages,
+            localization
         );
-<span class="fc" id="L58">        emitterFactory.createEmitter(site.home()).emitHTML(true);</span>
-<span class="fc" id="L59">   }</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        if (availableLanguages.isEmpty()) {</span>
+<span class="fc" id="L67">            emitterFactory.createEmitter(site.home(),SiteLanguage.UNDEFINED).emitHTML(true);</span>
+        } else {
+<span class="fc bfc" id="L69" title="All 2 branches covered.">            for (SiteLanguage language : availableLanguages) {</span>
+<span class="fc" id="L70">                emitterFactory.createEmitter(site.home(),language).emitHTML(true);</span>
+<span class="fc" id="L71">            }</span>
+        }
+<span class="fc" id="L73">   }</span>
 
 
 
     private void prepareCommonResources() throws IOException {
-<span class="fc" id="L64">        logger.debug(&quot;Copying common resources...&quot;);</span>
-<span class="fc" id="L65">        Path cssFolder = outputFolder.resolve(&quot;css&quot;);</span>
-<span class="fc" id="L66">        Path jsFolder = outputFolder.resolve(&quot;js&quot;);</span>
-<span class="fc bfc" id="L67" title="All 2 branches covered.">        if (cssFile == null) {</span>
-<span class="fc" id="L68">            ResourceUtil.copyResource(&quot;css/style.css&quot;, cssFolder);</span>
+<span class="fc" id="L78">        logger.debug(&quot;Copying common resources...&quot;);</span>
+<span class="fc" id="L79">        Path cssFolder = outputFolder.resolve(&quot;css&quot;);</span>
+<span class="fc" id="L80">        Path jsFolder = outputFolder.resolve(&quot;js&quot;);</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        if (cssFile == null) {</span>
+<span class="fc" id="L82">            ResourceUtil.copyResource(&quot;css/style.css&quot;, cssFolder);</span>
         } else {
-<span class="fc" id="L70">            ResourceUtil.copyExternalFileWithAnotherName(cssFile, cssFolder, &quot;style.css&quot;);</span>
+<span class="fc" id="L84">            ResourceUtil.copyExternalFileWithAnotherName(cssFile, cssFolder, &quot;style.css&quot;);</span>
         }
-<span class="fc" id="L72">        ResourceUtil.copyResource(&quot;css/common.css&quot;, cssFolder);</span>
-<span class="fc" id="L73">        ResourceUtil.copyResource(&quot;css/prism.min.css&quot;, cssFolder);</span>
-<span class="fc bfc" id="L74" title="All 2 branches covered.">        if (!useCDN) {</span>
-<span class="fc" id="L75">            ResourceUtil.copyResource(&quot;js/prism.js&quot;, jsFolder);</span>
-<span class="fc" id="L76">            ResourceUtil.copyResourceFolder(&quot;webfonts&quot;,  outputFolder);</span>
+<span class="fc" id="L86">        ResourceUtil.copyResource(&quot;css/common.css&quot;, cssFolder);</span>
+<span class="fc" id="L87">        ResourceUtil.copyResource(&quot;css/prism.min.css&quot;, cssFolder);</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">        if (!useCDN) {</span>
+<span class="fc" id="L89">            ResourceUtil.copyResource(&quot;js/prism.js&quot;, jsFolder);</span>
+<span class="fc" id="L90">            ResourceUtil.copyResourceFolder(&quot;webfonts&quot;,  outputFolder);</span>
         }
-<span class="fc" id="L78">        site.sections().forEach(this::copyEmbeddedSites);</span>
-<span class="fc" id="L79">        site.sections().forEach(this::copyLocalSites);</span>
-<span class="fc" id="L80">    }</span>
+<span class="fc" id="L92">        site.sections().forEach(this::copyEmbeddedSites);</span>
+<span class="fc" id="L93">        site.sections().forEach(this::copyLocalSites);</span>
+
+<span class="fc" id="L95">    }</span>
 
 
     private void copyEmbeddedSites(Section section) {
-<span class="fc" id="L84">        logger.debug(&quot;Copying embedded site {}&quot;, section.source());</span>
-<span class="pc bpc" id="L85" title="1 of 4 branches missed.">        if (section.type() == Section.SectionType.embedded &amp;&amp; section.isValid(baseDir)) {</span>
-<span class="fc" id="L86">            ResourceUtil.copyFolder(</span>
-<span class="fc" id="L87">                baseDir.resolve(section.source()),</span>
-<span class="fc" id="L88">                outputFolder.resolve(EmitterUtil.href(section.name()))</span>
+<span class="fc" id="L99">        logger.debug(&quot;Copying embedded site {}&quot;, section.source());</span>
+<span class="pc bpc" id="L100" title="1 of 4 branches missed.">        if (section.type() == Section.SectionType.embedded &amp;&amp; section.isValid(baseDir)) {</span>
+<span class="fc" id="L101">            ResourceUtil.copyFolder(</span>
+<span class="fc" id="L102">                baseDir.resolve(section.source()),</span>
+<span class="fc" id="L103">                outputFolder.resolve(EmitterUtil.href(section.name()))</span>
             );
         }
-<span class="fc" id="L91">        section.subsections().forEach(this::copyEmbeddedSites);</span>
-<span class="fc" id="L92">    }</span>
+<span class="fc" id="L106">        section.subsections().forEach(this::copyEmbeddedSites);</span>
+<span class="fc" id="L107">    }</span>
 
 
     private void copyLocalSites(Section section) {
-<span class="fc" id="L96">        logger.debug(&quot;Copying local site {}&quot;, section.source());</span>
-<span class="pc bpc" id="L97" title="3 of 4 branches missed.">        if (section.type() == Section.SectionType.copy &amp;&amp; section.isValid(baseDir)) {</span>
-<span class="nc" id="L98">            ResourceUtil.copyFolder(</span>
-<span class="nc" id="L99">                baseDir.resolve(section.source()),</span>
-<span class="nc" id="L100">                outputFolder.resolve(section.source())</span>
+<span class="fc" id="L111">        logger.debug(&quot;Copying local site {}&quot;, section.source());</span>
+<span class="pc bpc" id="L112" title="3 of 4 branches missed.">        if (section.type() == Section.SectionType.copy &amp;&amp; section.isValid(baseDir)) {</span>
+<span class="nc" id="L113">            ResourceUtil.copyFolder(</span>
+<span class="nc" id="L114">                baseDir.resolve(section.source()),</span>
+<span class="nc" id="L115">                outputFolder.resolve(section.source())</span>
             );
         }
-<span class="fc" id="L103">        section.subsections().forEach(this::copyLocalSites);</span>
-<span class="fc" id="L104">    }</span>
+<span class="fc" id="L118">        section.subsections().forEach(this::copyLocalSites);</span>
+<span class="fc" id="L119">    }</span>
 
 
 }

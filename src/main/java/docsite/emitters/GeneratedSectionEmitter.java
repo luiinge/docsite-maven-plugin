@@ -1,18 +1,50 @@
 package docsite.emitters;
 
 
+import docsite.util.*;
+import j2html.tags.Tag;
+import java.nio.file.*;
 import java.util.regex.*;
 
 import docsite.*;
-import docsite.util.EmitterUtil;
 import j2html.tags.specialized.*;
 import static docsite.util.EmitterUtil.*;
 import static j2html.TagCreator.*;
 
 public abstract class GeneratedSectionEmitter extends SectionEmitter {
 
+    private final String translatedOrigin;
+    private final boolean translationIsMissing;
+
+
     GeneratedSectionEmitter(EmitterBuildParams params) {
         super(params);
+        if (siteLanguage.isPrimary()) {
+            translatedOrigin = super.origin();
+            translationIsMissing = false;
+        } else {
+            String localizedOrigen = EmitterUtil.withLanguage(siteLanguage, super.origin());
+            if (!Files.exists(Path.of(localizedOrigen))) {
+                translatedOrigin = super.origin();
+                translationIsMissing = true;
+            } else {
+                translatedOrigin = localizedOrigen;
+                translationIsMissing = false;
+            }
+        }
+    }
+
+
+    protected abstract SectionTag generateSectionContent(Tag<?> before);
+
+
+    @Override
+    protected SectionTag createSectionContent() {
+        if (translationIsMissing) {
+            return generateSectionContent(blockquote("There is no localized version of this page"));
+        } else {
+            return generateSectionContent(div());
+        }
     }
 
 
@@ -23,16 +55,28 @@ public abstract class GeneratedSectionEmitter extends SectionEmitter {
 
 
     @Override
+    protected String url(SiteLanguage language) {
+        return EmitterUtil.page(section.name(), language);
+    }
+
+
+    @Override
     public ATag createLinkToSection(boolean withIcon) {
         return withIcon ?
-            internalLinkWithIcon(baseDir, section.name(), url(), section.icon(), globalImages) :
-            internalLink(section.name(), url());
+            internalLinkWithIcon(baseDir, translate(section.name()), url(siteLanguage), section.icon(), globalImages) :
+            internalLink(translate(section.name()), url(siteLanguage));
     }
 
 
     @Override
     protected AsideTag createTableOfContents(SectionTag section) {
         return createTableOfContentsFromHtml(section.render());
+    }
+
+
+    @Override
+    protected String origin() {
+        return translatedOrigin;
     }
 
 

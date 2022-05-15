@@ -7,6 +7,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][1],
 and this project adheres to [Semantic Versioning][2].
 
+
+[1.3.0]
+--------------------------------------------------------------------------
+**Release date:** 2022-05-08
+### Added
+- Multi-localization capabilities
+### Modified
+- Minor tweaks in the default stylesheet.
+
+
+
 [1.2.2]
 --------------------------------------------------------------------------
 **Release date:** 2022-04-10

@@ -1,8 +1,7 @@
 package docsite.emitters;
 
 
-import docsite.EmitterBuildParams;
-import docsite.SectionEmitter;
+import docsite.*;
 import j2html.tags.specialized.ATag;
 import j2html.tags.specialized.AsideTag;
 import j2html.tags.specialized.SectionTag;
@@ -29,10 +28,16 @@ public class CopySectionEmitter extends SectionEmitter {
 
 
     @Override
+    protected String url(SiteLanguage language) {
+        return url();
+    }
+
+
+    @Override
     public ATag createLinkToSection(boolean withIcon) {
         return withIcon ?
-            externalLinkWithIcon(baseDir, section.name(), url(), section.icon(), globalImages) :
-            externalLink(section.name(), url());
+            externalLinkWithIcon(baseDir, translate(section.name()), url(), section.icon(), globalImages) :
+            externalLink(translate(section.name()), url());
     }
 
 

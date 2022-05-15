@@ -1,4 +1,4 @@
-<html><head><title>Docsite Maven Plugin - index</title><meta name="description" content="A Maven plugin that generates static documentation sites"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="profile" href="http://www.w3.org/2005/10/profile"><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" integrity="sha512-BnbUDfEUfV0Slx6TunuB042k9tuKe3xrD6q4mg5Ed72LTgzDIcLPxg6yI2gcMFRyomt+yJJxE+zJwNmxki6/RA==" rel="stylesheet" crossorigin="anonymous" referrerpolicy="no-referrer"><link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" rel="stylesheet" crossorigin="anonymous" referrerpolicy="no-referrer"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><link href="css/common.css" rel="stylesheet"><link href="css/style.css" rel="stylesheet"><style>:root {
+<html><head><title>Docsite Maven Plugin</title><meta name="description" content="A Maven plugin that generates static documentation sites"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="profile" href="http://www.w3.org/2005/10/profile"><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" integrity="sha512-BnbUDfEUfV0Slx6TunuB042k9tuKe3xrD6q4mg5Ed72LTgzDIcLPxg6yI2gcMFRyomt+yJJxE+zJwNmxki6/RA==" rel="stylesheet" crossorigin="anonymous" referrerpolicy="no-referrer"><link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" rel="stylesheet" crossorigin="anonymous" referrerpolicy="no-referrer"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><link href="css/common.css" rel="stylesheet"><link href="css/style.css" rel="stylesheet"><style>:root {
 --menu-regular-background-color: #575757;
 --menu-bold-background-color: #413e3e;
 --menu-foreground-color: #f1f4f4;
@@ -7,7 +7,7 @@
 }</style><script src="https://www.googletagmanager.com/gtag/js?id=G-5KK3TJ7WBV" async></script><script>window.dataLayer = window.dataLayer || [];
                                 function gtag(){dataLayer.push(arguments);}
                                 gtag('js', new Date());
-                                gtag('config', 'G-5KK3TJ7WBV');</script></head><body><a id="jump-to-content" href="#content">jump to content</a><header><div class="title-and-subtitle"><h1 class="title label"><i class="hidden"></i><span>Docsite Maven Plugin</span></h1><span class="subtitle">A Maven plugin that generates static documentation sites</span></div><nav class="sections"><ul><li><a class="label internal" href="changelog.html"><i class="fas fa-clipboard-list"></i><span>Changelog</span></a></li><li><a class="label internal" href="reports.html"><i class="fas fa-file-medical-alt"></i><span>Reports</span></a><ul class="dropdown"><li><a class="label internal" href="plugin-goals.html"><i class="hidden"></i><span>Plugin Goals</span></a></li><li><a class="label internal" href="javadoc.html"><i class="fab fa-java"></i><span>Javadoc</span></a></li><li><a class="label internal" href="dependencies.html"><i class="hidden"></i><span>Dependencies</span></a></li><li><a class="label internal" href="test-coverage.html"><i class="hidden"></i><span>Test Coverage</span></a></li></ul></li><li><a class="label external" href="https://github.com/luiinge/docsite-maven-plugin" target="_blank" rel="external noreferrer noopener nofollow"><i class="fab fa-github"></i><span>Source</span></a></li><li><a class="label internal" href="license.html"><i class="fas fa-balance-scale"></i><span>License</span></a></li></ul></nav></header><nav class="breadcrumbs"><ol><li><a class="internal" href="index.html">Docsite Maven Plugin</a></li></ol></nav><aside><nav class="toc"><ol><li><a class="internal" href="#usage">Usage</a></li><ol><li><a class="internal" href="#documentation-sections">Documentation sections</a></li><li><a class="internal" href="#auto-configured-sites">Auto-configured sites</a></li><li><a class="internal" href="#multi-module-projects">Multi-module projects</a></li></ol><li><a class="internal" href="#other-considerations">Other considerations</a></li><ol><li><a class="internal" href="#icons">Icons</a></li><li><a class="internal" href="#github-emojis">Github emojis</a></li><li><a class="internal" href="#about-cdn-resources">About CDN resources</a></li><li><a class="internal" href="#maven-lifecycle">Maven lifecycle</a></li><li><a class="internal" href="#using-docsite-without-maven">Using Docsite without Maven</a></li><li><a class="internal" href="#adding-analytic-features">Adding analytic features</a></li></ol><li><a class="internal" href="#metrics">Metrics</a></li><li><a class="internal" href="#authors">Authors</a></li><li><a class="internal" href="#contributions">Contributions</a></li><li><a class="internal" href="#issue-reporting">Issue reporting</a></li></ol></ol></nav></aside><section class="content" id="content"><h1 id="docsite-maven-plugin">Docsite Maven Plugin</h1>
+                                gtag('config', 'G-5KK3TJ7WBV');</script><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script></head><body><a id="jump-to-content" href="#content">jump to content</a><header><div class="title-and-subtitle"><h1 class="title label"><i class="hidden"></i><span>Docsite Maven Plugin</span></h1><span class="subtitle">A Maven plugin that generates static documentation sites</span></div><nav class="sections"><ul><li><a class="label internal" href="changelog.html"><i class="fas fa-clipboard-list"></i><span>Changelog</span></a></li><li><a class="label internal" href="reports.html"><i class="fas fa-file-medical-alt"></i><span>Reports</span></a><ul class="dropdown"><li><a class="label internal" href="plugin-goals.html"><i class="hidden"></i><span>Plugin Goals</span></a></li><li><a class="label internal" href="javadoc.html"><i class="fab fa-java"></i><span>Javadoc</span></a></li><li><a class="label internal" href="dependencies.html"><i class="hidden"></i><span>Dependencies</span></a></li><li><a class="label internal" href="test-coverage.html"><i class="hidden"></i><span>Test Coverage</span></a></li></ul></li><li><a class="label external" href="https://github.com/luiinge/docsite-maven-plugin" target="_blank" rel="external noreferrer noopener nofollow"><i class="fab fa-github"></i><span>Source</span></a></li><li><a class="label internal" href="license.html"><i class="fas fa-balance-scale"></i><span>License</span></a></li></ul></nav><div class="company"><img class="hidden"></div></header><nav class="breadcrumbs"><ol><li><a class="internal" href="index.html">Docsite Maven Plugin</a></li></ol></nav><aside><nav class="toc"><ol><li><a class="internal" href="#get-started">Get started</a></li><ol><li><a class="internal" href="#documentation-sections">Documentation sections</a></li><li><a class="internal" href="#auto-configured-sites">Auto-configured sites</a></li><li><a class="internal" href="#multi-module-projects">Multi-module projects</a></li></ol><li><a class="internal" href="#advanced-usage">Advanced usage</a></li><ol><li><a class="internal" href="#icons">Icons</a></li><li><a class="internal" href="#github-emojis">Github emojis</a></li><li><a class="internal" href="#about-cdn-resources">About CDN resources</a></li><li><a class="internal" href="#maven-lifecycle">Maven lifecycle</a></li><li><a class="internal" href="#using-docsite-without-maven">Using Docsite without Maven</a></li><li><a class="internal" href="#adding-analytic-features">Adding analytic features</a></li></ol><li><a class="internal" href="#localization">Localization</a></li><li><a class="internal" href="#common-issues">Common Issues</a></li><li><a class="internal" href="#metrics">Metrics</a></li><li><a class="internal" href="#authors">Authors</a></li><li><a class="internal" href="#contributions">Contributions</a></li><li><a class="internal" href="#issue-reporting">Issue reporting</a></li></ol></ol></nav></aside><section class="content" id="content"><div></div><h1 id="docsite-maven-plugin">Docsite Maven Plugin</h1>
 <p><img src="https://img.shields.io/github/license/luiinge/docsite-maven-plugin?style=plastic" alt="GitHub" />
 <img src="https://img.shields.io/github/workflow/status/luiinge/docsite-maven-plugin/quality%20check/master?style=plastic" alt="GitHub Workflow Status (branch)" />
 <img src="https://img.shields.io/maven-central/v/io.github.luiinge/docsite-maven-plugin?style=plastic" alt="Maven Central" /></p>
@@ -27,7 +27,7 @@ providing the following benefits:</p>
 <p>This very site has been generated using Docsite (check <a class="external" target="_blank" rel="external noreferrer noopener nofollow" href="https://luiinge.github.io/docsite-maven-plugin/">the site</a>
 in case you are reading this document from Github).</p>
 </blockquote>
-<h2 id="usage">Usage</h2>
+<h2 id="get-started">Get started</h2>
 <ol>
 <li>Add the plugin to your <code>build</code> configuration in the <code>pom.xml</code> file:</li>
 </ol>
@@ -36,7 +36,7 @@ in case you are reading this document from Github).</p>
             &lt;plugin&gt;
                 &lt;groupId&gt;io.github.luiinge&lt;/groupId&gt;
                 &lt;artifactId&gt;docsite-maven-plugin&lt;/artifactId&gt;
-                &lt;version&gt;1.2.2&lt;/version&gt;
+                &lt;version&gt;1.3.0&lt;/version&gt;
             &lt;/plugin&gt;
         &lt;/plugins&gt;
     &lt;/build&gt;
@@ -58,7 +58,7 @@ the plugin within the <code>pom</code>.</p>
             &lt;plugin&gt;
                 &lt;groupId&gt;io.github.luiinge&lt;/groupId&gt;
                 &lt;artifactId&gt;docsite-maven-plugin&lt;/artifactId&gt;
-                &lt;version&gt;1.2.2&lt;/version&gt;
+                &lt;version&gt;1.3.0&lt;/version&gt;
                 &lt;configuration&gt;
                     &lt;docsite&gt;
                         ...
@@ -276,14 +276,16 @@ You can pass a different docsite configuration to the <code>aggregate</code> goa
         &lt;/plugins&gt;
     &lt;/build&gt;
 </code></pre>
-<h2 id="other-considerations">Other considerations</h2>
+<h2 id="advanced-usage">Advanced usage</h2>
 <h3 id="icons">Icons</h3>
 <p>For the main property <code>logo</code>, as well as the section property <code>icon</code>, you can choose among
-three different sources according the property value:</p>
+different sources according the property value:</p>
 <ul>
 <li>Starting with <code>http:</code> or <code>https:</code>, the image source would be an external link to the given URL</li>
 <li>Starting with <code>fa:</code>, <code>fas:</code>, <code>far:</code> or <code>fab:</code>, the image would be a
 <a class="external" target="_blank" rel="external noreferrer noopener nofollow" href="http://https://fontawesome.com/v5.15/icons">Font Awesome 5</a> icon</li>
+<li>Starting with <code>data:image</code>, you can embed an image using the corresponding Base64 code
+(as defined in <a class="external" target="_blank" rel="external noreferrer noopener nofollow" href="https://datatracker.ietf.org/doc/html/rfc2397">RFC-2397</a>)</li>
 <li>Otherwise, a local image file would be expected</li>
 </ul>
 <h3 id="github-emojis">Github emojis</h3>
@@ -344,6 +346,135 @@ Here you can add your extra code, like in the following example:</p>
       ...
 &lt;/configuration&gt;
 </code></pre>
+<h2 id="localization">Localization</h2>
+<p>You can enrich your documentation site providing localized versions of some documents.
+When enabled, a language selection option would be accessible in every page in the
+top right corner.</p>
+<p>In order to enable the localization features, you must provide the list of provided
+languages within the plugin configuration. For example:</p>
+<pre><code class="language-xml">&lt;configuration&gt;
+      ...
+      &lt;languages&gt;
+        &lt;language&gt;en:gb&lt;/language&gt;
+        &lt;language&gt;es:es&lt;/language&gt;
+      &lt;/languages&gt;
+      ...
+&lt;/configuration&gt;
+</code></pre>
+<p>Each language is defined by two codes separated by <code>:</code>. The first code is the <em>language code</em>
+used by your localized documents. The second code corresponds to any <em>country code</em> as
+defined by the standard <a class="external" target="_blank" rel="external noreferrer noopener nofollow" href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3166-1 alpha-2</a>,
+and it would be used to represent the language by a country flag Unicode emoji (as shown
+<a class="external" target="_blank" rel="external noreferrer noopener nofollow" href="https://flagpedia.net/emoji">here</a>). Notice that the first language in the list is
+considered as the <em>primary language</em>.</p>
+<p>During the generation process, for each section marked with the <code>generated</code> type,
+a similar source file will be searched at the same location of the original source,
+but with a prefix indicating the <em>language code</em> just before the extension (or just at the
+end of the name if there is no extension). For example, for a given <code>README.md</code> file and the
+additional language code <code>es</code>, a file named <code>README_es.md</code> would be expected.
+The <em>primary language</em>, however, would use the file with the regular name,
+just like if no localization was defined.</p>
+<p>In addition to the document content, you can provide translations for the names and descriptions
+used by the site and its sections. In order to do that, use the <code>localizations</code> configuration
+property. For example:</p>
+<pre><code class="language-xml">&lt;configuration&gt;
+      ...
+      &lt;docsite&gt;
+        &lt;title&gt;My Project Title&lt;/title&gt;
+        &lt;description&gt;My Project Description&lt;/description&gt;
+        &lt;index&gt;README.md&lt;/index&gt;
+        &lt;sections&gt;
+            &lt;section&gt;
+                &lt;type&gt;generated&lt;/type&gt;
+                &lt;name&gt;Changelog&lt;/name&gt;
+                &lt;description&gt;Log of modifications&lt;/description&gt;
+                &lt;source&gt;CHANGELOG.md&lt;/source&gt;
+            &lt;/section&gt;
+        &lt;/sections&gt;
+      &lt;/docsite&gt;
+
+      &lt;languages&gt;
+        &lt;language&gt;en:gb&lt;/language&gt;
+        &lt;language&gt;es:es&lt;/language&gt;
+      &lt;/languages&gt;
+
+      &lt;localizations&gt;
+        &lt;localization&gt;
+          &lt;language&gt;es&lt;/language&gt;
+          &lt;values&gt;
+            &lt;Changelog&gt;Historial de cambios&lt;/Changelog&gt;
+          &lt;/values&gt;
+        &lt;/localization&gt;
+      &lt;/localizations&gt;
+
+&lt;/configuration&gt;
+</code></pre>
+<p>Alternatively, you can create a JSON file like the following:</p>
+<pre><code class="language-json">{
+  &quot;es&quot;: {
+    &quot;My Project Title&quot;: &quot;Título del proyecto&quot;,
+    &quot;My Project Description&quot;: &quot;Descripción de mi proyecto&quot;,
+    &quot;Changelog&quot;: &quot;Historial de cambios&quot;
+  }
+}
+</code></pre>
+<p>and pass it with the property <code>localizationFile</code>.</p>
+<p>Notice that the <em>primary language</em> has no translations in the JSON file, since
+they are directly provided in the configuration and are used as keys for the other
+languages.</p>
+<h2 id="common-issues">Common Issues</h2>
+<h3><code>No plugin found for prefix 'docsite' in the current project and in the plugin</code>.</h3>
+<p>You can get this message when running <code>mvn docsite:generate</code> or <code>mvn docsite:aggregate</code>.
+That is because Maven only resolve plugin prefixes for plugins belonging to the groups
+<code>org.apache.maven.plugins</code> and <code>org.codehaus.mojo</code>. There are several ways to solve this issue:</p>
+<ul>
+<li>
+<p><strong>Option A.</strong> Edit your Maven settings file (per-user: <code>${user.home}/.m2/settings.xml</code>;
+global: <code>${maven.home}/conf/settings.xml</code>), adding the following:</p>
+<pre><code class="language-xml">&lt;settings&gt;
+   ...
+   &lt;pluginGroups&gt;
+     &lt;pluginGroup&gt;io.github.luiinge&lt;/pluginGroup&gt;
+   &lt;/pluginGroups&gt;
+&lt;/settings&gt;
+</code></pre>
+<blockquote>
+<p>In case you are using this tool during a CI/CD operation, you will require to edit the
+<code>settings.xml</code> file during the operation. Check the documentation of your CI/CD platform
+to find out how to accomplish this.</p>
+</blockquote>
+</li>
+<li>
+<p><strong>Option B.</strong> Use the full name of the plugin:</p>
+<pre><code class="language-shell">mvn io.github.luiinge:docsite-maven-plugin:1.3.0:generate
+</code></pre>
+<p>Be aware that by using this method you <em>cannot</em> define the configuration in the <code>pom</code>,
+you must pass any configuration data via parameters</p>
+</li>
+<li>
+<p><strong>Option C.</strong> Bound the execution to one of the build phases and run the predefined
+goal. For example, using the following:</p>
+<pre><code class="language-xml">&lt;plugin&gt;
+  &lt;groupId&gt;io.github.luiinge&lt;/groupId&gt;
+  &lt;artifactId&gt;docsite-maven-plugin&lt;/artifactId&gt;
+  &lt;version&gt;1.3.0&lt;/version&gt;
+  &lt;configuration&gt; ... &lt;/configuration&gt;
+  &lt;executions&gt;
+    &lt;execution&gt;
+      &lt;id&gt;generate-site&lt;/id&gt;
+      &lt;goals&gt;
+        &lt;goal&gt;generate&lt;/goal&gt;
+      &lt;/goals&gt;
+      &lt;phase&gt;prepare-package&lt;/phase&gt;
+    &lt;/execution&gt;
+  &lt;/executions&gt;
+&lt;/plugin&gt;
+</code></pre>
+<p>and running</p>
+<pre><code class="language-shell">mvn package
+</code></pre>
+</li>
+</ul>
 <h2 id="metrics">Metrics</h2>
 <p><a target="_blank" rel="external noreferrer noopener nofollow" href="https://sonarcloud.io/dashboard?id=luiinge_docsite-maven-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=luiinge_docsite-maven-plugin&amp;metric=alert_status" alt="Quality Gate Status" /></a></p>
 <p><a target="_blank" rel="external noreferrer noopener nofollow" href="https://sonarcloud.io/dashboard?id=luiinge_docsite-maven-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=luiinge_docsite-maven-plugin&amp;metric=ncloc" alt="Lines of Code" /></a></p>
@@ -366,4 +497,4 @@ as a contributor in this very page.</p>
 in <a class="external" target="_blank" rel="external noreferrer noopener nofollow" href="https://github.com/luiinge/docsite-maven-plugin/issues">Github project Issues</a>.
 There is no guarantee that it would be fixed in the following version but it would
 be addressed as soon as possible.</p>
-<div class="footer">Generated with <a href="https://luiinge.github.io/docsite-maven-plugin/">Docsite</a>. Last published on 2022-04-10</div></section></body></html>
+<div class="footer">Generated with <a href="https://luiinge.github.io/docsite-maven-plugin/" target="_blank_">Docsite</a>. Last published on 2022-05-15</div></section></body></html>

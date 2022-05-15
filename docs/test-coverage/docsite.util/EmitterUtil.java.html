@@ -111,9 +111,26 @@ public final class EmitterUtil {
 <span class="fc" id="L111">        return href(name)+ &quot;.html&quot;;</span>
     }
 
+    public static String page(String name, SiteLanguage language) {
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        return language.isPrimary() ? page(name) : href(name)+ &quot;_&quot;+language.language()+&quot;.html&quot;;</span>
+    }
+
 
     public static LinkTag stylesheet(String href) {
-<span class="fc" id="L116">        return link().attr(&quot;href&quot;,href).attr(&quot;rel&quot;,&quot;stylesheet&quot;);</span>
+<span class="fc" id="L120">        return link().attr(&quot;href&quot;,href).attr(&quot;rel&quot;,&quot;stylesheet&quot;);</span>
+    }
+
+
+    public static String withLanguage(SiteLanguage language, String path) {
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        if (language.isPrimary()) {</span>
+<span class="fc" id="L126">            return path;</span>
+        }
+<span class="fc" id="L128">        int extensionPosition = path.lastIndexOf('.');</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">        if (extensionPosition == -1) {</span>
+<span class="fc" id="L130">            return path+&quot;_&quot;+language.language();</span>
+        } else {
+<span class="fc" id="L132">            return path.substring(0,extensionPosition)+&quot;_&quot;+language.language()+path.substring(extensionPosition);</span>
+        }
     }
 
 }

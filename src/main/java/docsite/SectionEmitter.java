@@ -1,5 +1,6 @@
 package docsite;
 
+import j2html.TagCreator;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
@@ -11,6 +12,7 @@ import docsite.util.*;
 import j2html.tags.specialized.*;
 import static docsite.util.EmitterUtil.*;
 import static j2html.TagCreator.*;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class SectionEmitter {
 
@@ -23,7 +25,7 @@ public abstract class SectionEmitter {
 
     protected final Docsite site;
     protected final Section section;
-    protected final String origin;
+    private final String origin;
     protected final ImageResolver sectionImages;
     protected final ImageResolver globalImages;
     protected final boolean useCDN;
@@ -37,6 +39,10 @@ public abstract class SectionEmitter {
     protected final Path baseDir;
     protected final Map<String,String> metadata;
     protected final List<Script> scripts;
+    protected final List<SiteLanguage> availableLanguages;
+    protected final SiteLanguage siteLanguage;
+    protected final Map<String,String> localization;
+
 
     protected SectionEmitter(EmitterBuildParams params) {
         this.site = params.site();
@@ -56,10 +62,19 @@ public abstract class SectionEmitter {
             baseDir.resolve(origin)
         );
         this.useCDN = params.useCDN();
+        this.availableLanguages = params.availableLanguages();
+        this.siteLanguage = params.siteLanguage();
+        if (params.localization() != null) {
+            this.localization = params.localization().get(params.siteLanguage().language());
+        } else {
+            this.localization = null;
+        }
     }
 
 
     protected abstract String url();
+
+    protected abstract String url(SiteLanguage language);
 
     public abstract ATag createLinkToSection(boolean withIcon);
 
@@ -73,9 +88,12 @@ public abstract class SectionEmitter {
     }
 
     protected Path outputPath() {
-        return outputFolder.resolve(url());
+        return outputFolder.resolve(url(siteLanguage));
     }
 
+    protected String origin() {
+        return origin;
+    }
 
     public void emitHTML() throws IOException {
         emitHTML(false);
@@ -147,8 +165,9 @@ public abstract class SectionEmitter {
 
     public NavTag createBreadcrumbs() {
 
+        String index = EmitterUtil.withLanguage(siteLanguage, INDEX_FILE);
         OlTag container = ol();
-        container.with(li().with(internalLink(site.title(),INDEX_FILE)));
+        container.with(li().with(internalLink(translate(site.title()),index)));
 
         if (!ancestorEmitters.isEmpty()) {
             Iterator<SectionEmitter> iterator = ancestorEmitters.iterator();
@@ -161,16 +180,45 @@ public abstract class SectionEmitter {
                 if (path.section.isValid(baseDir)) {
                     container.with(li().with(path.createLinkToSection(false)));
                 } else {
-                    container.with(li().with(a(path.section.name())));
+                    container.with(li().with(a(translate(path.section.name()))));
                 }
             }
 
-            container.with(li().with(a(section.name())));
+            container.with(li().with(a(translate(section.name()))));
         }
 
-        return nav().withClass("breadcrumbs").with(container);
+        if (availableLanguages.size() > 1) {
+            SelectTag languageSelection = languageSelection();
+            return nav().withClass("breadcrumbs").with(container,languageSelection);
+        } else {
+            return nav().withClass("breadcrumbs").with(container);
+        }
+
     }
 
+
+    @NotNull
+    private SelectTag languageSelection() {
+        var options = availableLanguages.stream()
+            .map(it ->
+                option(it.unicode())
+                    .withValue(it.language())
+                    .withCondSelected(it.equals(siteLanguage))
+            )
+            .toArray(OptionTag[]::new);
+        var languageSelection = select().withClass("language-selection").with(options);
+        languageSelection.attr("onchange","redirectLanguage(this.value)");
+
+        List<String> scriptLines = new ArrayList<>();
+        scriptLines.add("function redirectLanguage(language) {");
+        for (var language : availableLanguages) {
+            scriptLines.add("if (language==='"+language.language()+"') location.href = '"+url(language)+"';");
+        }
+        scriptLines.add("}");
+        ScriptTag scriptTag = script(String.join("\n", scriptLines));
+
+        return languageSelection.with(scriptTag);
+    }
 
 
 
@@ -273,9 +321,9 @@ public abstract class SectionEmitter {
                 h1().withClasses("title label")
                     .with(
                         EmitterUtil.icon(baseDir, site.logo(), globalImages),
-                        span(site.title())
+                        span(translate(site.title()))
                     ),
-                span(site.description()).withClass("subtitle")
+                span(translate(site.description())).withClass("subtitle")
             );
     }
 
@@ -336,4 +384,16 @@ public abstract class SectionEmitter {
         }
         languages.forEach(lang -> CDNResources.js(lang).ifPresent(head::with));
     }
+
+
+
+    protected String translate(String value) {
+        if (this.localization == null || !this.localization.containsKey(value)) {
+            return value;
+        } else {
+            return this.localization.get(value);
+        }
+    }
+
+
 }

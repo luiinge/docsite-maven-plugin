@@ -1,5 +1,6 @@
 package docsite.emitters;
 
+import j2html.tags.Tag;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
@@ -24,21 +25,16 @@ public class TemplateSectionEmitter extends GeneratedSectionEmitter {
     }
 
 
-
-
-
     @Override
-    protected SectionTag createSectionContent() {
-
+    protected SectionTag generateSectionContent(Tag<?> before) {
         try (StringWriter output = new StringWriter()) {
             Configuration cfg = markerfreeConfiguration();
             Template template = cfg.getTemplate(templatePath.getFileName().toString());
             template.process(documentMap(), output);
-            return section().with(rawHtml(output.toString()));
+            return section().with(before).with(rawHtml(output.toString()));
         } catch (IOException | TemplateException e) {
             throw new DocsiteException(e);
         }
-
     }
 
 
@@ -59,6 +55,7 @@ public class TemplateSectionEmitter extends GeneratedSectionEmitter {
 
     @SuppressWarnings("unchecked")
     private Map<String,Object> documentMap() throws IOException {
+        String origin = origin();
         String extension = origin.substring(origin.indexOf(".")+1).toLowerCase();
         try (InputStream inputStream = ResourceUtil.open(baseDir, origin)) {
             switch (extension) {

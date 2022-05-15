@@ -22,29 +22,35 @@ public class LinkSectionEmitter extends SectionEmitter {
 
 
     @Override
+    protected String url(SiteLanguage language) {
+<span class="nc" id="L26">        return url();</span>
+    }
+
+
+    @Override
     public ATag createLinkToSection(boolean withIcon) {
-<span class="pc bpc" id="L26" title="1 of 2 branches missed.">        return withIcon ?</span>
-<span class="fc" id="L27">            externalLinkWithIcon(baseDir, section.name(), url(), section.icon(), globalImages) :</span>
-<span class="nc" id="L28">            externalLink(section.name(), url());</span>
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">        return withIcon ?</span>
+<span class="fc" id="L33">            externalLinkWithIcon(baseDir, translate(section.name()), url(), section.icon(), globalImages) :</span>
+<span class="nc" id="L34">            externalLink(translate(section.name()), url());</span>
     }
 
 
     @Override
     protected SectionTag createSectionContent() {
-<span class="nc" id="L34">        return section();</span>
+<span class="nc" id="L40">        return section();</span>
     }
 
 
     @Override
     protected AsideTag createTableOfContents(SectionTag section) {
-<span class="nc" id="L40">        return aside();</span>
+<span class="nc" id="L46">        return aside();</span>
     }
 
 
     @Override
     public void emitHTML() throws IOException {
         //
-<span class="fc" id="L47">    }</span>
+<span class="fc" id="L53">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TemplateSectionEmitter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Docsite Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">docsite.emitters</a> &gt; <span class="el_source">TemplateSectionEmitter.java</span></div><h1>TemplateSectionEmitter.java</h1><pre class="source lang-java linenums">package docsite.emitters;
 
+import j2html.tags.Tag;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
@@ -19,79 +20,75 @@ public class TemplateSectionEmitter extends GeneratedSectionEmitter {
     private final Path templatePath;
 
     public TemplateSectionEmitter(EmitterBuildParams params) {
-<span class="fc" id="L22">        super(params);</span>
-<span class="fc" id="L23">        this.templatePath = locateTemplate(section.template());</span>
-<span class="fc" id="L24">    }</span>
-
-
-
+<span class="fc" id="L23">        super(params);</span>
+<span class="fc" id="L24">        this.templatePath = locateTemplate(section.template());</span>
+<span class="fc" id="L25">    }</span>
 
 
     @Override
-    protected SectionTag createSectionContent() {
-
-<span class="fc" id="L33">        try (StringWriter output = new StringWriter()) {</span>
-<span class="fc" id="L34">            Configuration cfg = markerfreeConfiguration();</span>
-<span class="fc" id="L35">            Template template = cfg.getTemplate(templatePath.getFileName().toString());</span>
-<span class="fc" id="L36">            template.process(documentMap(), output);</span>
-<span class="fc" id="L37">            return section().with(rawHtml(output.toString()));</span>
-<span class="nc" id="L38">        } catch (IOException | TemplateException e) {</span>
-<span class="nc" id="L39">            throw new DocsiteException(e);</span>
+    protected SectionTag generateSectionContent(Tag&lt;?&gt; before) {
+<span class="fc" id="L30">        try (StringWriter output = new StringWriter()) {</span>
+<span class="fc" id="L31">            Configuration cfg = markerfreeConfiguration();</span>
+<span class="fc" id="L32">            Template template = cfg.getTemplate(templatePath.getFileName().toString());</span>
+<span class="fc" id="L33">            template.process(documentMap(), output);</span>
+<span class="fc" id="L34">            return section().with(before).with(rawHtml(output.toString()));</span>
+<span class="nc" id="L35">        } catch (IOException | TemplateException e) {</span>
+<span class="nc" id="L36">            throw new DocsiteException(e);</span>
         }
-
     }
 
 
     @NotNull
     private Configuration markerfreeConfiguration() throws IOException {
-<span class="fc" id="L47">        Configuration cfg = new Configuration(Configuration.VERSION_2_3_29);</span>
-<span class="fc" id="L48">        cfg.setDirectoryForTemplateLoading(templatePath.getParent().toFile());</span>
-<span class="fc" id="L49">        cfg.setDefaultEncoding(StandardCharsets.UTF_8.toString());</span>
-<span class="fc" id="L50">        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);</span>
-<span class="fc" id="L51">        cfg.setLogTemplateExceptions(false);</span>
-<span class="fc" id="L52">        cfg.setWrapUncheckedExceptions(true);</span>
-<span class="fc" id="L53">        cfg.setFallbackOnNullLoopVariable(false);</span>
-<span class="fc" id="L54">        cfg.setAutoEscapingPolicy(Configuration.DISABLE_AUTO_ESCAPING_POLICY);</span>
-<span class="fc" id="L55">        cfg.setOutputFormat(PlainTextOutputFormat.INSTANCE);</span>
-<span class="fc" id="L56">        return cfg;</span>
+<span class="fc" id="L43">        Configuration cfg = new Configuration(Configuration.VERSION_2_3_29);</span>
+<span class="fc" id="L44">        cfg.setDirectoryForTemplateLoading(templatePath.getParent().toFile());</span>
+<span class="fc" id="L45">        cfg.setDefaultEncoding(StandardCharsets.UTF_8.toString());</span>
+<span class="fc" id="L46">        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);</span>
+<span class="fc" id="L47">        cfg.setLogTemplateExceptions(false);</span>
+<span class="fc" id="L48">        cfg.setWrapUncheckedExceptions(true);</span>
+<span class="fc" id="L49">        cfg.setFallbackOnNullLoopVariable(false);</span>
+<span class="fc" id="L50">        cfg.setAutoEscapingPolicy(Configuration.DISABLE_AUTO_ESCAPING_POLICY);</span>
+<span class="fc" id="L51">        cfg.setOutputFormat(PlainTextOutputFormat.INSTANCE);</span>
+<span class="fc" id="L52">        return cfg;</span>
     }
 
 
     @SuppressWarnings(&quot;unchecked&quot;)
     private Map&lt;String,Object&gt; documentMap() throws IOException {
-<span class="fc" id="L62">        String extension = origin.substring(origin.indexOf(&quot;.&quot;)+1).toLowerCase();</span>
-<span class="fc" id="L63">        try (InputStream inputStream = ResourceUtil.open(baseDir, origin)) {</span>
-<span class="pc bpc" id="L64" title="3 of 4 branches missed.">            switch (extension) {</span>
+<span class="fc" id="L58">        String origin = origin();</span>
+<span class="fc" id="L59">        String extension = origin.substring(origin.indexOf(&quot;.&quot;)+1).toLowerCase();</span>
+<span class="fc" id="L60">        try (InputStream inputStream = ResourceUtil.open(baseDir, origin)) {</span>
+<span class="pc bpc" id="L61" title="3 of 4 branches missed.">            switch (extension) {</span>
                 case &quot;xml&quot;:
-<span class="fc" id="L66">                    return new XmlParser().parse(inputStream);</span>
+<span class="fc" id="L63">                    return new XmlParser().parse(inputStream);</span>
                 case &quot;json&quot;:
-<span class="nc" id="L68">                    return new ObjectMapper().readValue(inputStream, Map.class);</span>
+<span class="nc" id="L65">                    return new ObjectMapper().readValue(inputStream, Map.class);</span>
                 case &quot;yaml&quot;:
                 case &quot;yml&quot;:
-<span class="nc" id="L71">                    return new Yaml().loadAs(inputStream, Map.class);</span>
+<span class="nc" id="L68">                    return new Yaml().loadAs(inputStream, Map.class);</span>
                 default:
-<span class="nc" id="L73">                    throw new IOException(&quot;Templating cannot be applied to format of &quot;+origin);</span>
+<span class="nc" id="L70">                    throw new IOException(&quot;Templating cannot be applied to format of &quot;+origin);</span>
             }
-<span class="pc bpc" id="L75" title="3 of 4 branches missed.">        }</span>
+<span class="pc bpc" id="L72" title="3 of 4 branches missed.">        }</span>
     }
 
 
 
     private static Path locateTemplate(String fromTemplate) {
-<span class="fc" id="L81">        String internalTemplate = &quot;templates/&quot;+fromTemplate+&quot;.ftl&quot;;</span>
-<span class="pc bpc" id="L82" title="1 of 2 branches missed.">        if (ResourceUtil.existsResource(internalTemplate)) {</span>
+<span class="fc" id="L78">        String internalTemplate = &quot;templates/&quot;+fromTemplate+&quot;.ftl&quot;;</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">        if (ResourceUtil.existsResource(internalTemplate)) {</span>
             try {
-<span class="fc" id="L84">                Path tempFile = Files.createTempDirectory(&quot;docsite&quot;).resolve(internalTemplate);</span>
-<span class="fc" id="L85">                ResourceUtil.copyResource(internalTemplate, tempFile.getParent());</span>
-<span class="fc" id="L86">                return tempFile;</span>
-<span class="nc" id="L87">            } catch (IOException e) {</span>
-<span class="nc" id="L88">                throw new DocsiteException(e);</span>
+<span class="fc" id="L81">                Path tempFile = Files.createTempDirectory(&quot;docsite&quot;).resolve(internalTemplate);</span>
+<span class="fc" id="L82">                ResourceUtil.copyResource(internalTemplate, tempFile.getParent());</span>
+<span class="fc" id="L83">                return tempFile;</span>
+<span class="nc" id="L84">            } catch (IOException e) {</span>
+<span class="nc" id="L85">                throw new DocsiteException(e);</span>
             }
         } else {
-<span class="nc bnc" id="L91" title="All 2 branches missed.">            if (!Files.exists(Path.of(fromTemplate))) {</span>
-<span class="nc" id="L92">                throw new DocsiteException(&quot;Template &quot;+fromTemplate+&quot; is neither an existing file nor a built-in template&quot;);</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">            if (!Files.exists(Path.of(fromTemplate))) {</span>
+<span class="nc" id="L89">                throw new DocsiteException(&quot;Template &quot;+fromTemplate+&quot; is neither an existing file nor a built-in template&quot;);</span>
             }
-<span class="nc" id="L94">            return Path.of(fromTemplate);</span>
+<span class="nc" id="L91">            return Path.of(fromTemplate);</span>
         }
     }
 }
