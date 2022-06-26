@@ -78,45 +78,50 @@ public class DocsiteEmitter {
 <span class="fc" id="L78">        logger.debug(&quot;Copying common resources...&quot;);</span>
 <span class="fc" id="L79">        Path cssFolder = outputFolder.resolve(&quot;css&quot;);</span>
 <span class="fc" id="L80">        Path jsFolder = outputFolder.resolve(&quot;js&quot;);</span>
-<span class="fc bfc" id="L81" title="All 2 branches covered.">        if (cssFile == null) {</span>
-<span class="fc" id="L82">            ResourceUtil.copyResource(&quot;css/style.css&quot;, cssFolder);</span>
-        } else {
-<span class="fc" id="L84">            ResourceUtil.copyExternalFileWithAnotherName(cssFile, cssFolder, &quot;style.css&quot;);</span>
-        }
-<span class="fc" id="L86">        ResourceUtil.copyResource(&quot;css/common.css&quot;, cssFolder);</span>
-<span class="fc" id="L87">        ResourceUtil.copyResource(&quot;css/prism.min.css&quot;, cssFolder);</span>
-<span class="fc bfc" id="L88" title="All 2 branches covered.">        if (!useCDN) {</span>
-<span class="fc" id="L89">            ResourceUtil.copyResource(&quot;js/prism.js&quot;, jsFolder);</span>
-<span class="fc" id="L90">            ResourceUtil.copyResourceFolder(&quot;webfonts&quot;,  outputFolder);</span>
-        }
-<span class="fc" id="L92">        site.sections().forEach(this::copyEmbeddedSites);</span>
-<span class="fc" id="L93">        site.sections().forEach(this::copyLocalSites);</span>
 
-<span class="fc" id="L95">    }</span>
+<span class="fc" id="L82">        ResourceUtil.copyResource(&quot;css/layout.css&quot;, cssFolder);</span>
+<span class="fc" id="L83">        ResourceUtil.copyResource(&quot;css/theme.css&quot;, cssFolder);</span>
+<span class="fc" id="L84">        ResourceUtil.copyResource(&quot;js/menu.js&quot;, jsFolder);</span>
+
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        if (cssFile != null) {</span>
+<span class="fc" id="L87">            ResourceUtil.copyExternalFileWithAnotherName(cssFile, cssFolder, &quot;extra-style.css&quot;);</span>
+        }
+
+<span class="fc" id="L90">        ResourceUtil.copyResource(&quot;css/common.css&quot;, cssFolder);</span>
+<span class="fc" id="L91">        ResourceUtil.copyResource(&quot;css/prism.min.css&quot;, cssFolder);</span>
+
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        if (!useCDN) {</span>
+<span class="fc" id="L94">            ResourceUtil.copyResource(&quot;js/prism.js&quot;, jsFolder);</span>
+<span class="fc" id="L95">            ResourceUtil.copyResourceFolder(&quot;webfonts&quot;,  outputFolder);</span>
+        }
+<span class="fc" id="L97">        site.sections().forEach(this::copyEmbeddedSites);</span>
+<span class="fc" id="L98">        site.sections().forEach(this::copyLocalSites);</span>
+
+<span class="fc" id="L100">    }</span>
 
 
     private void copyEmbeddedSites(Section section) {
-<span class="fc" id="L99">        logger.debug(&quot;Copying embedded site {}&quot;, section.source());</span>
-<span class="pc bpc" id="L100" title="1 of 4 branches missed.">        if (section.type() == Section.SectionType.embedded &amp;&amp; section.isValid(baseDir)) {</span>
-<span class="fc" id="L101">            ResourceUtil.copyFolder(</span>
-<span class="fc" id="L102">                baseDir.resolve(section.source()),</span>
-<span class="fc" id="L103">                outputFolder.resolve(EmitterUtil.href(section.name()))</span>
+<span class="fc" id="L104">        logger.debug(&quot;Copying embedded site {}&quot;, section.source());</span>
+<span class="pc bpc" id="L105" title="1 of 4 branches missed.">        if (section.type() == Section.SectionType.embedded &amp;&amp; section.isValid(baseDir)) {</span>
+<span class="fc" id="L106">            ResourceUtil.copyFolder(</span>
+<span class="fc" id="L107">                baseDir.resolve(section.source()),</span>
+<span class="fc" id="L108">                outputFolder.resolve(EmitterUtil.href(section.name()))</span>
             );
         }
-<span class="fc" id="L106">        section.subsections().forEach(this::copyEmbeddedSites);</span>
-<span class="fc" id="L107">    }</span>
+<span class="fc" id="L111">        section.subsections().forEach(this::copyEmbeddedSites);</span>
+<span class="fc" id="L112">    }</span>
 
 
     private void copyLocalSites(Section section) {
-<span class="fc" id="L111">        logger.debug(&quot;Copying local site {}&quot;, section.source());</span>
-<span class="pc bpc" id="L112" title="3 of 4 branches missed.">        if (section.type() == Section.SectionType.copy &amp;&amp; section.isValid(baseDir)) {</span>
-<span class="nc" id="L113">            ResourceUtil.copyFolder(</span>
-<span class="nc" id="L114">                baseDir.resolve(section.source()),</span>
-<span class="nc" id="L115">                outputFolder.resolve(section.source())</span>
+<span class="fc" id="L116">        logger.debug(&quot;Copying local site {}&quot;, section.source());</span>
+<span class="pc bpc" id="L117" title="3 of 4 branches missed.">        if (section.type() == Section.SectionType.copy &amp;&amp; section.isValid(baseDir)) {</span>
+<span class="nc" id="L118">            ResourceUtil.copyFolder(</span>
+<span class="nc" id="L119">                baseDir.resolve(section.source()),</span>
+<span class="nc" id="L120">                outputFolder.resolve(section.source())</span>
             );
         }
-<span class="fc" id="L118">        section.subsections().forEach(this::copyLocalSites);</span>
-<span class="fc" id="L119">    }</span>
+<span class="fc" id="L123">        section.subsections().forEach(this::copyLocalSites);</span>
+<span class="fc" id="L124">    }</span>
 
 
 }

@@ -1,6 +1,6 @@
 package docsite;
 
-import com.vdurmont.emoji.*;
+
 import java.util.*;
 
 public class SiteLanguage {
@@ -25,23 +25,20 @@ public class SiteLanguage {
 
 
     private final String language;
-    private final String country;
+    private final String display;
     private final boolean primary;
-    private final String unicode;
 
 
     public SiteLanguage(String languageTag, boolean primary) {
         if (languageTag.contains(":")) {
             this.language = languageTag.split(":")[0];
-            this.country = languageTag.split(":")[1];
+            this.display = languageTag.split(":")[1];
         } else {
             this.language = languageTag;
-            this.country = languageTag;
+            this.display = languageTag;
         }
         this.primary = primary;
-        this.unicode = unicode(this.language,this.country);
     }
-
 
 
 
@@ -50,8 +47,8 @@ public class SiteLanguage {
     }
 
 
-    public String unicode() {
-        return unicode;
+    public String display() {
+        return display;
     }
 
 
@@ -65,19 +62,14 @@ public class SiteLanguage {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SiteLanguage that = (SiteLanguage) o;
-        return Objects.equals(language, that.language) && Objects.equals(country, that.country);
+        return Objects.equals(language, that.language) && Objects.equals(display, that.display);
     }
 
 
     @Override
     public int hashCode() {
-        return Objects.hash(language, country);
+        return Objects.hash(language, display);
     }
 
-
-    private static String unicode(String language, String country) {
-        Emoji emoji = EmojiManager.getForAlias(":"+country+":");
-        return emoji == null ? language : emoji.getUnicode();
-    }
 
 }

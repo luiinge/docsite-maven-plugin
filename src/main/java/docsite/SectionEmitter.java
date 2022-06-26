@@ -1,6 +1,5 @@
 package docsite;
 
-import j2html.TagCreator;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
@@ -12,7 +11,6 @@ import docsite.util.*;
 import j2html.tags.specialized.*;
 import static docsite.util.EmitterUtil.*;
 import static j2html.TagCreator.*;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class SectionEmitter {
 
@@ -112,17 +110,26 @@ public abstract class SectionEmitter {
         }
 
         HeaderTag header = createHeader();
-        NavTag breadcrumbs = createBreadcrumbs();
+        NavTag menu = createMenu();
+        DivTag info = div().withClass("info").with(createBreadcrumbs(), createLanguageSelection());
         SectionTag sectionContent = createSectionContent().withId("content");
         if (includeFooter) {
             sectionContent.with(rawHtml(
                 "<div class=\"footer\">"+
-                "Generated with <a href=\"https://luiinge.github.io/docsite-maven-plugin/\" target=\"_blank_\">Docsite</a>. "+
-                "Last published on "+ LocalDate.now()+
-                "</div>"
+                    "Generated with <a href=\"https://luiinge.github.io/docsite-maven-plugin/\" target=\"_blank_\">Docsite</a>. "+
+                    "Last published on "+ LocalDate.now()+
+                    "</div>"
             ));
         }
+
         AsideTag tableOfContents = createTableOfContents(sectionContent);
+        if (tableOfContents.getNumChildren() == 0) {
+            tableOfContents.withClass("empty");
+        }
+        tableOfContents.attr("onclick","hideTocIfVisible(event,this)");
+        DivTag tocButton = createTableOfContentsButton(tableOfContents.getNumChildren() == 0);
+
+
 
         HeadTag head = htmlHead();
         if (useCDN) {
@@ -132,15 +139,18 @@ public abstract class SectionEmitter {
         HtmlTag htmlObject = html().with(
             head,
             body()
-                .withCondClass(tableOfContents.getNumChildren() == 0, "empty-aside")
+                .withCondClass(tableOfContents.getNumChildren() == 0, "no-toc")
                 .with(
                     jumpToContentButton(),
                     header,
-                    breadcrumbs,
+                    menu,
+                    info,
+                    tocButton,
                     tableOfContents,
                     sectionContent
                 )
-        );
+        )
+        .withLang(this.siteLanguage.language());
         writeToFile(htmlObject);
 
         for (SectionEmitter child : childEmitters) {
@@ -156,8 +166,10 @@ public abstract class SectionEmitter {
 
     private HeaderTag createHeader() {
         return header().with(
-            createTitleAndSubtitle(),
-            createNavigation(),
+            createLogoAndTitle(),
+            //createMenu("header-menu"),
+            div().withClass("filler"),
+            createMenuButton(),
             createCompanyLogo()
         );
     }
@@ -187,26 +199,24 @@ public abstract class SectionEmitter {
             container.with(li().with(a(translate(section.name()))));
         }
 
-        if (availableLanguages.size() > 1) {
-            SelectTag languageSelection = languageSelection();
-            return nav().withClass("breadcrumbs").with(container,languageSelection);
-        } else {
-            return nav().withClass("breadcrumbs").with(container);
-        }
-
+       return nav().withClass("breadcrumbs").with(container);
     }
 
 
-    @NotNull
-    private SelectTag languageSelection() {
+
+
+    private SpanTag createLanguageSelection() {
         var options = availableLanguages.stream()
             .map(it ->
-                option(it.unicode())
+                option(it.display())
                     .withValue(it.language())
                     .withCondSelected(it.equals(siteLanguage))
             )
             .toArray(OptionTag[]::new);
-        var languageSelection = select().withClass("language-selection").with(options);
+        if (options.length == 0) {
+            return span();
+        }
+        var languageSelection = select().with(options);
         languageSelection.attr("onchange","redirectLanguage(this.value)");
 
         List<String> scriptLines = new ArrayList<>();
@@ -217,7 +227,7 @@ public abstract class SectionEmitter {
         scriptLines.add("}");
         ScriptTag scriptTag = script(String.join("\n", scriptLines));
 
-        return languageSelection.with(scriptTag);
+        return span().withClass("language-selection").with(scriptTag,languageSelection);
     }
 
 
@@ -225,7 +235,7 @@ public abstract class SectionEmitter {
     private DivTag createCompanyLogo() {
         if (site.companyLogo() != null && site.companyLink() != null) {
             return div().withClass("company").with(
-                EmitterUtil.externalLinkWithImage(baseDir,"",site.companyLink(),site.companyLogo(),globalImages)
+                EmitterUtil.externalLinkWithIcon(baseDir,"",site.companyLink(),site.companyLogo(),globalImages)
             );
         } else if (site.companyLink() == null) {
             return div().withClass("company").with(
@@ -268,15 +278,20 @@ public abstract class SectionEmitter {
             CDNResources.css("fontawesome.min").ifPresent(head::with);
             CDNResources.css("prism.min").ifPresent(head::with);
             CDNResources.js("prism.min").ifPresent(head::with);
+            CDNResources.js("mermaid").ifPresent(head::with);
+            CDNResources.js("katex").ifPresent(head::with);
+            CDNResources.css("katex").ifPresent(head::with);
         } else {
             head.with(stylesheet("css/font-awesome-all.css"));
             head.with(script().attr("src","js/prism.js"));
             head.with(stylesheet("css/prism.min.css"));
         }
 
-
         head.with(stylesheet("css/common.css"));
-        head.with(stylesheet("css/style.css"));
+        head.with(stylesheet("css/layout.css"));
+        head.with(stylesheet("css/theme.css"));
+        head.with(stylesheet("css/extra-style.css"));
+        head.with(script().attr("src","js/menu.js"));
 
 
         String themeStyle =
@@ -315,22 +330,26 @@ public abstract class SectionEmitter {
 
 
 
-    private DivTag createTitleAndSubtitle() {
+    private DivTag createLogoAndTitle() {
+        boolean hasSubtitle = (site.description() != null && !site.description().isBlank());
         return div().withClass("title-and-subtitle")
             .with(
-                h1().withClasses("title label")
-                    .with(
-                        EmitterUtil.icon(baseDir, site.logo(), globalImages),
-                        span(translate(site.title()))
-                    ),
+                EmitterUtil.icon(baseDir, site.logo(), globalImages),
+                h1(translate(site.title())).withClass(hasSubtitle ? "title" : "title no-subtitle"),
                 span(translate(site.description())).withClass("subtitle")
             );
     }
 
 
 
-    private NavTag createNavigation() {
-        return nav().withClass("sections")
+    private DivTag createMenuButton() {
+        return div().withStyle("display: flex; align-items: center;")
+            .with(a().withHref("#").withClasses("menu-button").attr("onclick","showOrHideMenu(event,this)"));
+    }
+
+
+    private NavTag createMenu() {
+        return nav().withClasses("sections", "menu hidden")
             .with(
                 ul().with(
                     rootEmitter.childEmitters.stream()
@@ -342,17 +361,29 @@ public abstract class SectionEmitter {
     }
 
 
+    private DivTag createTableOfContentsButton(boolean empty) {
+        return div().withClass(empty ? "toc-button no-toc" : "toc-button").with(
+            a().withHref("#")
+        ).attr("onclick","showOrHideToc(event,this)");
+    }
+
+
     private LiTag createNavigationSection(boolean selected) {
 
         if (!childEmitters.isEmpty()) {
-            UlTag dropdownMenu = ul().withClass("dropdown");
+            UlTag dropdownMenu = ul().withClasses("dropdown", selected ? "visible" : "hidden");
             for (SectionEmitter child : childEmitters) {
-                dropdownMenu.with(li().with(child.createLinkToSection(true)));
+                if (child.section.subsections() != null && !child.section.subsections().isEmpty()) {
+                    dropdownMenu.with(child.createNavigationSection(selected));
+                } else {
+                    dropdownMenu.with(li().with(child.createLinkToSection(true)));
+                }
             }
             return li()
-                .withCondClass(selected, "selected")
-                .with(createLinkToSection(true))
-                .with(dropdownMenu);
+                .withClass(selected ? "selected expandable collapsed" : "expandable collapsed")
+                .with(createLinkToSection(true).withHref("#"))
+                .with(dropdownMenu)
+                .attr("onclick","expandOrCollapse(event,this);");
         } else {
             return li()
                 .withCondClass(selected, "selected")

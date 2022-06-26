@@ -25,6 +25,9 @@ public class Autoconfigurer {
         docsite.description(nonNull(project.getDescription(),""));
         docsite.index(searchIndex());
         docsite.sections(createSections());
+        if (docsite.companyLink() == null || docsite.companyLink().isBlank()) {
+            fillVcsAsCompany(docsite);
+        }
         return docsite;
     }
 
@@ -43,10 +46,12 @@ public class Autoconfigurer {
             );
         }
         sections.add(Section.group("Components").icon("fas:stream").subsections(childrenSections).build());
-        vcsSection().ifPresent(sections::add);
         licenseSection().ifPresent(sections::add);
         docsite.sections(sections);
 
+        if (docsite.companyLink() == null || docsite.companyLink().isBlank()) {
+            fillVcsAsCompany(docsite);
+        }
         return docsite;
     }
 
@@ -56,7 +61,6 @@ public class Autoconfigurer {
         List<Section> sections = new ArrayList<>();
         changelogSection().ifPresent(sections::add);
         reportsSection().ifPresent(sections::add);
-        vcsSection().ifPresent(sections::add);
         licenseSection().ifPresent(sections::add);
         return sections;
     }
@@ -109,7 +113,7 @@ public class Autoconfigurer {
     }
 
 
-    private Optional<Section> vcsSection() {
+    private void fillVcsAsCompany(Docsite docsite) {
         if (project.getScm() != null && project.getScm().getUrl() != null) {
             String url = project.getScm().getUrl();
             String icon;
@@ -124,9 +128,9 @@ public class Autoconfigurer {
             } else {
                 icon = "fas:code-branch";
             }
-            return Optional.of(Section.link().name("Source").source(url).icon(icon).build());
+            docsite.companyLink(url);
+            docsite.companyLogo(icon);
         }
-        return Optional.empty();
     }
 
 

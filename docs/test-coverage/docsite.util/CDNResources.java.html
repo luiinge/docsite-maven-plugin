@@ -8,6 +8,7 @@ public final class CDNResources {
 
     private CDNResources() { }
 
+
     private static final String INTEGRITY = &quot;integrity&quot;;
     private static final String CROSSORIGIN = &quot;crossorigin&quot;;
     private static final String ANONYMOUS = &quot;anonymous&quot;;
@@ -18,73 +19,93 @@ public final class CDNResources {
     private static final String REL = &quot;rel&quot;;
     private static final String HREF = &quot;href&quot;;
 
-<span class="fc" id="L21">    private static final Map&lt;String, ScriptTag&gt; scripts = Map.of(</span>
-<span class="fc" id="L22">        &quot;prism.min&quot;, script()</span>
-<span class="fc" id="L23">            .attr(SRC,&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js&quot;)</span>
-<span class="fc" id="L24">            .attr(INTEGRITY, &quot;sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==&quot;)</span>
-<span class="fc" id="L25">            .attr(CROSSORIGIN, ANONYMOUS)</span>
-<span class="fc" id="L26">            .attr(REFERRERPOLICY, NO_REFERRER),</span>
-<span class="fc" id="L27">        &quot;prism.java&quot;, script()</span>
-<span class="fc" id="L28">            .attr(SRC,&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js&quot;)</span>
-<span class="fc" id="L29">            .attr(INTEGRITY, &quot;sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==&quot;)</span>
+
+
+
+
+<span class="fc" id="L26">    private static final Map&lt;String, ScriptTag&gt; scripts = Map.of(</span>
+<span class="fc" id="L27">        &quot;prism.min&quot;, script()</span>
+<span class="fc" id="L28">            .attr(SRC,&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js&quot;)</span>
+<span class="fc" id="L29">            .attr(INTEGRITY, &quot;sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==&quot;)</span>
 <span class="fc" id="L30">            .attr(CROSSORIGIN, ANONYMOUS)</span>
 <span class="fc" id="L31">            .attr(REFERRERPOLICY, NO_REFERRER),</span>
-<span class="fc" id="L32">        &quot;prism.yaml&quot;, script()</span>
-<span class="fc" id="L33">            .attr(SRC,&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-yaml.min.js&quot;)</span>
-<span class="fc" id="L34">            .attr(INTEGRITY, &quot;sha512-QRKKJS95wG2dOCdc7Cm0Zbu+L04xY8fTwhHG3UnqZPMiFrAN8uXrqVTx//eqvTaoYwNJ7oFN3Vej5gnJ+GAxkw==&quot;)</span>
+<span class="fc" id="L32">        &quot;prism.java&quot;, script()</span>
+<span class="fc" id="L33">            .attr(SRC,&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js&quot;)</span>
+<span class="fc" id="L34">            .attr(INTEGRITY, &quot;sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==&quot;)</span>
 <span class="fc" id="L35">            .attr(CROSSORIGIN, ANONYMOUS)</span>
 <span class="fc" id="L36">            .attr(REFERRERPOLICY, NO_REFERRER),</span>
-<span class="fc" id="L37">        &quot;prism.json&quot;, script()</span>
-<span class="fc" id="L38">            .attr(SRC,&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js&quot;)</span>
-<span class="fc" id="L39">            .attr(INTEGRITY, &quot;sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==&quot;)</span>
+<span class="fc" id="L37">        &quot;prism.yaml&quot;, script()</span>
+<span class="fc" id="L38">            .attr(SRC,&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-yaml.min.js&quot;)</span>
+<span class="fc" id="L39">            .attr(INTEGRITY, &quot;sha512-QRKKJS95wG2dOCdc7Cm0Zbu+L04xY8fTwhHG3UnqZPMiFrAN8uXrqVTx//eqvTaoYwNJ7oFN3Vej5gnJ+GAxkw==&quot;)</span>
 <span class="fc" id="L40">            .attr(CROSSORIGIN, ANONYMOUS)</span>
 <span class="fc" id="L41">            .attr(REFERRERPOLICY, NO_REFERRER),</span>
-<span class="fc" id="L42">        &quot;prism.css&quot;, script()</span>
-<span class="fc" id="L43">            .attr(SRC,&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-css.min.js&quot;)</span>
-<span class="fc" id="L44">            .attr(INTEGRITY, &quot;sha512-1qYok2x2Rsm2y+mrdyrp00iH7xYSgVyIQ1egDAoT7CBZ3kSzlaJK+NhWAh746NeL3gnH6dnP8FGS+3xOdwO7ig==&quot;)</span>
+<span class="fc" id="L42">        &quot;prism.json&quot;, script()</span>
+<span class="fc" id="L43">            .attr(SRC,&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js&quot;)</span>
+<span class="fc" id="L44">            .attr(INTEGRITY, &quot;sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==&quot;)</span>
 <span class="fc" id="L45">            .attr(CROSSORIGIN, ANONYMOUS)</span>
 <span class="fc" id="L46">            .attr(REFERRERPOLICY, NO_REFERRER),</span>
-<span class="fc" id="L47">        &quot;prism.javascript&quot;, script()</span>
-<span class="fc" id="L48">            .attr(SRC,&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-javascript.min.js&quot;)</span>
-<span class="fc" id="L49">            .attr(INTEGRITY, &quot;sha512-I4ZWqUpk7wqHcm7Gkv7k4IdgrDUTlGm1a7xeqyduqZLWeoGOn2E9us4XNBEDGclpk+6d1CmqIHYwmoyyL59zeA==&quot;)</span>
+<span class="fc" id="L47">        &quot;prism.css&quot;, script()</span>
+<span class="fc" id="L48">            .attr(SRC,&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-css.min.js&quot;)</span>
+<span class="fc" id="L49">            .attr(INTEGRITY, &quot;sha512-1qYok2x2Rsm2y+mrdyrp00iH7xYSgVyIQ1egDAoT7CBZ3kSzlaJK+NhWAh746NeL3gnH6dnP8FGS+3xOdwO7ig==&quot;)</span>
 <span class="fc" id="L50">            .attr(CROSSORIGIN, ANONYMOUS)</span>
 <span class="fc" id="L51">            .attr(REFERRERPOLICY, NO_REFERRER),</span>
-<span class="fc" id="L52">        &quot;prism.bash&quot;, script()</span>
-<span class="fc" id="L53">            .attr(SRC,&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js&quot;)</span>
-<span class="fc" id="L54">            .attr(INTEGRITY, &quot;sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==&quot;)</span>
+<span class="fc" id="L52">        &quot;prism.javascript&quot;, script()</span>
+<span class="fc" id="L53">            .attr(SRC,&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-javascript.min.js&quot;)</span>
+<span class="fc" id="L54">            .attr(INTEGRITY, &quot;sha512-I4ZWqUpk7wqHcm7Gkv7k4IdgrDUTlGm1a7xeqyduqZLWeoGOn2E9us4XNBEDGclpk+6d1CmqIHYwmoyyL59zeA==&quot;)</span>
 <span class="fc" id="L55">            .attr(CROSSORIGIN, ANONYMOUS)</span>
 <span class="fc" id="L56">            .attr(REFERRERPOLICY, NO_REFERRER),</span>
-<span class="fc" id="L57">        &quot;prism.gherkin&quot;, script()</span>
-<span class="fc" id="L58">            .attr(SRC,&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-gherkin.min.js&quot;)</span>
-<span class="fc" id="L59">            .attr(INTEGRITY, &quot;sha512-mIOZdB9UVqzUuNdWFcaqJssGJd6q7aaJpg+Q0z3kAWycvIrtcdiwELnKd2izg/ZlPqphj7rtqiUcmVS4bnd7RQ==&quot;)</span>
+<span class="fc" id="L57">        &quot;prism.bash&quot;, script()</span>
+<span class="fc" id="L58">            .attr(SRC,&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js&quot;)</span>
+<span class="fc" id="L59">            .attr(INTEGRITY, &quot;sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==&quot;)</span>
 <span class="fc" id="L60">            .attr(CROSSORIGIN, ANONYMOUS)</span>
-<span class="fc" id="L61">            .attr(REFERRERPOLICY, NO_REFERRER)</span>
+<span class="fc" id="L61">            .attr(REFERRERPOLICY, NO_REFERRER),</span>
+<span class="fc" id="L62">        &quot;prism.gherkin&quot;, script()</span>
+<span class="fc" id="L63">            .attr(SRC,&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-gherkin.min.js&quot;)</span>
+<span class="fc" id="L64">            .attr(INTEGRITY, &quot;sha512-mIOZdB9UVqzUuNdWFcaqJssGJd6q7aaJpg+Q0z3kAWycvIrtcdiwELnKd2izg/ZlPqphj7rtqiUcmVS4bnd7RQ==&quot;)</span>
+<span class="fc" id="L65">            .attr(CROSSORIGIN, ANONYMOUS)</span>
+<span class="fc" id="L66">            .attr(REFERRERPOLICY, NO_REFERRER),</span>
+<span class="fc" id="L67">        &quot;katex&quot;, script()</span>
+<span class="fc" id="L68">            .attr(SRC,&quot;https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.0/katex.min.js&quot;)</span>
+<span class="fc" id="L69">            .attr(INTEGRITY, &quot;sha512-M7/jkZoKEln1jaaY2roCK9Jt4t+j/iru0e2vInDkVO5LY0EBt3m66tjTT5XFsGH2LJG+VRRL2ueIR3U0frs/GQ==&quot;)</span>
+<span class="fc" id="L70">            .attr(CROSSORIGIN, ANONYMOUS)</span>
+<span class="fc" id="L71">            .attr(REFERRERPOLICY, NO_REFERRER),</span>
+<span class="fc" id="L72">        &quot;mermaid&quot;, script()</span>
+<span class="fc" id="L73">            .attr(SRC,&quot;https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.1.2/mermaid.min.js&quot;)</span>
+<span class="fc" id="L74">            .attr(INTEGRITY, &quot;sha512-8ZrL1m0+KXHylxkFJdFtFCauQdV/KZMjSBL9iydsyIfiB1LwYBlGegX8dUlLnUtRDrTgWKP6pPVyOqa2VrqoNA==&quot;)</span>
+<span class="fc" id="L75">            .attr(CROSSORIGIN, ANONYMOUS)</span>
+<span class="fc" id="L76">            .attr(REFERRERPOLICY, NO_REFERRER)</span>
     );
 
 
 
-<span class="fc" id="L66">    private static final Map&lt;String, LinkTag&gt; links = Map.of(</span>
-<span class="fc" id="L67">        &quot;prism.min&quot;, link()</span>
-<span class="fc" id="L68">            .attr(HREF,&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css&quot;)</span>
-<span class="fc" id="L69">            .attr(INTEGRITY, &quot;sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==&quot;)</span>
-<span class="fc" id="L70">            .attr(REL, STYLESHEET)</span>
-<span class="fc" id="L71">            .attr(CROSSORIGIN, ANONYMOUS)</span>
-<span class="fc" id="L72">            .attr(REFERRERPOLICY, NO_REFERRER),</span>
-<span class="fc" id="L73">        &quot;fontawesome.min&quot;, link()</span>
-<span class="fc" id="L74">            .attr(HREF,&quot;https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css&quot;)</span>
-<span class="fc" id="L75">            .attr(INTEGRITY, &quot;sha512-BnbUDfEUfV0Slx6TunuB042k9tuKe3xrD6q4mg5Ed72LTgzDIcLPxg6yI2gcMFRyomt+yJJxE+zJwNmxki6/RA==&quot;)</span>
-<span class="fc" id="L76">            .attr(REL, STYLESHEET)</span>
-<span class="fc" id="L77">            .attr(CROSSORIGIN, ANONYMOUS)</span>
-<span class="fc" id="L78">            .attr(REFERRERPOLICY, NO_REFERRER)</span>
+<span class="fc" id="L81">    private static final Map&lt;String, LinkTag&gt; links = Map.of(</span>
+<span class="fc" id="L82">        &quot;prism.min&quot;, link()</span>
+<span class="fc" id="L83">            .attr(HREF,&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css&quot;)</span>
+<span class="fc" id="L84">            .attr(INTEGRITY, &quot;sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==&quot;)</span>
+<span class="fc" id="L85">            .attr(REL, STYLESHEET)</span>
+<span class="fc" id="L86">            .attr(CROSSORIGIN, ANONYMOUS)</span>
+<span class="fc" id="L87">            .attr(REFERRERPOLICY, NO_REFERRER),</span>
+<span class="fc" id="L88">        &quot;fontawesome.min&quot;, link()</span>
+<span class="fc" id="L89">            .attr(HREF,&quot;https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css&quot;)</span>
+<span class="fc" id="L90">            .attr(INTEGRITY, &quot;sha512-BnbUDfEUfV0Slx6TunuB042k9tuKe3xrD6q4mg5Ed72LTgzDIcLPxg6yI2gcMFRyomt+yJJxE+zJwNmxki6/RA==&quot;)</span>
+<span class="fc" id="L91">            .attr(REL, STYLESHEET)</span>
+<span class="fc" id="L92">            .attr(CROSSORIGIN, ANONYMOUS)</span>
+<span class="fc" id="L93">            .attr(REFERRERPOLICY, NO_REFERRER),</span>
+<span class="fc" id="L94">        &quot;katex&quot;, link()</span>
+<span class="fc" id="L95">            .attr(HREF,&quot;https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.0/katex.min.css&quot;)</span>
+<span class="fc" id="L96">            .attr(INTEGRITY, &quot;sha512-Yfxo7zXGaQYyzWNxz8r4s8axNfG4jS3dips8p2HA/wNWmuapakkQiki+/XA3o3Ol+i8WI03cRJVDDUElEtED6g==&quot;)</span>
+<span class="fc" id="L97">            .attr(REL, STYLESHEET)</span>
+<span class="fc" id="L98">            .attr(CROSSORIGIN, ANONYMOUS)</span>
+<span class="fc" id="L99">            .attr(REFERRERPOLICY, NO_REFERRER)</span>
     );
 
 
     public static Optional&lt;ScriptTag&gt; js(String language) {
-<span class="fc" id="L83">        return Optional.ofNullable(scripts.get(language));</span>
+<span class="fc" id="L104">        return Optional.ofNullable(scripts.get(language));</span>
     }
 
     public static Optional&lt;LinkTag&gt; css(String language) {
-<span class="fc" id="L87">        return Optional.ofNullable(links.get(language));</span>
+<span class="fc" id="L108">        return Optional.ofNullable(links.get(language));</span>
     }
 
 }

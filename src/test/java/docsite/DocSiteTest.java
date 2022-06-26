@@ -66,7 +66,22 @@ public class DocSiteTest {
                         .source("src/test/resources/apidocs")
                         .siteIndex("index.html")
                         .icon("fab:java")
-                        .build()
+                        .build(),
+                    group("More Reports")
+                        .subsections(List.of(
+                            generated("More Metrics")
+                                .source("src/test/resources/metrics.md")
+                                .build(),
+                            generated("More Dependencies")
+                                .source("src/test/resources/dependencies.html")
+                                .build(),
+                            site()
+                                .name("More Javadoc")
+                                .source("src/test/resources/apidocs")
+                                .siteIndex("index.html")
+                                .icon("fab:java")
+                                .build()
+                        )).build()
                 )).build(),
             link()
                 .name("Github")
@@ -121,7 +136,7 @@ public class DocSiteTest {
                     )).build()
 
             ));
-        testSiteGeneration(docsite,"localization",true,List.of("en:gb","es:es"));
+        testSiteGeneration(docsite,"localization",true,List.of("en:English","es:Español"));
     }
 
 

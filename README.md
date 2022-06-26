@@ -10,8 +10,10 @@ Docsite is a Maven plugin that generates static documentation sites
 with minimal effort. It is an alternative to the standard Maven site generation, 
 providing the following benefits:
 - No extra configuration files required
-- Several source formats including Markdown, HTML, XML, JSON and YAMl
+- Several source formats including Markdown, HTML, XML, JSON and YAML
 - Automatic generation of ToCs (*Table of Content*)
+- Code syntax highlighting using [Prism](https://prismjs.com)
+- Diagram rendering using [Mermaid](https://mermaid-js.github.io/)
 - Not bound to any Maven reporting plugin
 - Easily customizable
 - Responsiveness
@@ -393,18 +395,16 @@ languages within the plugin configuration. For example:
 <configuration>
       ...
       <languages>
-        <language>en:gb</language>
-        <language>es:es</language>
+        <language>en:English</language>
+        <language>es:Español</language>
       </languages>
       ...
 </configuration>
 ```
 
 Each language is defined by two codes separated by `:`. The first code is the *language code* 
-used by your localized documents. The second code corresponds to any *country code* as 
-defined by the standard [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2),
-and it would be used to represent the language by a country flag Unicode emoji (as shown
-[here](https://flagpedia.net/emoji)). Notice that the first language in the list is 
+used by your localized documents. The second code corresponds to the *display language* and 
+should be the translated name of the language. Notice that the first language in the list is 
 considered as the *primary language*.
 
 

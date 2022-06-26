@@ -1,6 +1,7 @@
 package docsite.emitters;
 
 
+import com.vladsch.flexmark.ext.gitlab.GitLabExtension;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.util.data.*;
 import j2html.tags.Tag;
@@ -26,6 +27,7 @@ public class MarkdownGeneratedSectionEmitter extends GeneratedSectionEmitter {
         .set(TablesExtension.DISCARD_EXTRA_COLUMNS, true)
         .set(TablesExtension.HEADER_SEPARATOR_COLUMN_MATCH, true)
         .set(Parser.EXTENSIONS, List.of(TablesExtension.create()))
+        .set(GitLabExtension.BLOCK_MERMAID_CLASS, "mermaid")
         .toImmutable();
     protected static final Parser parser = Parser.builder(options).build();
     protected static final HtmlRenderer renderer = HtmlRenderer.builder(options).build();
@@ -47,9 +49,11 @@ public class MarkdownGeneratedSectionEmitter extends GeneratedSectionEmitter {
                 .map(Heading.class::cast)
                 .forEach(heading -> heading.setAnchorRefId(hrefId(heading.getAnchorRefText())));
             String html = renderer.render(document);
+            html = removeH1(html);
             html = generateHeadersId(html);
             html = normalizeLinks(html);
             html = replaceLocalImages(html);
+            html = replaceMermaidDiagrams(html);
             return section().with(before).with(rawHtml(html)).withClass("content");
         }  catch (IOException e) {
             throw new DocsiteException(e);

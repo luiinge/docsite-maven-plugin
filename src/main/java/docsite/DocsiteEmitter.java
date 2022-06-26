@@ -78,13 +78,18 @@ public class DocsiteEmitter {
         logger.debug("Copying common resources...");
         Path cssFolder = outputFolder.resolve("css");
         Path jsFolder = outputFolder.resolve("js");
-        if (cssFile == null) {
-            ResourceUtil.copyResource("css/style.css", cssFolder);
-        } else {
-            ResourceUtil.copyExternalFileWithAnotherName(cssFile, cssFolder, "style.css");
+
+        ResourceUtil.copyResource("css/layout.css", cssFolder);
+        ResourceUtil.copyResource("css/theme.css", cssFolder);
+        ResourceUtil.copyResource("js/menu.js", jsFolder);
+
+        if (cssFile != null) {
+            ResourceUtil.copyExternalFileWithAnotherName(cssFile, cssFolder, "extra-style.css");
         }
+
         ResourceUtil.copyResource("css/common.css", cssFolder);
         ResourceUtil.copyResource("css/prism.min.css", cssFolder);
+
         if (!useCDN) {
             ResourceUtil.copyResource("js/prism.js", jsFolder);
             ResourceUtil.copyResourceFolder("webfonts",  outputFolder);

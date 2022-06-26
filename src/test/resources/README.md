@@ -222,6 +222,29 @@ License
 ```
 
 
+This is a mermaid diagram:
+
+```mermaid
+sequenceDiagram
+    participant Alice
+    participant Bob
+    Alice->>John: Hello John, how are you?
+    loop Healthcheck
+        John->>John: Fight against hypochondria
+    end
+    Note right of John: Rational thoughts <br/>prevail!
+    John-->>Alice: Great!
+    John->>Bob: How about you?
+    Bob-->>John: Jolly good!
+```
+
+```mermaid
+graph TD;
+    A-->B;
+    A-->C;
+    B-->D;
+    C-->D;
+```
 
 [1]: <https://docs.oracle.com/javase/tutorial/ext/basics/spi.html>
 [2]: <https://docs.oracle.com/javase/11/docs/api/java/util/ServiceLoader.html>

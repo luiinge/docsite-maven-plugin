@@ -93,6 +93,14 @@ public abstract class GeneratedSectionEmitter extends SectionEmitter {
     }
 
 
+    protected String replaceMermaidDiagrams(String html) {
+        return html.replaceAll(
+            "<pre><code class=\"language-mermaid\">([^<]+)</code></pre>",
+            "<div class=\"mermaid\">$1</div>"
+        );
+    }
+
+
     protected String hrefId(String name) {
         return name.strip().toLowerCase().replace(" ", "-");
     }
@@ -108,6 +116,11 @@ public abstract class GeneratedSectionEmitter extends SectionEmitter {
                 "<a href([^>]*)>([^<]*)</a>",
                 "<a class=\"external\" target=\"_blank\" rel=\"external noreferrer noopener nofollow\" href$1>$2</a>"
             );
+    }
+
+
+    protected String removeH1(String html) {
+        return html.replaceAll("<h1>([^<]*)</h1>","");
     }
 
 

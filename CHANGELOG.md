@@ -7,6 +7,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][1],
 and this project adheres to [Semantic Versioning][2].
 
+[1.4.0]
+--------------------------------------------------------------------------
+**Release date:** 2022-06-26
+### Added
+- Render [Mermaid](https://mermaid-js.github.io/) diagrams embedded in Markdown
+### Modified
+- Rework of menus for better responsiveness
+- Language selection now uses names instead of flags
+- `<h1>` tags removed from content fragments
+
 
 [1.3.0]
 --------------------------------------------------------------------------

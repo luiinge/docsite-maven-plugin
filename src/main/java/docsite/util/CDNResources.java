@@ -8,6 +8,7 @@ public final class CDNResources {
 
     private CDNResources() { }
 
+
     private static final String INTEGRITY = "integrity";
     private static final String CROSSORIGIN = "crossorigin";
     private static final String ANONYMOUS = "anonymous";
@@ -17,6 +18,10 @@ public final class CDNResources {
     private static final String STYLESHEET = "stylesheet";
     private static final String REL = "rel";
     private static final String HREF = "href";
+
+
+
+
 
     private static final Map<String, ScriptTag> scripts = Map.of(
         "prism.min", script()
@@ -58,6 +63,16 @@ public final class CDNResources {
             .attr(SRC,"https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-gherkin.min.js")
             .attr(INTEGRITY, "sha512-mIOZdB9UVqzUuNdWFcaqJssGJd6q7aaJpg+Q0z3kAWycvIrtcdiwELnKd2izg/ZlPqphj7rtqiUcmVS4bnd7RQ==")
             .attr(CROSSORIGIN, ANONYMOUS)
+            .attr(REFERRERPOLICY, NO_REFERRER),
+        "katex", script()
+            .attr(SRC,"https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.0/katex.min.js")
+            .attr(INTEGRITY, "sha512-M7/jkZoKEln1jaaY2roCK9Jt4t+j/iru0e2vInDkVO5LY0EBt3m66tjTT5XFsGH2LJG+VRRL2ueIR3U0frs/GQ==")
+            .attr(CROSSORIGIN, ANONYMOUS)
+            .attr(REFERRERPOLICY, NO_REFERRER),
+        "mermaid", script()
+            .attr(SRC,"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.1.2/mermaid.min.js")
+            .attr(INTEGRITY, "sha512-8ZrL1m0+KXHylxkFJdFtFCauQdV/KZMjSBL9iydsyIfiB1LwYBlGegX8dUlLnUtRDrTgWKP6pPVyOqa2VrqoNA==")
+            .attr(CROSSORIGIN, ANONYMOUS)
             .attr(REFERRERPOLICY, NO_REFERRER)
     );
 
@@ -73,6 +88,12 @@ public final class CDNResources {
         "fontawesome.min", link()
             .attr(HREF,"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css")
             .attr(INTEGRITY, "sha512-BnbUDfEUfV0Slx6TunuB042k9tuKe3xrD6q4mg5Ed72LTgzDIcLPxg6yI2gcMFRyomt+yJJxE+zJwNmxki6/RA==")
+            .attr(REL, STYLESHEET)
+            .attr(CROSSORIGIN, ANONYMOUS)
+            .attr(REFERRERPOLICY, NO_REFERRER),
+        "katex", link()
+            .attr(HREF,"https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.0/katex.min.css")
+            .attr(INTEGRITY, "sha512-Yfxo7zXGaQYyzWNxz8r4s8axNfG4jS3dips8p2HA/wNWmuapakkQiki+/XA3o3Ol+i8WI03cRJVDDUElEtED6g==")
             .attr(REL, STYLESHEET)
             .attr(CROSSORIGIN, ANONYMOUS)
             .attr(REFERRERPOLICY, NO_REFERRER)

@@ -93,38 +93,51 @@ public abstract class GeneratedSectionEmitter extends SectionEmitter {
     }
 
 
+    protected String replaceMermaidDiagrams(String html) {
+<span class="fc" id="L97">        return html.replaceAll(</span>
+            &quot;&lt;pre&gt;&lt;code class=\&quot;language-mermaid\&quot;&gt;([^&lt;]+)&lt;/code&gt;&lt;/pre&gt;&quot;,
+            &quot;&lt;div class=\&quot;mermaid\&quot;&gt;$1&lt;/div&gt;&quot;
+        );
+    }
+
+
     protected String hrefId(String name) {
-<span class="fc" id="L97">        return name.strip().toLowerCase().replace(&quot; &quot;, &quot;-&quot;);</span>
+<span class="fc" id="L105">        return name.strip().toLowerCase().replace(&quot; &quot;, &quot;-&quot;);</span>
     }
 
 
     protected String normalizeLinks(String html) {
-<span class="fc" id="L102">        return html</span>
-<span class="fc" id="L103">            .replaceAll(</span>
+<span class="fc" id="L110">        return html</span>
+<span class="fc" id="L111">            .replaceAll(</span>
                 &quot;&lt;a href([^&gt;]*)&gt;([^&lt;]*)&lt;([^&lt;]*)&lt;/a&gt;&quot;,
                 &quot;&lt;a target=\&quot;_blank\&quot; rel=\&quot;external noreferrer noopener nofollow\&quot; href$1&gt;$2&lt;$3&lt;/a&gt;&quot;
             )
-<span class="fc" id="L107">            .replaceAll(</span>
+<span class="fc" id="L115">            .replaceAll(</span>
                 &quot;&lt;a href([^&gt;]*)&gt;([^&lt;]*)&lt;/a&gt;&quot;,
                 &quot;&lt;a class=\&quot;external\&quot; target=\&quot;_blank\&quot; rel=\&quot;external noreferrer noopener nofollow\&quot; href$1&gt;$2&lt;/a&gt;&quot;
             );
     }
 
 
+    protected String removeH1(String html) {
+<span class="fc" id="L123">        return html.replaceAll(&quot;&lt;h1&gt;([^&lt;]*)&lt;/h1&gt;&quot;,&quot;&quot;);</span>
+    }
+
+
     protected String generateHeadersId(String html) {
-<span class="fc" id="L115">        String[] patterns = {&quot;&lt;(h\\d)&gt;([^&lt;]*)&quot;, &quot;&lt;(h\\d)&gt;&lt;code&gt;([^&lt;]*)&quot;};</span>
-<span class="fc bfc" id="L116" title="All 2 branches covered.">        for (String pattern : patterns) {</span>
-<span class="fc" id="L117">            Matcher matcher = Pattern.compile(pattern).matcher(html);</span>
-<span class="fc bfc" id="L118" title="All 2 branches covered.">            while (matcher.find()) {</span>
-<span class="fc" id="L119">                String tag = matcher.group(1);</span>
-<span class="fc" id="L120">                String name = matcher.group(2);</span>
-<span class="fc" id="L121">                String id = hrefId(name);</span>
-<span class="pc bpc" id="L122" title="1 of 2 branches missed.">                if (!id.isEmpty()) {</span>
-<span class="fc" id="L123">                    html = html.replace(&quot;&lt;&quot; + tag + &quot;&gt;&quot; + name, &quot;&lt;&quot; + tag + &quot; id=\&quot;&quot; + id + &quot;\&quot;&gt;&quot; + name);</span>
+<span class="fc" id="L128">        String[] patterns = {&quot;&lt;(h\\d)&gt;([^&lt;]*)&quot;, &quot;&lt;(h\\d)&gt;&lt;code&gt;([^&lt;]*)&quot;};</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">        for (String pattern : patterns) {</span>
+<span class="fc" id="L130">            Matcher matcher = Pattern.compile(pattern).matcher(html);</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">            while (matcher.find()) {</span>
+<span class="fc" id="L132">                String tag = matcher.group(1);</span>
+<span class="fc" id="L133">                String name = matcher.group(2);</span>
+<span class="fc" id="L134">                String id = hrefId(name);</span>
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">                if (!id.isEmpty()) {</span>
+<span class="fc" id="L136">                    html = html.replace(&quot;&lt;&quot; + tag + &quot;&gt;&quot; + name, &quot;&lt;&quot; + tag + &quot; id=\&quot;&quot; + id + &quot;\&quot;&gt;&quot; + name);</span>
                 }
-<span class="fc" id="L125">            }</span>
+<span class="fc" id="L138">            }</span>
         }
-<span class="fc" id="L127">        return html;</span>
+<span class="fc" id="L140">        return html;</span>
     }
 
 
@@ -133,44 +146,44 @@ public abstract class GeneratedSectionEmitter extends SectionEmitter {
 
     protected AsideTag createTableOfContentsFromHtml(String html) {
 
-<span class="fc" id="L136">        Matcher matcher = Pattern.compile(&quot;&lt;h(\\d)[^&gt;]*&gt;([^&lt;]*)&lt;&quot;).matcher(html);</span>
+<span class="fc" id="L149">        Matcher matcher = Pattern.compile(&quot;&lt;h(\\d)[^&gt;]*&gt;([^&lt;]*)&lt;&quot;).matcher(html);</span>
 
-<span class="fc" id="L138">        StringBuilder string = new StringBuilder();</span>
-<span class="fc" id="L139">        int previousLevel = TOC_MIN_LEVEL - 1;</span>
+<span class="fc" id="L151">        StringBuilder string = new StringBuilder();</span>
+<span class="fc" id="L152">        int previousLevel = TOC_MIN_LEVEL - 1;</span>
 
-<span class="fc" id="L141">        boolean empty = true;</span>
+<span class="fc" id="L154">        boolean empty = true;</span>
 
-<span class="fc bfc" id="L143" title="All 2 branches covered.">        while (matcher.find()) {</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">        while (matcher.find()) {</span>
 
-<span class="fc" id="L145">            int level = Integer.parseInt(matcher.group(1));</span>
-<span class="fc" id="L146">            String name = matcher.group(2);</span>
-<span class="fc" id="L147">            String id = hrefId(name);</span>
+<span class="fc" id="L158">            int level = Integer.parseInt(matcher.group(1));</span>
+<span class="fc" id="L159">            String name = matcher.group(2);</span>
+<span class="fc" id="L160">            String id = hrefId(name);</span>
 
-<span class="pc bpc" id="L149" title="1 of 6 branches missed.">            if (level &lt; TOC_MIN_LEVEL || level &gt; TOC_MAX_LEVEL || id.isEmpty()) {</span>
-<span class="nc" id="L150">                continue;</span>
+<span class="pc bpc" id="L162" title="1 of 6 branches missed.">            if (level &lt; TOC_MIN_LEVEL || level &gt; TOC_MAX_LEVEL || id.isEmpty()) {</span>
+<span class="nc" id="L163">                continue;</span>
             }
 
-<span class="fc bfc" id="L153" title="All 2 branches covered.">            if (previousLevel &gt; level) {</span>
-<span class="fc" id="L154">                string.append(&quot;&lt;/ol&gt;&quot;.repeat(Math.max(0, previousLevel - level)));</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">            if (previousLevel &gt; level) {</span>
+<span class="fc" id="L167">                string.append(&quot;&lt;/ol&gt;&quot;.repeat(Math.max(0, previousLevel - level)));</span>
             } else {
-<span class="fc" id="L156">                string.append(&quot;&lt;ol&gt;&quot;.repeat(Math.max(0, level - previousLevel)));</span>
+<span class="fc" id="L169">                string.append(&quot;&lt;ol&gt;&quot;.repeat(Math.max(0, level - previousLevel)));</span>
             }
-<span class="fc" id="L158">            string</span>
-<span class="fc" id="L159">                .append(&quot;&lt;li&gt;&lt;a class=\&quot;internal\&quot; href=\&quot;#&quot;)</span>
-<span class="fc" id="L160">                .append(id)</span>
-<span class="fc" id="L161">                .append(&quot;\&quot;&gt;&quot;)</span>
-<span class="fc" id="L162">                .append(name)</span>
-<span class="fc" id="L163">                .append(&quot;&lt;/a&gt;&lt;/li&gt;&quot;);</span>
+<span class="fc" id="L171">            string</span>
+<span class="fc" id="L172">                .append(&quot;&lt;li&gt;&lt;a class=\&quot;internal\&quot; href=\&quot;#&quot;)</span>
+<span class="fc" id="L173">                .append(id)</span>
+<span class="fc" id="L174">                .append(&quot;\&quot;&gt;&quot;)</span>
+<span class="fc" id="L175">                .append(name)</span>
+<span class="fc" id="L176">                .append(&quot;&lt;/a&gt;&lt;/li&gt;&quot;);</span>
 
-<span class="fc" id="L165">            previousLevel = level;</span>
-<span class="fc" id="L166">            empty = false;</span>
-<span class="fc" id="L167">        }</span>
+<span class="fc" id="L178">            previousLevel = level;</span>
+<span class="fc" id="L179">            empty = false;</span>
+<span class="fc" id="L180">        }</span>
 
-<span class="pc bpc" id="L169" title="1 of 2 branches missed.">        if (empty) {</span>
-<span class="nc" id="L170">            return aside();</span>
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">        if (empty) {</span>
+<span class="nc" id="L183">            return aside();</span>
         } else {
-<span class="fc" id="L172">            string.append(&quot;&lt;/ol&gt;&quot;.repeat(previousLevel));</span>
-<span class="fc" id="L173">            return aside().with(nav().with(rawHtml(string.toString())).withClass(&quot;toc&quot;));</span>
+<span class="fc" id="L185">            string.append(&quot;&lt;/ol&gt;&quot;.repeat(previousLevel));</span>
+<span class="fc" id="L186">            return aside().with(nav().with(rawHtml(string.toString())).withClass(&quot;toc&quot;));</span>
         }
 
     }
