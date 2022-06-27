@@ -97,7 +97,16 @@
                     <groupId>commons-io</groupId>
                     <artifactId>commons-io</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.apache.maven.shared</groupId>
+                    <artifactId>maven-shared-utils</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-shared-utils</artifactId>
+            <version>3.3.4</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>

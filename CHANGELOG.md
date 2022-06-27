@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning][2].
 - Rework of menus for better responsiveness
 - Language selection now uses names instead of flags
 - `<h1>` tags removed from content fragments
+### Fixed
+- Bumped version of `maven-shared-utils` to `3.3.4` [CVE-2022-29599](https://nvd.nist.gov/vuln/detail/CVE-2022-29599)
 
 
 [1.3.0]
