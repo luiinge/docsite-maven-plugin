@@ -51,10 +51,13 @@ header .title-and-subtitle i {
     padding: 0.2em;
 }
 
-header .title-and-subtitle .title {
+header .title-and-subtitle .title-container {
     grid-area: title;
     padding-top: 0.5em;
+    display: flex;
+    align-items: center;
 }
+
 
 header .title-and-subtitle .subtitle {
     grid-area: subtitle;
@@ -153,6 +156,13 @@ body.no-toc {
     grid-template-columns: auto;
 }
 
+
+header .title-and-subtitle {
+    display: grid;
+    grid-template-areas:
+        'logo title';
+}
+
 header .title-and-subtitle .title {
     padding-top: 1em;
     padding-left: 1em;
@@ -160,9 +170,7 @@ header .title-and-subtitle .title {
 header .subtitle {
     display: none;
 }
-header .title-and-subtitle i {
-    display: none;
-}
+
 
 .toc-button {
     display: flex;
@@ -182,6 +190,14 @@ aside {
 
 
 
+}
 
+
+
+@media (max-width: 300px) {
+
+header .title-and-subtitle i {
+    display: none;
+}
 
 }

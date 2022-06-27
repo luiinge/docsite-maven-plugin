@@ -335,7 +335,9 @@ public abstract class SectionEmitter {
         return div().withClass("title-and-subtitle")
             .with(
                 EmitterUtil.icon(baseDir, site.logo(), globalImages),
-                h1(translate(site.title())).withClass(hasSubtitle ? "title" : "title no-subtitle"),
+                div().with(
+                    h1(translate(site.title())).withClass(hasSubtitle ? "title" : "title no-subtitle")
+                ).withClass("title-container"),
                 span(translate(site.description())).withClass("subtitle")
             );
     }

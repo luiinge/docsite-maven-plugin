@@ -32,7 +32,7 @@ Get started
             <plugin>
                 <groupId>io.github.luiinge</groupId>
                 <artifactId>docsite-maven-plugin</artifactId>
-                <version>1.3.0</version>
+                <version>1.4.0</version>
             </plugin>
         </plugins>
     </build>
@@ -58,7 +58,7 @@ the plugin within the `pom`.
             <plugin>
                 <groupId>io.github.luiinge</groupId>
                 <artifactId>docsite-maven-plugin</artifactId>
-                <version>1.3.0</version>
+                <version>1.4.0</version>
                 <configuration>
                     <docsite>
                         ...
@@ -439,8 +439,8 @@ property. For example:
       </docsite>
 
       <languages>
-        <language>en:gb</language>
-        <language>es:es</language>
+        <language>en:English</language>
+        <language>es:Español</language>
       </languages>
 
       <localizations>
@@ -503,7 +503,7 @@ global: `${maven.home}/conf/settings.xml`), adding the following:
 - **Option B.** Use the full name of the plugin: 
 
   ```shell
-  mvn io.github.luiinge:docsite-maven-plugin:1.3.0:generate
+  mvn io.github.luiinge:docsite-maven-plugin:1.4.0:generate
   ```
   
   Be aware that by using this method you *cannot* define the configuration in the `pom`, 
@@ -516,7 +516,7 @@ global: `${maven.home}/conf/settings.xml`), adding the following:
   <plugin>
     <groupId>io.github.luiinge</groupId>
     <artifactId>docsite-maven-plugin</artifactId>
-    <version>1.3.0</version>
+    <version>1.4.0</version>
     <configuration> ... </configuration>
     <executions>
       <execution>
@@ -579,6 +579,6 @@ Issue reporting
 -----------------------------------------------------------------------------------------
 If you have found any defect in this software, please report it
 in [Github project Issues](https://github.com/luiinge/docsite-maven-plugin/issues).
-There is no guarantee that it would be fixed in the following version but it would
+There is no guarantee that it would be fixed in the following version, but it would
 be addressed as soon as possible.   
  
