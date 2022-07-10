@@ -45,6 +45,21 @@ public class DocSiteTest {
             generated("License")
                 .source("src/test/resources/LICENSE")
                 .build(),
+            group("Report 3")
+                .subsections(List.of(
+                    generated("Metrics 3")
+                        .source("src/test/resources/metrics.md")
+                        .build(),
+                    generated("Dependencies 3")
+                        .source("src/test/resources/dependencies.html")
+                        .build(),
+                    site()
+                        .name("Javadoc 3")
+                        .source("src/test/resources/apidocs")
+                        .siteIndex("index.html")
+                        .icon("fab:java")
+                        .build()
+                )).build(),
             generated("License")
                 .source("src/test/resources/LICENSE")
                 .build(),

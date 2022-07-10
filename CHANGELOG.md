@@ -7,6 +7,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][1],
 and this project adheres to [Semantic Versioning][2].
 
+[1.5.0]
+--------------------------------------------------------------------------
+**Release date:** 2022-07-10
+### Modified
+- Automatic switch between expanded menu and collapsed menu
+according client width
+
+
+
 [1.4.0]
 --------------------------------------------------------------------------
 **Release date:** 2022-06-26

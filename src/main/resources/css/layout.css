@@ -92,6 +92,21 @@ header .title-and-subtitle .subtitle {
     z-index: 1;
 }
 
+.expanded-menu {
+    position: inherit;
+    display: flex;
+    align-items: center;
+}
+
+.expanded-menu ul {
+    display: flex;
+    align-items: center;
+}
+
+.expanded-menu > ul > li > ul {
+    position: absolute;
+}
+
 
 /* Table Of Contents -----------------------------  */
 

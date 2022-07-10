@@ -110,7 +110,7 @@ public abstract class SectionEmitter {
         }
 
         HeaderTag header = createHeader();
-        NavTag menu = createMenu();
+        NavTag burgerMenu = createBurgerMenu();
         DivTag info = div().withClass("info").with(createBreadcrumbs(), createLanguageSelection());
         SectionTag sectionContent = createSectionContent().withId("content");
         if (includeFooter) {
@@ -143,7 +143,7 @@ public abstract class SectionEmitter {
                 .with(
                     jumpToContentButton(),
                     header,
-                    menu,
+                    burgerMenu,
                     info,
                     tocButton,
                     tableOfContents,
@@ -167,8 +167,8 @@ public abstract class SectionEmitter {
     private HeaderTag createHeader() {
         return header().with(
             createLogoAndTitle(),
-            //createMenu("header-menu"),
             div().withClass("filler"),
+            createExpandedMenu(),
             createMenuButton(),
             createCompanyLogo()
         );
@@ -350,13 +350,26 @@ public abstract class SectionEmitter {
     }
 
 
-    private NavTag createMenu() {
-        return nav().withClasses("sections", "menu hidden")
+    private NavTag createBurgerMenu() {
+        return nav().withClasses("menu hidden burger-menu")
             .with(
                 ul().with(
                     rootEmitter.childEmitters.stream()
                         .filter(it -> it.section.isValid(baseDir))
-                        .map(it -> it.createNavigationSection(it == this))
+                        .map(it -> it.createMenuItem(it == this))
+                        .toArray(LiTag[]::new)
+                )
+            );
+    }
+
+
+    private NavTag createExpandedMenu() {
+        return nav().withClasses("expanded-menu menu")
+            .with(
+                ul().with(
+                    rootEmitter.childEmitters.stream()
+                        .filter(it -> it.section.isValid(baseDir))
+                        .map(it -> it.createExpandedMenuItem(it == this, 0))
                         .toArray(LiTag[]::new)
                 )
             );
@@ -370,13 +383,13 @@ public abstract class SectionEmitter {
     }
 
 
-    private LiTag createNavigationSection(boolean selected) {
+    private LiTag createMenuItem(boolean selected) {
 
         if (!childEmitters.isEmpty()) {
             UlTag dropdownMenu = ul().withClasses("dropdown", selected ? "visible" : "hidden");
             for (SectionEmitter child : childEmitters) {
                 if (child.section.subsections() != null && !child.section.subsections().isEmpty()) {
-                    dropdownMenu.with(child.createNavigationSection(selected));
+                    dropdownMenu.with(child.createMenuItem(selected));
                 } else {
                     dropdownMenu.with(li().with(child.createLinkToSection(true)));
                 }
@@ -393,6 +406,36 @@ public abstract class SectionEmitter {
         }
 
     }
+
+
+
+    private LiTag createExpandedMenuItem(boolean selected, int level) {
+        if (!childEmitters.isEmpty()) {
+            UlTag dropdownMenu = ul().withClasses("dropdown", "hidden");
+            for (SectionEmitter child : childEmitters) {
+                if (child.section.subsections() != null && !child.section.subsections().isEmpty()) {
+                    dropdownMenu.with(child.createExpandedMenuItem(selected, level+1));
+                } else {
+                    dropdownMenu.with(li().with(child.createLinkToSection(true)));
+                }
+            }
+            return li()
+                .withClass(selected ? "selected expandable collapsed" : "expandable collapsed")
+                .with(createLinkToSection(true).withHref("#"))
+                .with(dropdownMenu)
+                .attr("onclick",
+                    level == 0 ?
+                        "expandOrCollapseExpandedMenu(event,this);" :
+                        "expandOrCollapse(event,this);"
+                );
+        } else {
+            return li()
+                .withCondClass(selected, "selected")
+                .with(createLinkToSection(true));
+        }
+
+    }
+
 
 
 
