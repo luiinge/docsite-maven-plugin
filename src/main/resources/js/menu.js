@@ -65,7 +65,6 @@ function hideTocIfVisible(event,emitter) {
 function resizeExpandedMenu(elements) {
   let isDisplayed = (window.expandedMenu.style.display != 'none');
   if (isDisplayed) {
-    console.log('a',window.expandedMenu.scrollWidth);
     let hasOverflow = window.expandedMenu.scrollWidth > window.expandedMenu.clientWidth;
     if (hasOverflow) {
         window.expandedMenu.style.display = 'none';
@@ -78,7 +77,6 @@ function resizeExpandedMenu(elements) {
   } else {
     window.expandedMenu.style.visibility = 'hidden';
     window.expandedMenu.style.display = 'block';
-    console.log('b',window.expandedMenu.scrollWidth);
     let hasOverflow = window.expandedMenu.scrollWidth > window.expandedMenu.clientWidth;
     if (hasOverflow) {
        window.expandedMenu.style.display = 'none';
