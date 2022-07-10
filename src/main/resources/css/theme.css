@@ -53,10 +53,11 @@ header .title-and-subtitle .title {
     font-size: 2em;
 
 }
+/*
 header .title-and-subtitle .title.no-subtitle {
     padding-top: 1em;
 }
-
+*/
 header .title-and-subtitle .subtitle {
     font-size: 0.8em;
 }
