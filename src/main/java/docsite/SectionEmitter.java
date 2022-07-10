@@ -345,6 +345,9 @@ public abstract class SectionEmitter {
 
 
     private DivTag createMenuButton() {
+        if (rootEmitter.childEmitters.isEmpty()) {
+            return div().withClass("hidden");
+        }
         return div().withStyle("display: flex; align-items: center;")
             .with(a().withHref("#").withClasses("menu-button").attr("onclick","showOrHideMenu(event,this)"));
     }
@@ -364,6 +367,9 @@ public abstract class SectionEmitter {
 
 
     private NavTag createExpandedMenu() {
+        if (rootEmitter.childEmitters.isEmpty()) {
+            return nav().withClass("hidden");
+        }
         return nav().withClasses("expanded-menu menu")
             .with(
                 ul().with(

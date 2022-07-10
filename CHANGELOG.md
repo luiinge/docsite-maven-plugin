@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning][2].
 [1.5.0]
 --------------------------------------------------------------------------
 **Release date:** 2022-07-10
+### Added
+- Asciidoc support
 ### Modified
 - Automatic switch between expanded menu and collapsed menu
 according client width

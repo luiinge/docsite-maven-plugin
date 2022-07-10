@@ -261,6 +261,15 @@ public class DocSiteTest {
     }
 
 
+    @Test
+    public void testAsciidocIndex() throws IOException {
+        Docsite docsite = new Docsite()
+            .title("jExt")
+            .index("src/test/resources/README.adoc")
+            ;
+        testSiteGeneration(docsite, "asciidoc", true);
+    }
+
 
     @Test
     public void testTemplate() throws IOException {

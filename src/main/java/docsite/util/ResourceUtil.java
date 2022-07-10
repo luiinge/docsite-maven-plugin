@@ -84,7 +84,6 @@ public final class ResourceUtil {
 
 
     private static void copyFromURL(URL url, Path target) throws IOException {
-
         Files.createDirectories(target.getParent());
         Files.copy(
             url.openStream(),

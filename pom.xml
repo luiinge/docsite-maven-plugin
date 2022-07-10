@@ -133,6 +133,12 @@
             <artifactId>snakeyaml</artifactId>
             <version>1.30</version>
         </dependency>
+        <dependency>
+            <groupId>org.asciidoctor</groupId>
+            <artifactId>asciidoctorj</artifactId>
+            <version>2.5.4</version>
+        </dependency>
+
 
         <dependency>
             <groupId>junit</groupId>

@@ -98,7 +98,9 @@ public class SectionEmitterFactory {
             return new MarkdownGeneratedSectionEmitter(params);
         } else if (source.endsWith(".html") || source.endsWith(".htm")) {
             return new HtmlGeneratedSectionEmitter(params);
-        } else {
+        } else if (source.endsWith(".adoc") || source.endsWith(".asciidoc") || source.endsWith(".asc")) {
+            return new AsciidocGeneratedSectionEmitter(params);
+        }else {
             return new TextGeneratedSectionEmitter(params);
         }
     }

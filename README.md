@@ -10,7 +10,7 @@ Docsite is a Maven plugin that generates static documentation sites
 with minimal effort. It is an alternative to the standard Maven site generation, 
 providing the following benefits:
 - No extra configuration files required
-- Several source formats including Markdown, HTML, XML, JSON and YAML
+- Several source formats including Markdown, Asciidoc, HTML, XML, JSON and YAML
 - Automatic generation of ToCs (*Table of Content*)
 - Code syntax highlighting using [Prism](https://prismjs.com)
 - Diagram rendering using [Mermaid](https://mermaid-js.github.io/)
