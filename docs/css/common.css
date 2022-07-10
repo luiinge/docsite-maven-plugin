@@ -8,11 +8,11 @@ body, div, a, p, header, nav, aside, main, section, ol, iframe {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 .visible {
-    display: block;
+    display: block !important;
 }
 
 

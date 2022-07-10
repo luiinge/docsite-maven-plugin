@@ -110,7 +110,7 @@ public abstract class SectionEmitter {
         }
 
 <span class="fc" id="L112">        HeaderTag header = createHeader();</span>
-<span class="fc" id="L113">        NavTag menu = createMenu();</span>
+<span class="fc" id="L113">        NavTag burgerMenu = createBurgerMenu();</span>
 <span class="fc" id="L114">        DivTag info = div().withClass(&quot;info&quot;).with(createBreadcrumbs(), createLanguageSelection());</span>
 <span class="fc" id="L115">        SectionTag sectionContent = createSectionContent().withId(&quot;content&quot;);</span>
 <span class="fc bfc" id="L116" title="All 2 branches covered.">        if (includeFooter) {</span>
@@ -143,7 +143,7 @@ public abstract class SectionEmitter {
 <span class="fc" id="L143">                .with(</span>
 <span class="fc" id="L144">                    jumpToContentButton(),</span>
                     header,
-                    menu,
+                    burgerMenu,
                     info,
                     tocButton,
                     tableOfContents,
@@ -167,8 +167,8 @@ public abstract class SectionEmitter {
     private HeaderTag createHeader() {
 <span class="fc" id="L168">        return header().with(</span>
 <span class="fc" id="L169">            createLogoAndTitle(),</span>
-            //createMenu(&quot;header-menu&quot;),
-<span class="fc" id="L171">            div().withClass(&quot;filler&quot;),</span>
+<span class="fc" id="L170">            div().withClass(&quot;filler&quot;),</span>
+<span class="fc" id="L171">            createExpandedMenu(),</span>
 <span class="fc" id="L172">            createMenuButton(),</span>
 <span class="fc" id="L173">            createCompanyLogo()</span>
         );
@@ -345,86 +345,135 @@ public abstract class SectionEmitter {
 
 
     private DivTag createMenuButton() {
-<span class="fc" id="L348">        return div().withStyle(&quot;display: flex; align-items: center;&quot;)</span>
-<span class="fc" id="L349">            .with(a().withHref(&quot;#&quot;).withClasses(&quot;menu-button&quot;).attr(&quot;onclick&quot;,&quot;showOrHideMenu(event,this)&quot;));</span>
+<span class="fc bfc" id="L348" title="All 2 branches covered.">        if (rootEmitter.childEmitters.isEmpty()) {</span>
+<span class="fc" id="L349">            return div().withClass(&quot;hidden&quot;);</span>
+        }
+<span class="fc" id="L351">        return div().withStyle(&quot;display: flex; align-items: center;&quot;)</span>
+<span class="fc" id="L352">            .with(a().withHref(&quot;#&quot;).withClasses(&quot;menu-button&quot;).attr(&quot;onclick&quot;,&quot;showOrHideMenu(event,this)&quot;));</span>
     }
 
 
-    private NavTag createMenu() {
-<span class="fc" id="L354">        return nav().withClasses(&quot;sections&quot;, &quot;menu hidden&quot;)</span>
-<span class="fc" id="L355">            .with(</span>
-<span class="fc" id="L356">                ul().with(</span>
-<span class="fc" id="L357">                    rootEmitter.childEmitters.stream()</span>
-<span class="fc" id="L358">                        .filter(it -&gt; it.section.isValid(baseDir))</span>
-<span class="fc bfc" id="L359" title="All 2 branches covered.">                        .map(it -&gt; it.createNavigationSection(it == this))</span>
-<span class="fc" id="L360">                        .toArray(LiTag[]::new)</span>
+    private NavTag createBurgerMenu() {
+<span class="fc" id="L357">        return nav().withClasses(&quot;menu hidden burger-menu&quot;)</span>
+<span class="fc" id="L358">            .with(</span>
+<span class="fc" id="L359">                ul().with(</span>
+<span class="fc" id="L360">                    rootEmitter.childEmitters.stream()</span>
+<span class="fc" id="L361">                        .filter(it -&gt; it.section.isValid(baseDir))</span>
+<span class="fc bfc" id="L362" title="All 2 branches covered.">                        .map(it -&gt; it.createMenuItem(it == this))</span>
+<span class="fc" id="L363">                        .toArray(LiTag[]::new)</span>
+                )
+            );
+    }
+
+
+    private NavTag createExpandedMenu() {
+<span class="fc bfc" id="L370" title="All 2 branches covered.">        if (rootEmitter.childEmitters.isEmpty()) {</span>
+<span class="fc" id="L371">            return nav().withClass(&quot;hidden&quot;);</span>
+        }
+<span class="fc" id="L373">        return nav().withClasses(&quot;expanded-menu menu&quot;)</span>
+<span class="fc" id="L374">            .with(</span>
+<span class="fc" id="L375">                ul().with(</span>
+<span class="fc" id="L376">                    rootEmitter.childEmitters.stream()</span>
+<span class="fc" id="L377">                        .filter(it -&gt; it.section.isValid(baseDir))</span>
+<span class="fc bfc" id="L378" title="All 2 branches covered.">                        .map(it -&gt; it.createExpandedMenuItem(it == this, 0))</span>
+<span class="fc" id="L379">                        .toArray(LiTag[]::new)</span>
                 )
             );
     }
 
 
     private DivTag createTableOfContentsButton(boolean empty) {
-<span class="fc bfc" id="L367" title="All 2 branches covered.">        return div().withClass(empty ? &quot;toc-button no-toc&quot; : &quot;toc-button&quot;).with(</span>
-<span class="fc" id="L368">            a().withHref(&quot;#&quot;)</span>
-<span class="fc" id="L369">        ).attr(&quot;onclick&quot;,&quot;showOrHideToc(event,this)&quot;);</span>
+<span class="fc bfc" id="L386" title="All 2 branches covered.">        return div().withClass(empty ? &quot;toc-button no-toc&quot; : &quot;toc-button&quot;).with(</span>
+<span class="fc" id="L387">            a().withHref(&quot;#&quot;)</span>
+<span class="fc" id="L388">        ).attr(&quot;onclick&quot;,&quot;showOrHideToc(event,this)&quot;);</span>
     }
 
 
-    private LiTag createNavigationSection(boolean selected) {
+    private LiTag createMenuItem(boolean selected) {
 
-<span class="fc bfc" id="L375" title="All 2 branches covered.">        if (!childEmitters.isEmpty()) {</span>
-<span class="fc bfc" id="L376" title="All 2 branches covered.">            UlTag dropdownMenu = ul().withClasses(&quot;dropdown&quot;, selected ? &quot;visible&quot; : &quot;hidden&quot;);</span>
-<span class="fc bfc" id="L377" title="All 2 branches covered.">            for (SectionEmitter child : childEmitters) {</span>
-<span class="pc bpc" id="L378" title="1 of 4 branches missed.">                if (child.section.subsections() != null &amp;&amp; !child.section.subsections().isEmpty()) {</span>
-<span class="fc" id="L379">                    dropdownMenu.with(child.createNavigationSection(selected));</span>
+<span class="fc bfc" id="L394" title="All 2 branches covered.">        if (!childEmitters.isEmpty()) {</span>
+<span class="fc bfc" id="L395" title="All 2 branches covered.">            UlTag dropdownMenu = ul().withClasses(&quot;dropdown&quot;, selected ? &quot;visible&quot; : &quot;hidden&quot;);</span>
+<span class="fc bfc" id="L396" title="All 2 branches covered.">            for (SectionEmitter child : childEmitters) {</span>
+<span class="pc bpc" id="L397" title="1 of 4 branches missed.">                if (child.section.subsections() != null &amp;&amp; !child.section.subsections().isEmpty()) {</span>
+<span class="fc" id="L398">                    dropdownMenu.with(child.createMenuItem(selected));</span>
                 } else {
-<span class="fc" id="L381">                    dropdownMenu.with(li().with(child.createLinkToSection(true)));</span>
+<span class="fc" id="L400">                    dropdownMenu.with(li().with(child.createLinkToSection(true)));</span>
                 }
-<span class="fc" id="L383">            }</span>
-<span class="fc" id="L384">            return li()</span>
-<span class="fc bfc" id="L385" title="All 2 branches covered.">                .withClass(selected ? &quot;selected expandable collapsed&quot; : &quot;expandable collapsed&quot;)</span>
-<span class="fc" id="L386">                .with(createLinkToSection(true).withHref(&quot;#&quot;))</span>
-<span class="fc" id="L387">                .with(dropdownMenu)</span>
-<span class="fc" id="L388">                .attr(&quot;onclick&quot;,&quot;expandOrCollapse(event,this);&quot;);</span>
+<span class="fc" id="L402">            }</span>
+<span class="fc" id="L403">            return li()</span>
+<span class="fc bfc" id="L404" title="All 2 branches covered.">                .withClass(selected ? &quot;selected expandable collapsed&quot; : &quot;expandable collapsed&quot;)</span>
+<span class="fc" id="L405">                .with(createLinkToSection(true).withHref(&quot;#&quot;))</span>
+<span class="fc" id="L406">                .with(dropdownMenu)</span>
+<span class="fc" id="L407">                .attr(&quot;onclick&quot;,&quot;expandOrCollapse(event,this);&quot;);</span>
         } else {
-<span class="fc" id="L390">            return li()</span>
-<span class="fc" id="L391">                .withCondClass(selected, &quot;selected&quot;)</span>
-<span class="fc" id="L392">                .with(createLinkToSection(true));</span>
+<span class="fc" id="L409">            return li()</span>
+<span class="fc" id="L410">                .withCondClass(selected, &quot;selected&quot;)</span>
+<span class="fc" id="L411">                .with(createLinkToSection(true));</span>
         }
 
     }
+
+
+
+    private LiTag createExpandedMenuItem(boolean selected, int level) {
+<span class="fc bfc" id="L419" title="All 2 branches covered.">        if (!childEmitters.isEmpty()) {</span>
+<span class="fc" id="L420">            UlTag dropdownMenu = ul().withClasses(&quot;dropdown&quot;, &quot;hidden&quot;);</span>
+<span class="fc bfc" id="L421" title="All 2 branches covered.">            for (SectionEmitter child : childEmitters) {</span>
+<span class="pc bpc" id="L422" title="1 of 4 branches missed.">                if (child.section.subsections() != null &amp;&amp; !child.section.subsections().isEmpty()) {</span>
+<span class="fc" id="L423">                    dropdownMenu.with(child.createExpandedMenuItem(selected, level+1));</span>
+                } else {
+<span class="fc" id="L425">                    dropdownMenu.with(li().with(child.createLinkToSection(true)));</span>
+                }
+<span class="fc" id="L427">            }</span>
+<span class="fc" id="L428">            return li()</span>
+<span class="fc bfc" id="L429" title="All 2 branches covered.">                .withClass(selected ? &quot;selected expandable collapsed&quot; : &quot;expandable collapsed&quot;)</span>
+<span class="fc" id="L430">                .with(createLinkToSection(true).withHref(&quot;#&quot;))</span>
+<span class="fc" id="L431">                .with(dropdownMenu)</span>
+<span class="fc" id="L432">                .attr(&quot;onclick&quot;,</span>
+<span class="fc bfc" id="L433" title="All 2 branches covered.">                    level == 0 ?</span>
+<span class="fc" id="L434">                        &quot;expandOrCollapseExpandedMenu(event,this);&quot; :</span>
+<span class="fc" id="L435">                        &quot;expandOrCollapse(event,this);&quot;</span>
+                );
+        } else {
+<span class="fc" id="L438">            return li()</span>
+<span class="fc" id="L439">                .withCondClass(selected, &quot;selected&quot;)</span>
+<span class="fc" id="L440">                .with(createLinkToSection(true));</span>
+        }
+
+    }
+
 
 
 
 
     private void writeToFile(HtmlTag htmlObject) throws IOException {
-<span class="fc" id="L401">        String html = htmlObject.render();</span>
-<span class="pc bpc" id="L402" title="1 of 2 branches missed.">        if (Boolean.TRUE.equals(section.replaceEmojis())) {</span>
-<span class="fc" id="L403">            html = EmojiParser.parseToUnicode(html);</span>
+<span class="fc" id="L450">        String html = htmlObject.render();</span>
+<span class="pc bpc" id="L451" title="1 of 2 branches missed.">        if (Boolean.TRUE.equals(section.replaceEmojis())) {</span>
+<span class="fc" id="L452">            html = EmojiParser.parseToUnicode(html);</span>
         }
-<span class="fc" id="L405">        Files.writeString(outputPath(), html, StandardCharsets.UTF_8);</span>
-<span class="fc" id="L406">        logger.info(&quot;Written file {}&quot;, outputPath());</span>
-<span class="fc" id="L407">    }</span>
+<span class="fc" id="L454">        Files.writeString(outputPath(), html, StandardCharsets.UTF_8);</span>
+<span class="fc" id="L455">        logger.info(&quot;Written file {}&quot;, outputPath());</span>
+<span class="fc" id="L456">    }</span>
 
 
     private void addPrismComponents(HeadTag head, SectionTag section) {
-<span class="fc" id="L411">        Pattern pattern = Pattern.compile(&quot;&lt;code\\s*class=\&quot;\\s*language-([^\\s\&quot;]+)&quot;);</span>
-<span class="fc" id="L412">        String html = section.render();</span>
-<span class="fc" id="L413">        Matcher matcher = pattern.matcher(html);</span>
-<span class="fc" id="L414">        Set&lt;String&gt; languages = new HashSet&lt;&gt;();</span>
-<span class="fc bfc" id="L415" title="All 2 branches covered.">        while (matcher.find()) {</span>
-<span class="fc" id="L416">            languages.add(&quot;prism.&quot;+matcher.group(1));</span>
+<span class="fc" id="L460">        Pattern pattern = Pattern.compile(&quot;&lt;code\\s*class=\&quot;\\s*language-([^\\s\&quot;]+)&quot;);</span>
+<span class="fc" id="L461">        String html = section.render();</span>
+<span class="fc" id="L462">        Matcher matcher = pattern.matcher(html);</span>
+<span class="fc" id="L463">        Set&lt;String&gt; languages = new HashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L464" title="All 2 branches covered.">        while (matcher.find()) {</span>
+<span class="fc" id="L465">            languages.add(&quot;prism.&quot;+matcher.group(1));</span>
         }
-<span class="fc" id="L418">        languages.forEach(lang -&gt; CDNResources.js(lang).ifPresent(head::with));</span>
-<span class="fc" id="L419">    }</span>
+<span class="fc" id="L467">        languages.forEach(lang -&gt; CDNResources.js(lang).ifPresent(head::with));</span>
+<span class="fc" id="L468">    }</span>
 
 
 
     protected String translate(String value) {
-<span class="fc bfc" id="L424" title="All 4 branches covered.">        if (this.localization == null || !this.localization.containsKey(value)) {</span>
-<span class="fc" id="L425">            return value;</span>
+<span class="fc bfc" id="L473" title="All 4 branches covered.">        if (this.localization == null || !this.localization.containsKey(value)) {</span>
+<span class="fc" id="L474">            return value;</span>
         } else {
-<span class="fc" id="L427">            return this.localization.get(value);</span>
+<span class="fc" id="L476">            return this.localization.get(value);</span>
         }
     }
 

@@ -9,7 +9,7 @@ Docsite Maven Plugin,docsite.util,ImageResolver,25,156,1,7,4,29,1,10,0,7
 Docsite Maven Plugin,docsite.util,CDNResources,0,263,0,0,0,72,0,3,0,3
 Docsite Maven Plugin,docsite.util,DocsiteReader,27,0,0,0,5,0,3,0,3,0
 Docsite Maven Plugin,docsite.util,ResourceUtil,71,247,6,8,23,44,7,15,2,13
-Docsite Maven Plugin,docsite,SectionEmitterFactory,9,153,3,13,2,39,3,12,0,5
+Docsite Maven Plugin,docsite,SectionEmitterFactory,9,170,5,17,2,41,5,13,0,5
 Docsite Maven Plugin,docsite,Section.SectionType,0,54,0,0,0,6,0,1,0,1
 Docsite Maven Plugin,docsite,Localization,3,0,0,0,1,0,1,0,1,0
 Docsite Maven Plugin,docsite,Script,42,0,0,0,13,0,9,0,9,0
@@ -17,7 +17,7 @@ Docsite Maven Plugin,docsite,SiteLanguage,32,115,7,13,3,22,7,12,2,7
 Docsite Maven Plugin,docsite,Section,13,128,3,9,4,30,5,21,2,17
 Docsite Maven Plugin,docsite,DocsiteException,8,0,0,0,4,0,2,0,2,0
 Docsite Maven Plugin,docsite,Logger,12,55,0,0,4,17,2,7,2,7
-Docsite Maven Plugin,docsite,SectionEmitter,57,1123,14,68,8,198,13,57,1,28
+Docsite Maven Plugin,docsite,SectionEmitter,57,1285,15,85,8,228,14,70,1,33
 Docsite Maven Plugin,docsite,DocsiteEmitter,16,222,4,12,3,49,3,11,0,6
 Docsite Maven Plugin,docsite,ThemeColors.ThemeColorsBuilder,0,42,0,0,0,13,0,7,0,7
 Docsite Maven Plugin,docsite,ThemeColors,28,61,0,0,12,20,6,8,6,8
@@ -32,4 +32,5 @@ Docsite Maven Plugin,docsite.emitters,GroupSectionEmitter,5,100,0,4,1,14,1,8,1,6
 Docsite Maven Plugin,docsite.emitters,CopySectionEmitter,47,0,2,0,10,0,8,0,7,0
 Docsite Maven Plugin,docsite.emitters,TemplateSectionEmitter,61,132,9,3,10,29,7,5,0,5
 Docsite Maven Plugin,docsite.emitters,LinkSectionEmitter,15,28,1,1,4,6,4,4,3,4
+Docsite Maven Plugin,docsite.emitters,AsciidocGeneratedSectionEmitter,6,73,0,0,2,15,0,3,0,3
 Docsite Maven Plugin,docsite.emitters,HtmlGeneratedSectionEmitter,6,39,0,0,2,8,0,2,0,2

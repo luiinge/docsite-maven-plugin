@@ -209,7 +209,7 @@
             <plugin>
                 <groupId>io.github.luiinge</groupId>
                 <artifactId>docsite-maven-plugin</artifactId>
-                <version>1.4.0</version>
+                <version>1.5.0</version>
                 <configuration>
                     <outputFolder>docs</outputFolder>
                     <forceDelete>true</forceDelete>

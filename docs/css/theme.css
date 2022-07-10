@@ -53,10 +53,11 @@ header .title-and-subtitle .title {
     font-size: 2em;
 
 }
+/*
 header .title-and-subtitle .title.no-subtitle {
     padding-top: 1em;
 }
-
+*/
 header .title-and-subtitle .subtitle {
     font-size: 0.8em;
 }
@@ -180,6 +181,7 @@ header .company .label {
     font-weight: bold;
     margin-left: 1em;
     color: var(--menu-decoration-color);
+    width: 1em;
 }
 
 .menu li.collapsed > a::after {
@@ -188,6 +190,7 @@ header .company .label {
     font-weight: bold;
     margin-left: 1em;
     color: var(--menu-decoration-color);
+    width: 1em;
 }
 
 .menu li > a.external::after {
@@ -225,6 +228,18 @@ header .company .label {
     padding-left: 3rem;
     filter: brightness(0.6);
 }
+
+
+
+.expanded-menu {
+    border: 2px solid var(--menu-regular-background-color);
+    padding-top: 0.6rem;
+}
+
+.expanded-menu > ul > li > a {
+    border-bottom: 2px solid var(--menu-regular-background-color);
+}
+
 
 /* Table Of Contents -----------------------------  */
 

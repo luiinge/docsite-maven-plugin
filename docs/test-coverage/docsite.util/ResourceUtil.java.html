@@ -84,80 +84,79 @@ public final class ResourceUtil {
 
 
     private static void copyFromURL(URL url, Path target) throws IOException {
-
-<span class="fc" id="L88">        Files.createDirectories(target.getParent());</span>
-<span class="fc" id="L89">        Files.copy(</span>
-<span class="fc" id="L90">            url.openStream(),</span>
+<span class="fc" id="L87">        Files.createDirectories(target.getParent());</span>
+<span class="fc" id="L88">        Files.copy(</span>
+<span class="fc" id="L89">            url.openStream(),</span>
             target,
             StandardCopyOption.REPLACE_EXISTING
         );
-<span class="fc" id="L94">    }</span>
+<span class="fc" id="L93">    }</span>
 
 
 
     public static String read(InputStream inputStream) throws IOException {
-<span class="fc" id="L99">        try (BufferedReader reader = new BufferedReader( new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {</span>
-<span class="fc" id="L100">            return reader.lines().collect(Collectors.joining(&quot;\n&quot;));</span>
+<span class="fc" id="L98">        try (BufferedReader reader = new BufferedReader( new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {</span>
+<span class="fc" id="L99">            return reader.lines().collect(Collectors.joining(&quot;\n&quot;));</span>
         }
     }
 
 
     public static InputStream open(Path baseDir, String source) throws IOException {
         try {
-<span class="fc" id="L107">            return baseDir.resolve(source).toUri().toURL().openStream();</span>
-<span class="nc" id="L108">        } catch (MalformedURLException e) {</span>
-<span class="nc" id="L109">            return Files.newInputStream(Path.of(source));</span>
+<span class="fc" id="L106">            return baseDir.resolve(source).toUri().toURL().openStream();</span>
+<span class="nc" id="L107">        } catch (MalformedURLException e) {</span>
+<span class="nc" id="L108">            return Files.newInputStream(Path.of(source));</span>
         }
     }
 
 
     public static boolean existsSource(Path baseDir, String source) {
-<span class="pc bpc" id="L115" title="2 of 4 branches missed.">        if (source == null || source.isBlank()) {</span>
-<span class="nc" id="L116">            return false;</span>
+<span class="pc bpc" id="L114" title="2 of 4 branches missed.">        if (source == null || source.isBlank()) {</span>
+<span class="nc" id="L115">            return false;</span>
         }
-<span class="fc bfc" id="L118" title="All 2 branches covered.">        if (Files.exists(baseDir.resolve(source))) {</span>
-<span class="fc" id="L119">            return true;</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">        if (Files.exists(baseDir.resolve(source))) {</span>
+<span class="fc" id="L118">            return true;</span>
         }
-<span class="nc" id="L121">        try (InputStream stream = new URL(source).openStream()) {</span>
-<span class="nc bnc" id="L122" title="All 2 branches missed.">            return stream != null;</span>
-<span class="fc" id="L123">        } catch (IOException e) {</span>
-<span class="fc" id="L124">            return false;</span>
+<span class="nc" id="L120">        try (InputStream stream = new URL(source).openStream()) {</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">            return stream != null;</span>
+<span class="fc" id="L122">        } catch (IOException e) {</span>
+<span class="fc" id="L123">            return false;</span>
         }
     }
 
 
     public static void copyFolder(Path siteFolder, Path outputFolder)  {
-<span class="fc" id="L130">        try(Stream&lt;Path&gt; walker = Files.walk(siteFolder)) {</span>
-<span class="fc" id="L131">            Files.createDirectories(outputFolder);</span>
-<span class="fc" id="L132">            walker.forEach(sourcePath -&gt; {</span>
+<span class="fc" id="L129">        try(Stream&lt;Path&gt; walker = Files.walk(siteFolder)) {</span>
+<span class="fc" id="L130">            Files.createDirectories(outputFolder);</span>
+<span class="fc" id="L131">            walker.forEach(sourcePath -&gt; {</span>
                 try {
-<span class="fc" id="L134">                    Path targetPath = outputFolder.resolve(siteFolder.relativize(sourcePath));</span>
-<span class="fc" id="L135">                    Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);</span>
-<span class="nc" id="L136">                } catch (IOException e) {</span>
-<span class="nc" id="L137">                    throw new DocsiteException(e);</span>
-<span class="fc" id="L138">                }</span>
-<span class="fc" id="L139">            });</span>
-<span class="nc" id="L140">        } catch (IOException e) {</span>
-<span class="nc" id="L141">            throw new DocsiteException(e);</span>
-<span class="fc" id="L142">        }</span>
-<span class="fc" id="L143">    }</span>
+<span class="fc" id="L133">                    Path targetPath = outputFolder.resolve(siteFolder.relativize(sourcePath));</span>
+<span class="fc" id="L134">                    Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);</span>
+<span class="nc" id="L135">                } catch (IOException e) {</span>
+<span class="nc" id="L136">                    throw new DocsiteException(e);</span>
+<span class="fc" id="L137">                }</span>
+<span class="fc" id="L138">            });</span>
+<span class="nc" id="L139">        } catch (IOException e) {</span>
+<span class="nc" id="L140">            throw new DocsiteException(e);</span>
+<span class="fc" id="L141">        }</span>
+<span class="fc" id="L142">    }</span>
 
 
     public static void deleteDirectory(Path path) {
-<span class="nc" id="L147">        try(Stream&lt;Path&gt; walker = Files.walk(path)) {</span>
-<span class="nc" id="L148">            walker</span>
-<span class="nc" id="L149">                .sorted(Comparator.reverseOrder())</span>
-<span class="nc" id="L150">                .forEach(sourcePath -&gt; {</span>
+<span class="nc" id="L146">        try(Stream&lt;Path&gt; walker = Files.walk(path)) {</span>
+<span class="nc" id="L147">            walker</span>
+<span class="nc" id="L148">                .sorted(Comparator.reverseOrder())</span>
+<span class="nc" id="L149">                .forEach(sourcePath -&gt; {</span>
                     try {
-<span class="nc" id="L152">                        Files.delete(sourcePath);</span>
-<span class="nc" id="L153">                    } catch (IOException e) {</span>
-<span class="nc" id="L154">                        throw new DocsiteException(e);</span>
-<span class="nc" id="L155">                    }</span>
-<span class="nc" id="L156">                });</span>
-<span class="nc" id="L157">        } catch (IOException e) {</span>
-<span class="nc" id="L158">            throw new DocsiteException(e);</span>
-<span class="nc" id="L159">        }</span>
-<span class="nc" id="L160">    }</span>
+<span class="nc" id="L151">                        Files.delete(sourcePath);</span>
+<span class="nc" id="L152">                    } catch (IOException e) {</span>
+<span class="nc" id="L153">                        throw new DocsiteException(e);</span>
+<span class="nc" id="L154">                    }</span>
+<span class="nc" id="L155">                });</span>
+<span class="nc" id="L156">        } catch (IOException e) {</span>
+<span class="nc" id="L157">            throw new DocsiteException(e);</span>
+<span class="nc" id="L158">        }</span>
+<span class="nc" id="L159">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

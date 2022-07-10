@@ -53,7 +53,6 @@ header .title-and-subtitle i {
 
 header .title-and-subtitle .title-container {
     grid-area: title;
-    padding-top: 0.5em;
     display: flex;
     align-items: center;
 }
@@ -90,6 +89,21 @@ header .title-and-subtitle .subtitle {
     overflow-y: auto;
     max-height: 80%;
     z-index: 1;
+}
+
+.expanded-menu {
+    position: inherit;
+    display: flex;
+    align-items: center;
+}
+
+.expanded-menu ul {
+    display: flex;
+    align-items: center;
+}
+
+.expanded-menu > ul > li > ul {
+    position: absolute;
 }
 
 
