@@ -63,6 +63,13 @@ function hideTocIfVisible(event,emitter) {
 
 
 function resizeExpandedMenu(elements) {
+  let reducedLayout = window.getComputedStyle(window.document.body).getPropertyValue('--reduced-layout').trim();
+  if (reducedLayout === 'true') {
+    window.expandedMenu.style.display = 'none';
+    window.menuButton.classList.add('visible');
+    window.menuButton.classList.remove('hidden');
+    return;
+  }
   let isDisplayed = (window.expandedMenu.style.display != 'none');
   if (isDisplayed) {
     let hasOverflow = window.expandedMenu.scrollWidth > window.expandedMenu.clientWidth;

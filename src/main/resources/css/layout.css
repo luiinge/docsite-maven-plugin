@@ -22,6 +22,7 @@ body {
        'toc    content';
     grid-template-rows: 5em 1.2em auto;
     grid-template-columns: 10em auto;
+    --reduced-layout: false;
 }
 
 
@@ -158,6 +159,7 @@ body {
        'content';
     grid-template-rows: 5em 1.2em 2em auto auto;
     grid-template-columns: auto;
+    --reduced-layout: true;
 }
 
 body.no-toc {

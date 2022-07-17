@@ -7,6 +7,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][1],
 and this project adheres to [Semantic Versioning][2].
 
+[1.5.1]
+--------------------------------------------------------------------------
+**Release date:** 2022-07-17
+### Fixed
+- Fixed issue regarding the expanded menu with many sections
+
 [1.5.0]
 --------------------------------------------------------------------------
 **Release date:** 2022-07-10
