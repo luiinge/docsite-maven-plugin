@@ -24,7 +24,7 @@ public abstract class GeneratedSectionEmitter extends SectionEmitter {
             translationIsMissing = false;
         } else {
             String localizedOrigen = EmitterUtil.withLanguage(siteLanguage, super.origin());
-            if (!Files.exists(Path.of(localizedOrigen))) {
+            if (!ResourceUtil.existsSource(params.baseDir(),localizedOrigen)) {
                 translatedOrigin = super.origin();
                 translationIsMissing = true;
             } else {

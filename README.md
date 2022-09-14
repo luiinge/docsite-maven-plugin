@@ -32,7 +32,7 @@ Get started
             <plugin>
                 <groupId>io.github.luiinge</groupId>
                 <artifactId>docsite-maven-plugin</artifactId>
-                <version>1.5.1</version>
+                <version>1.5.2</version>
             </plugin>
         </plugins>
     </build>
@@ -58,7 +58,7 @@ the plugin within the `pom`.
             <plugin>
                 <groupId>io.github.luiinge</groupId>
                 <artifactId>docsite-maven-plugin</artifactId>
-                <version>1.5.1</version>
+                <version>1.5.2</version>
                 <configuration>
                     <docsite>
                         ...
@@ -503,7 +503,7 @@ global: `${maven.home}/conf/settings.xml`), adding the following:
 - **Option B.** Use the full name of the plugin: 
 
   ```shell
-  mvn io.github.luiinge:docsite-maven-plugin:1.5.1:generate
+  mvn io.github.luiinge:docsite-maven-plugin:1.5.2:generate
   ```
   
   Be aware that by using this method you *cannot* define the configuration in the `pom`, 
@@ -516,7 +516,7 @@ global: `${maven.home}/conf/settings.xml`), adding the following:
   <plugin>
     <groupId>io.github.luiinge</groupId>
     <artifactId>docsite-maven-plugin</artifactId>
-    <version>1.5.1</version>
+    <version>1.5.2</version>
     <configuration> ... </configuration>
     <executions>
       <execution>

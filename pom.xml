@@ -5,7 +5,7 @@
     
     <groupId>io.github.luiinge</groupId>
     <artifactId>docsite-maven-plugin</artifactId>
-    <version>1.5.1</version>
+    <version>1.5.2</version>
     <packaging>maven-plugin</packaging>
 
     <name>Docsite Maven Plugin</name>
@@ -131,7 +131,7 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.30</version>
+            <version>1.31</version>
         </dependency>
         <dependency>
             <groupId>org.asciidoctor</groupId>
@@ -221,7 +221,7 @@
             <plugin>
                 <groupId>io.github.luiinge</groupId>
                 <artifactId>docsite-maven-plugin</artifactId>
-                <version>1.5.1</version>
+                <version>1.5.2</version>
                 <configuration>
                     <outputFolder>docs</outputFolder>
                     <forceDelete>true</forceDelete>

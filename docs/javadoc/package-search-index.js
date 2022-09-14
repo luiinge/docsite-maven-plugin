@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"docsite"},{"l":"docsite.emitters"},{"l":"docsite.mojo"},{"l":"docsite.util"}]
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"docsite"},{"l":"docsite.emitters"},{"l":"docsite.mojo"},{"l":"docsite.util"}];updateSearchResults();
