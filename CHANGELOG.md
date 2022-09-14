@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning][2].
 --------------------------------------------------------------------------
 **Release date:** 2022-09-14
 ### Modified
-- Bump `snakeyaml` to version 1.31
+- Bump `snakeyaml` to version 1.32
 ### Fixed
 - [Localization not working for multi-module projects](https://github.com/luiinge/docsite-maven-plugin/issues/4)
 
