@@ -3,7 +3,6 @@ package docsite.emitters;
 
 import docsite.util.*;
 import j2html.tags.Tag;
-import java.nio.file.*;
 import java.util.regex.*;
 
 import docsite.*;
