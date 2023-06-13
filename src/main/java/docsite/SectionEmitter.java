@@ -278,12 +278,14 @@ public abstract class SectionEmitter {
             CDNResources.css("fontawesome.min").ifPresent(head::with);
             CDNResources.css("prism.min").ifPresent(head::with);
             CDNResources.js("prism.min").ifPresent(head::with);
+            CDNResources.js("prism.autoloader").ifPresent(head::with);
             CDNResources.js("mermaid").ifPresent(head::with);
             CDNResources.js("katex").ifPresent(head::with);
             CDNResources.css("katex").ifPresent(head::with);
         } else {
             head.with(stylesheet("css/font-awesome-all.css"));
             head.with(script().attr("src","js/prism.js"));
+            head.with(script().attr("src","js/prism-autoloader.js"));
             head.with(stylesheet("css/prism.min.css"));
         }
 
