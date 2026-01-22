@@ -1,3 +1,6 @@
+> [!WARNING]
+> This project has been moved to https://github.com/org-myjtools/docsite-maven-plugin
+
 Docsite Maven Plugin
 ================================================================================
 
